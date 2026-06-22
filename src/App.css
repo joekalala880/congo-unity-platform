@@ -1,0 +1,176 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f7f3e8;
+  color: #111827;
+}
+
+.navbar {
+  background: #111111;
+  color: white;
+  padding: 20px 8%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar h2 {
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  margin-left: 25px;
+  font-weight: bold;
+}
+
+.hero-section {
+  min-height: 85vh;
+  background:
+    linear-gradient(rgba(0,0,0,.65), rgba(0,0,0,.65)),
+    url("https://images.unsplash.com/photo-1523805009345-7448845a9e53?auto=format&fit=crop&w=1600&q=80");
+  background-size: cover;
+  background-position: center;
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 8%;
+}
+
+.hero-content {
+  max-width: 760px;
+}
+
+.hero-content h1 {
+  font-size: 64px;
+  line-height: 1.05;
+  margin-bottom: 25px;
+}
+
+.hero-content p {
+  font-size: 21px;
+  line-height: 1.7;
+}
+
+button {
+  margin-top: 25px;
+  background: #d4a948;
+  color: white;
+  border: none;
+  padding: 18px 34px;
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 3px;
+  cursor: pointer;
+}
+
+.section {
+  padding: 80px 8%;
+  text-align: center;
+}
+
+.section h2 {
+  font-size: 44px;
+  margin-bottom: 20px;
+}
+
+.section p {
+  max-width: 850px;
+  margin: auto;
+  font-size: 19px;
+  line-height: 1.8;
+}
+
+.cards {
+  padding: 80px 8%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+.card {
+  background: white;
+  padding: 35px;
+  border-radius: 4px;
+  box-shadow: 0 15px 35px rgba(0,0,0,.08);
+  border-top: 6px solid #d4a948;
+}
+
+.card h3 {
+  font-size: 25px;
+}
+
+.card p {
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+#join {
+  background: #111111;
+  color: white;
+}
+
+@media (max-width: 800px) {
+  .navbar {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .hero-content h1 {
+    font-size: 42px;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+  }
+}
+.register-section {
+  background: #ffffff;
+  padding: 80px 8%;
+  text-align: center;
+}
+
+.register-header h1 {
+  font-size: 42px;
+  margin-bottom: 10px;
+}
+
+.register-header p {
+  font-size: 18px;
+  color: #555;
+}
+
+.register-form {
+  max-width: 850px;
+  margin: 35px auto 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.register-form input {
+  padding: 16px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  border-radius: 6px;
+}
+
+.register-form button {
+  grid-column: span 2;
+}
+
+@media (max-width: 700px) {
+  .register-form {
+    grid-template-columns: 1fr;
+  }
+
+  .register-form button {
+    grid-column: span 1;
+  }
+}
