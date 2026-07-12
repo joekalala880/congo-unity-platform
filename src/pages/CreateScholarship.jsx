@@ -1,120 +1,51 @@
-import { useState } from "react";
-import { collection, addDoc } from "firebase/firestore";
-import { auth, db } from "../firebase";
+import useCreateForm from "../hooks/useCreateForm";
+import FormPage from "../components/forms/FormPage";
+import FormField from "../components/forms/FormField";
 
 function CreateScholarship() {
-  const [scholarship, setScholarship] = useState({
-    title: "",
-    organization: "",
-    location: "",
-    deadline: "",
-    amount: "",
-    description: "",
-    link: "",
+  const { values, handleChange, handleSubmit, isSubmitting } = useCreateForm({
+    collectionName: "scholarships",
+    initialValues: {
+      title: "",
+      organization: "",
+      location: "",
+      deadline: "",
+      amount: "",
+      description: "",
+      link: "",
+    },
+    successMessage: "Scholarship posted successfully!",
   });
 
-  const handleChange = (e) => {
-    setScholarship({
-      ...scholarship,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const submitScholarship = async (e) => {
-    e.preventDefault();
-
-    const user = auth.currentUser;
-
-    if (!user) {
-      alert("Please login first");
-      return;
-    }
-
-    try {
-      await addDoc(collection(db, "scholarships"), {
-        ...scholarship,
-        createdBy: user.email,
-        createdAt: new Date(),
-        status: "published",
-      });
-
-      alert("Scholarship posted successfully!");
-
-      setScholarship({
-        title: "",
-        organization: "",
-        location: "",
-        deadline: "",
-        amount: "",
-        description: "",
-        link: "",
-      });
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    }
-  };
-
   return (
-    <section className="register-section">
-      <div className="register-header">
-        <h1>Create Scholarship</h1>
-        <p>Add education opportunities for the Congolese community.</p>
-      </div>
+    <FormPage
+      title="Create Scholarship"
+      subtitle="Add education opportunities for the Congolese community."
+      onSubmit={handleSubmit}
+      submitLabel="Publish Scholarship"
+      isSubmitting={isSubmitting}
+    >
+      <FormField name="title" value={values.title} onChange={handleChange} placeholder="Scholarship Title" />
+      <FormField
+        name="organization"
+        value={values.organization}
+        onChange={handleChange}
+        placeholder="Organization"
+      />
+      <FormField name="location" value={values.location} onChange={handleChange} placeholder="Location" />
+      <FormField name="deadline" value={values.deadline} onChange={handleChange} placeholder="Deadline" />
+      <FormField name="amount" value={values.amount} onChange={handleChange} placeholder="Amount" />
 
-      <form className="register-form" onSubmit={submitScholarship}>
-        <input
-          name="title"
-          value={scholarship.title}
-          onChange={handleChange}
-          placeholder="Scholarship Title"
-        />
+      <FormField
+        as="textarea"
+        name="description"
+        value={values.description}
+        onChange={handleChange}
+        placeholder="Scholarship Description"
+      />
 
-        <input
-          name="organization"
-          value={scholarship.organization}
-          onChange={handleChange}
-          placeholder="Organization"
-        />
-
-        <input
-          name="location"
-          value={scholarship.location}
-          onChange={handleChange}
-          placeholder="Location"
-        />
-
-        <input
-          name="deadline"
-          value={scholarship.deadline}
-          onChange={handleChange}
-          placeholder="Deadline"
-        />
-
-        <input
-          name="amount"
-          value={scholarship.amount}
-          onChange={handleChange}
-          placeholder="Amount"
-        />
-
-        <textarea
-          name="description"
-          value={scholarship.description}
-          onChange={handleChange}
-          placeholder="Scholarship Description"
-        />
-
-        <input
-          name="link"
-          value={scholarship.link}
-          onChange={handleChange}
-          placeholder="Application Link"
-        />
-
-        <button type="submit">Publish Scholarship</button>
-      </form>
-    </section>
+      <FormField name="link" value={values.link} onChange={handleChange} placeholder="Application Link" />
+    </FormPage>
   );
 }
 
