@@ -1,120 +1,46 @@
-import { useState } from "react";
-import { collection, addDoc } from "firebase/firestore";
-import { auth, db } from "../firebase";
+import useCreateForm from "../hooks/useCreateForm";
+import FormPage from "../components/forms/FormPage";
+import FormField from "../components/forms/FormField";
 
 function CreateEvent() {
-  const [event, setEvent] = useState({
-    title: "",
-    organizer: "",
-    location: "",
-    date: "",
-    time: "",
-    description: "",
-    link: "",
+  const { values, handleChange, handleSubmit, isSubmitting } = useCreateForm({
+    collectionName: "events",
+    initialValues: {
+      title: "",
+      organizer: "",
+      location: "",
+      date: "",
+      time: "",
+      description: "",
+      link: "",
+    },
+    successMessage: "Event posted successfully!",
   });
 
-  const handleChange = (e) => {
-    setEvent({
-      ...event,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const submitEvent = async (e) => {
-    e.preventDefault();
-
-    const user = auth.currentUser;
-
-    if (!user) {
-      alert("Please login first");
-      return;
-    }
-
-    try {
-      await addDoc(collection(db, "events"), {
-        ...event,
-        createdBy: user.email,
-        createdAt: new Date(),
-        status: "published",
-      });
-
-      alert("Event posted successfully!");
-
-      setEvent({
-        title: "",
-        organizer: "",
-        location: "",
-        date: "",
-        time: "",
-        description: "",
-        link: "",
-      });
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    }
-  };
-
   return (
-    <section className="register-section">
-      <div className="register-header">
-        <h1>Create Event</h1>
-        <p>Add community events, fundraisers, meetings, and diaspora programs.</p>
-      </div>
+    <FormPage
+      title="Create Event"
+      subtitle="Add community events, fundraisers, meetings, and diaspora programs."
+      onSubmit={handleSubmit}
+      submitLabel="Publish Event"
+      isSubmitting={isSubmitting}
+    >
+      <FormField name="title" value={values.title} onChange={handleChange} placeholder="Event Title" />
+      <FormField name="organizer" value={values.organizer} onChange={handleChange} placeholder="Organizer" />
+      <FormField name="location" value={values.location} onChange={handleChange} placeholder="Location" />
+      <FormField name="date" value={values.date} onChange={handleChange} placeholder="Date" />
+      <FormField name="time" value={values.time} onChange={handleChange} placeholder="Time" />
 
-      <form className="register-form" onSubmit={submitEvent}>
-        <input
-          name="title"
-          value={event.title}
-          onChange={handleChange}
-          placeholder="Event Title"
-        />
+      <FormField
+        as="textarea"
+        name="description"
+        value={values.description}
+        onChange={handleChange}
+        placeholder="Event Description"
+      />
 
-        <input
-          name="organizer"
-          value={event.organizer}
-          onChange={handleChange}
-          placeholder="Organizer"
-        />
-
-        <input
-          name="location"
-          value={event.location}
-          onChange={handleChange}
-          placeholder="Location"
-        />
-
-        <input
-          name="date"
-          value={event.date}
-          onChange={handleChange}
-          placeholder="Date"
-        />
-
-        <input
-          name="time"
-          value={event.time}
-          onChange={handleChange}
-          placeholder="Time"
-        />
-
-        <textarea
-          name="description"
-          value={event.description}
-          onChange={handleChange}
-          placeholder="Event Description"
-        />
-
-        <input
-          name="link"
-          value={event.link}
-          onChange={handleChange}
-          placeholder="Event Link"
-        />
-
-        <button type="submit">Publish Event</button>
-      </form>
-    </section>
+      <FormField name="link" value={values.link} onChange={handleChange} placeholder="Event Link" />
+    </FormPage>
   );
 }
 
