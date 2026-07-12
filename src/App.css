@@ -1853,7 +1853,7 @@ button {
   min-height: 70vh;
   background:
     linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.85)),
-    url("./galleryPhotos/FlagCongo.webp");
+    url("./galery photo/FlagCongo.webp");
   background-size: cover;
   background-position: center;
   display: flex;
