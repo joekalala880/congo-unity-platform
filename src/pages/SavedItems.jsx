@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import {
   collection,
+  query,
+  where,
   getDocs,
   doc,
   updateDoc,
@@ -17,18 +19,21 @@ function SavedItems() {
     if (!user) return;
 
     try {
-      const snapshot = await getDocs(collection(db, "savedItems"));
+      // Firestore rules only allow reading savedItems owned by the
+      // signed-in user, so userEmail must be filtered server-side.
+      const q = query(
+        collection(db, "savedItems"),
+        where("userEmail", "==", user.email)
+      );
+
+      const snapshot = await getDocs(q);
 
       const data = snapshot.docs
-        .map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
+        .map((document) => ({
+          id: document.id,
+          ...document.data(),
         }))
-        .filter(
-          (item) =>
-            item.userEmail === user.email &&
-            item.removed !== true
-        );
+        .filter((item) => item.removed !== true);
 
       setSavedItems(data);
     } catch (error) {

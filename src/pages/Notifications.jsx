@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import {
   collection,
   query,
+  where,
   orderBy,
   onSnapshot,
   doc,
@@ -17,18 +18,20 @@ function Notifications() {
 
     if (!user) return;
 
+    // Firestore rules only allow reading notifications addressed to the
+    // signed-in user, so the query must filter server-side rather than
+    // fetching everything and filtering in the client.
     const q = query(
       collection(db, "notifications"),
+      where("to", "==", user.email),
       orderBy("createdAt", "desc")
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs
-        .map((document) => ({
-          id: document.id,
-          ...document.data(),
-        }))
-        .filter((notification) => notification.to === user.email);
+      const data = snapshot.docs.map((document) => ({
+        id: document.id,
+        ...document.data(),
+      }));
 
       setNotifications(data);
     });

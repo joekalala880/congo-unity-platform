@@ -3,6 +3,7 @@ import {
   collection,
   addDoc,
   query,
+  where,
   orderBy,
   onSnapshot,
   getDocs,
@@ -39,20 +40,60 @@ function DirectMessages() {
 
     if (!user) return;
 
-    const q = query(collection(db, "messages"), orderBy("createdAt", "asc"));
+    // Firestore rules only allow reading messages where the signed-in user
+    // is the sender or recipient, so a single unfiltered query would be
+    // denied outright. Two participant-scoped queries are merged instead.
+    const sentQuery = query(
+      collection(db, "messages"),
+      where("from", "==", user.email),
+      orderBy("createdAt", "asc")
+    );
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs
-        .map((document) => ({
-          id: document.id,
-          ...document.data(),
-        }))
-        .filter((msg) => msg.from === user.email || msg.to === user.email);
+    const receivedQuery = query(
+      collection(db, "messages"),
+      where("to", "==", user.email),
+      orderBy("createdAt", "asc")
+    );
 
-      setMessages(data);
+    let sentMessages = [];
+    let receivedMessages = [];
+
+    const mergeAndSetMessages = () => {
+      const merged = new Map();
+
+      [...sentMessages, ...receivedMessages].forEach((msg) => {
+        merged.set(msg.id, msg);
+      });
+
+      const sorted = Array.from(merged.values()).sort(
+        (a, b) => (a.createdAt?.toMillis?.() ?? 0) - (b.createdAt?.toMillis?.() ?? 0)
+      );
+
+      setMessages(sorted);
+    };
+
+    const unsubscribeSent = onSnapshot(sentQuery, (snapshot) => {
+      sentMessages = snapshot.docs.map((document) => ({
+        id: document.id,
+        ...document.data(),
+      }));
+
+      mergeAndSetMessages();
     });
 
-    return () => unsubscribe();
+    const unsubscribeReceived = onSnapshot(receivedQuery, (snapshot) => {
+      receivedMessages = snapshot.docs.map((document) => ({
+        id: document.id,
+        ...document.data(),
+      }));
+
+      mergeAndSetMessages();
+    });
+
+    return () => {
+      unsubscribeSent();
+      unsubscribeReceived();
+    };
   }, []);
 
   const handleChange = (e) => {
