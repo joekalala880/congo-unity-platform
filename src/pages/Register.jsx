@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { collection, addDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { db, auth } from "../firebase";
 
@@ -38,7 +38,7 @@ function Register() {
 
       const { password, ...profileData } = formData;
 
-      await addDoc(collection(db, "congoleseProfiles"), {
+      await setDoc(doc(db, "congoleseProfiles", userCredential.user.uid), {
         ...profileData,
         userId: userCredential.user.uid,
         role: "citizen",
