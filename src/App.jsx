@@ -73,6 +73,7 @@ import JobDetails from "./pages/JobDetails";
 import BusinessDetails from "./pages/BusinessDetails";
 import ScholarshipDetails from "./pages/ScholarshipDetails";
 import EventDetails from "./pages/EventDetails";
+import NewsDetails from "./pages/NewsDetails";
 import SavedItems from "./pages/SavedItems";
 
 
@@ -421,10 +422,8 @@ function App() {
         <Route path="/create-event" element={<CreateEvent />} />
         <Route path="/businesses/:id" element={<BusinessDetails />} />
         <Route path="/scholarships/:id" element={<ScholarshipDetails />} />
-     <Route path="/events/:id" element={<EventDetails />} />
-     <Route path="/login" element={<Login />} />
-<Route path="/register" element={<Register />} />
-     
+        <Route path="/events/:id" element={<EventDetails />} />
+        <Route path="/news/:id" element={<NewsDetails />} />
 
         <Route
           path="/admin"
