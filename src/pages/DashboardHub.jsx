@@ -21,7 +21,7 @@ function DashboardHub() {
           <Link to="/feed" className="hub-card">Community Feed</Link>
           <Link to="/directory" className="hub-card">Citizen Directory</Link>
           <Link to="/profile" className="hub-card">My Profile</Link>
-          <Link to="/messages" className="hub-card">Messages</Link>
+          <Link to="/direct-messages" className="hub-card">Messages</Link>
         </div>
 
         <h2>Crisis & Action</h2>

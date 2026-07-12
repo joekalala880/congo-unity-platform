@@ -48,7 +48,7 @@ function AdminDashboard() {
         <Link to="/news">News</Link>
         <Link to="/businesses">Businesses</Link>
         <Link to="/feed">Community Feed</Link>
-        <Link to="/messages">Messages</Link>
+        <Link to="/direct-messages">Messages</Link>
         <Link to="/notifications">Notifications</Link>
         <Link to="/admin-cms">Create New</Link>
         <Link to="/settings">Settings</Link>

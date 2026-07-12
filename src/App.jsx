@@ -1,6 +1,6 @@
 import "./App.css";
 import { useEffect, useState } from "react";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "./firebase";
 
@@ -46,7 +46,6 @@ import CreateJob from "./pages/CreateJob";
 import Scholarships from "./pages/Scholarships";
 import CreateScholarship from "./pages/CreateScholarship";
 
-import Messages from "./pages/Messages";
 import DirectMessages from "./pages/DirectMessages";
 import CongoMap from "./pages/CongoMap";
 import Languages from "./pages/Languages";
@@ -362,7 +361,7 @@ function App() {
         <Route path="/following" element={<FollowingPage />} />
 
         <Route path="/feed" element={<CommunityFeed />} />
-        <Route path="/messages" element={<Messages />} />
+        <Route path="/messages" element={<Navigate to="/direct-messages" replace />} />
         <Route path="/direct-messages" element={<DirectMessages />} />
         <Route path="/notifications" element={<Notifications />} />
 
