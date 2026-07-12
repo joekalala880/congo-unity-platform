@@ -32,6 +32,7 @@ function CreateAnnouncement() {
     >
       <FormField
         name="title"
+        label="Announcement Title"
         value={values.title}
         onChange={handleChange}
         placeholder="Announcement Title"
@@ -40,6 +41,7 @@ function CreateAnnouncement() {
       <FormField
         as="select"
         name="category"
+        label="Category"
         value={values.category}
         onChange={handleChange}
         options={CATEGORY_OPTIONS}
@@ -48,6 +50,7 @@ function CreateAnnouncement() {
       <FormField
         as="textarea"
         name="message"
+        label="Announcement Message"
         value={values.message}
         onChange={handleChange}
         placeholder="Write announcement message..."
