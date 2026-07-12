@@ -18,6 +18,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import GovernmentDashboard from "./pages/GovernmentDashboard";
 import VerifyCitizens from "./pages/VerifyCitizens";
 import ProtectedAdmin from "./components/ProtectedAdmin";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
 
 import DiasporaHub from "./pages/DiasporaHub";
@@ -362,8 +363,22 @@ function App() {
 
         <Route path="/feed" element={<CommunityFeed />} />
         <Route path="/messages" element={<Navigate to="/direct-messages" replace />} />
-        <Route path="/direct-messages" element={<DirectMessages />} />
-        <Route path="/notifications" element={<Notifications />} />
+        <Route
+          path="/direct-messages"
+          element={
+            <ProtectedRoute>
+              <DirectMessages />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/notifications"
+          element={
+            <ProtectedRoute>
+              <Notifications />
+            </ProtectedRoute>
+          }
+        />
 
         <Route path="/report-issue" element={<ReportIssue />} />
         <Route path="/issues" element={<Issues />} />
@@ -434,7 +449,14 @@ function App() {
         <Route path="/create-business" element={<CreateBusiness />} />
         <Route path="/global-search" element={<GlobalSearch />} />
         <Route path="/jobs/:id" element={<JobDetails />} />
-        <Route path="/saved" element={<SavedItems />} />
+        <Route
+          path="/saved"
+          element={
+            <ProtectedRoute>
+              <SavedItems />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
