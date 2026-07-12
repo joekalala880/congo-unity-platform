@@ -20,16 +20,35 @@ function DirectMessages() {
     text: "",
   });
 
+  const [loadingProfiles, setLoadingProfiles] = useState(true);
+  // No signed-in user means there's nothing to load (this page is also
+  // gated by ProtectedRoute, so that shouldn't normally happen here).
+  const [loadingMessages, setLoadingMessages] = useState(() => Boolean(auth.currentUser));
+  const [profilesError, setProfilesError] = useState(null);
+  const [messagesError, setMessagesError] = useState(null);
+
   useEffect(() => {
     const fetchProfiles = async () => {
-      const snapshot = await getDocs(collection(db, "congoleseProfiles"));
+      setLoadingProfiles(true);
+      setProfilesError(null);
 
-      const data = snapshot.docs.map((document) => ({
-        id: document.id,
-        ...document.data(),
-      }));
+      try {
+        const snapshot = await getDocs(collection(db, "congoleseProfiles"));
 
-      setProfiles(data);
+        const data = snapshot.docs.map((document) => ({
+          id: document.id,
+          ...document.data(),
+        }));
+
+        setProfiles(data);
+      } catch (error) {
+        console.error("Failed to load community members:", error);
+        setProfilesError(
+          "We couldn't load community members right now. Please try again later."
+        );
+      } finally {
+        setLoadingProfiles(false);
+      }
     };
 
     fetchProfiles();
@@ -57,6 +76,8 @@ function DirectMessages() {
 
     let sentMessages = [];
     let receivedMessages = [];
+    let sentLoaded = false;
+    let receivedLoaded = false;
 
     const mergeAndSetMessages = () => {
       const merged = new Map();
@@ -72,23 +93,43 @@ function DirectMessages() {
       setMessages(sorted);
     };
 
-    const unsubscribeSent = onSnapshot(sentQuery, (snapshot) => {
-      sentMessages = snapshot.docs.map((document) => ({
-        id: document.id,
-        ...document.data(),
-      }));
+    const handleSnapshotError = (label) => (error) => {
+      console.error(`Failed to load ${label} messages:`, error);
+      setMessagesError(
+        "We couldn't load your messages right now. Please try again later."
+      );
+      setLoadingMessages(false);
+    };
 
-      mergeAndSetMessages();
-    });
+    const unsubscribeSent = onSnapshot(
+      sentQuery,
+      (snapshot) => {
+        sentMessages = snapshot.docs.map((document) => ({
+          id: document.id,
+          ...document.data(),
+        }));
 
-    const unsubscribeReceived = onSnapshot(receivedQuery, (snapshot) => {
-      receivedMessages = snapshot.docs.map((document) => ({
-        id: document.id,
-        ...document.data(),
-      }));
+        sentLoaded = true;
+        if (sentLoaded && receivedLoaded) setLoadingMessages(false);
+        mergeAndSetMessages();
+      },
+      handleSnapshotError("sent")
+    );
 
-      mergeAndSetMessages();
-    });
+    const unsubscribeReceived = onSnapshot(
+      receivedQuery,
+      (snapshot) => {
+        receivedMessages = snapshot.docs.map((document) => ({
+          id: document.id,
+          ...document.data(),
+        }));
+
+        receivedLoaded = true;
+        if (sentLoaded && receivedLoaded) setLoadingMessages(false);
+        mergeAndSetMessages();
+      },
+      handleSnapshotError("received")
+    );
 
     return () => {
       unsubscribeSent();
@@ -150,6 +191,28 @@ function DirectMessages() {
   const availableProfiles = profiles.filter(
     (profile) => profile.email !== currentUserEmail
   );
+
+  if (loadingProfiles || loadingMessages) {
+    return (
+      <section className="register-section">
+        <div className="register-header">
+          <h1>Direct Messages</h1>
+          <p>Loading your conversations...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (profilesError || messagesError) {
+    return (
+      <section className="register-section">
+        <div className="register-header">
+          <h1>Direct Messages</h1>
+          <p>{profilesError || messagesError}</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="register-section">
