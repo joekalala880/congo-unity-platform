@@ -24,7 +24,9 @@ function FollowSystem() {
   };
 
   useEffect(() => {
-    fetchProfiles();
+    (async () => {
+      await fetchProfiles();
+    })();
   }, []);
 
   const followUser = async (profileId) => {

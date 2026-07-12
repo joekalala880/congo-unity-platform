@@ -42,7 +42,9 @@ function SavedItems() {
   };
 
   useEffect(() => {
-    fetchSavedItems();
+    (async () => {
+      await fetchSavedItems();
+    })();
   }, []);
 
   const removeSavedItem = async (id) => {

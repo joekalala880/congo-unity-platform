@@ -36,10 +36,18 @@ function Register() {
         formData.password
       );
 
-      const { password, ...profileData } = formData;
-
       await setDoc(doc(db, "congoleseProfiles", userCredential.user.uid), {
-        ...profileData,
+        firstName: formData.firstName,
+        middleName: formData.middleName,
+        lastName: formData.lastName,
+        dateOfBirth: formData.dateOfBirth,
+        province: formData.province,
+        territory: formData.territory,
+        village: formData.village,
+        currentCountry: formData.currentCountry,
+        phone: formData.phone,
+        email: formData.email,
+        profileImage: formData.profileImage,
         userId: userCredential.user.uid,
         role: "citizen",
         createdAt: new Date(),

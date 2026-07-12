@@ -26,7 +26,9 @@ function VerifyCitizens() {
   };
 
   useEffect(() => {
-    fetchCitizens();
+    (async () => {
+      await fetchCitizens();
+    })();
   }, []);
 
   const updateStatus = async (id, status) => {

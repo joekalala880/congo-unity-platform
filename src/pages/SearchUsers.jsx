@@ -7,7 +7,6 @@ import {
   updateDoc,
   arrayUnion,
   arrayRemove,
-  addDoc,
 } from "firebase/firestore";
 import { auth, db } from "../firebase";
 
@@ -27,7 +26,9 @@ function SearchUsers() {
   };
 
   useEffect(() => {
-    fetchProfiles();
+    (async () => {
+      await fetchProfiles();
+    })();
   }, []);
 
   const followUser = async (profileId) => {
