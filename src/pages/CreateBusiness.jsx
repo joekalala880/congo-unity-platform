@@ -1,99 +1,65 @@
-import { useState } from "react";
-import { collection, addDoc } from "firebase/firestore";
-import { auth, db } from "../firebase";
+import useCreateForm from "../hooks/useCreateForm";
+import FormPage from "../components/forms/FormPage";
+import FormField from "../components/forms/FormField";
+
+function validateBusiness(values) {
+  if (!values.name || !values.category || !values.country) {
+    return "Please fill business name, category, and country";
+  }
+
+  return null;
+}
 
 function CreateBusiness() {
-  const [business, setBusiness] = useState({
-    name: "",
-    category: "",
-    country: "",
-    city: "",
-    address: "",
-    phone: "",
-    email: "",
-    website: "",
-    imageUrl: "",
-    description: "",
+  const { values, handleChange, handleSubmit, isSubmitting } = useCreateForm({
+    collectionName: "businesses",
+    initialValues: {
+      name: "",
+      category: "",
+      country: "",
+      city: "",
+      address: "",
+      phone: "",
+      email: "",
+      website: "",
+      imageUrl: "",
+      description: "",
+    },
+    successMessage: "Business published successfully!",
+    validate: validateBusiness,
   });
 
-  const handleChange = (e) => {
-    setBusiness({
-      ...business,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const submitBusiness = async (e) => {
-    e.preventDefault();
-
-    const user = auth.currentUser;
-
-    if (!user) {
-      alert("Please login first");
-      return;
-    }
-
-    if (!business.name || !business.category || !business.country) {
-      alert("Please fill business name, category, and country");
-      return;
-    }
-
-    try {
-      await addDoc(collection(db, "businesses"), {
-        ...business,
-        createdBy: user.email,
-        createdAt: new Date(),
-        status: "published",
-      });
-
-      alert("Business published successfully!");
-
-      setBusiness({
-        name: "",
-        category: "",
-        country: "",
-        city: "",
-        address: "",
-        phone: "",
-        email: "",
-        website: "",
-        imageUrl: "",
-        description: "",
-      });
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    }
-  };
-
   return (
-    <section className="register-section">
-      <div className="register-header">
-        <h1>Create Business</h1>
-        <p>Add Congolese-owned businesses and organizations.</p>
-      </div>
+    <FormPage
+      title="Create Business"
+      subtitle="Add Congolese-owned businesses and organizations."
+      onSubmit={handleSubmit}
+      submitLabel="Publish Business"
+      isSubmitting={isSubmitting}
+    >
+      <FormField name="name" value={values.name} onChange={handleChange} placeholder="Business Name" />
+      <FormField name="category" value={values.category} onChange={handleChange} placeholder="Category" />
+      <FormField name="country" value={values.country} onChange={handleChange} placeholder="Country" />
+      <FormField name="city" value={values.city} onChange={handleChange} placeholder="City" />
+      <FormField name="address" value={values.address} onChange={handleChange} placeholder="Address" />
+      <FormField name="phone" value={values.phone} onChange={handleChange} placeholder="Phone" />
+      <FormField name="email" value={values.email} onChange={handleChange} placeholder="Email" />
+      <FormField name="website" value={values.website} onChange={handleChange} placeholder="Website" />
+      <FormField
+        name="imageUrl"
+        value={values.imageUrl}
+        onChange={handleChange}
+        placeholder="Image URL optional"
+      />
 
-      <form className="register-form" onSubmit={submitBusiness}>
-        <input name="name" value={business.name} onChange={handleChange} placeholder="Business Name" />
-        <input name="category" value={business.category} onChange={handleChange} placeholder="Category" />
-        <input name="country" value={business.country} onChange={handleChange} placeholder="Country" />
-        <input name="city" value={business.city} onChange={handleChange} placeholder="City" />
-        <input name="address" value={business.address} onChange={handleChange} placeholder="Address" />
-        <input name="phone" value={business.phone} onChange={handleChange} placeholder="Phone" />
-        <input name="email" value={business.email} onChange={handleChange} placeholder="Email" />
-        <input name="website" value={business.website} onChange={handleChange} placeholder="Website" />
-        <input name="imageUrl" value={business.imageUrl} onChange={handleChange} placeholder="Image URL optional" />
-
-        <textarea
-          name="description"
-          value={business.description}
-          onChange={handleChange}
-          placeholder="Business Description"
-        />
-
-        <button type="submit">Publish Business</button>
-      </form>
-    </section>
+      <FormField
+        as="textarea"
+        name="description"
+        value={values.description}
+        onChange={handleChange}
+        placeholder="Business Description"
+      />
+    </FormPage>
   );
 }
 
