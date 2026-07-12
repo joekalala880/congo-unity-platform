@@ -1172,6 +1172,47 @@ button {
 .nav-links a:hover {
   color: #d9a441;
 }
+
+.navbar-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 26px;
+  margin: 0;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.navbar-logout {
+  margin: 0;
+  padding: 8px 18px;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  background: #d9a441;
+  color: #0d0d0d;
+  border: none;
+  cursor: pointer;
+}
+
+@media (max-width: 800px) {
+  .navbar-toggle {
+    display: block;
+  }
+
+  .nav-links {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    gap: 14px;
+    padding-top: 16px;
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+}
 .post-image {
   width: 100%;
   max-height: 350px;

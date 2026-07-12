@@ -18,6 +18,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import GovernmentDashboard from "./pages/GovernmentDashboard";
 import VerifyCitizens from "./pages/VerifyCitizens";
 import ProtectedAdmin from "./components/ProtectedAdmin";
+import Navbar from "./components/Navbar";
 
 import DiasporaHub from "./pages/DiasporaHub";
 import EastCrisis from "./pages/EastCrisis";
@@ -108,28 +109,6 @@ useEffect(() => {
 }, []);
   return (
     <div className="app">
-      <nav className="navbar">
-        <h2>🇨🇩 Congo Unity Platform</h2>
-
-        <div className="nav-links">
-          <a href="#mission">Mission</a>
-          <a href="#features">Features</a>
-
-          <Link to="/hub">Hub</Link>
-          <Link to="/diaspora">Diaspora</Link>
-          <Link to="/feed">Feed</Link>
-          <Link to="/directory">Directory</Link>
-          <Link to="/search-users">Search Users</Link>
-          <Link to="/issues">Issues</Link>
-          <Link to="/jobs">Jobs</Link>
-          <Link to="/admin-cms">Admin CMS</Link>
-          <Link to="/login">Login</Link>
-          <Link to="/register">Register</Link>
-          <Link to="/global-search">Global Search</Link>
-          <Link to="/saved">Saved</Link>
-        </div>
-      </nav>
-
       <section className="hero-section">
         <div className="hero-content">
           <h1>Putting All Congolese Together</h1>
@@ -143,6 +122,11 @@ useEffect(() => {
             Together we preserve truth, strengthen identity, support our people,
             and build a stronger future for Congo.
           </p>
+
+          <div className="nav-links">
+            <a href="#mission">Mission</a>
+            <a href="#features">Features</a>
+          </div>
 
           <div className="hero-buttons">
             <Link to="/register">
@@ -357,6 +341,7 @@ useEffect(() => {
 function App() {
   return (
     <BrowserRouter>
+      <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
 
