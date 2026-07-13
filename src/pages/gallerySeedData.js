@@ -720,6 +720,127 @@ const SEED_ITEMS = [
     featured: false,
     verified: true,
   },
+
+  // ---- Cities: major DRC cities beyond Kinshasa. No local photos exist
+  // for these, so each uses a Commons image verified on its own file
+  // page (license + author checked individually, same discipline as
+  // Music/Politics/History).
+  {
+    slug: "lubumbashi",
+    name: "Lubumbashi",
+    category: "Cities",
+    province: "Haut-Katanga",
+    country: "DR Congo",
+    shortDescription:
+      "The DRC's second-largest city and mining capital, at the heart of the copper and cobalt belt in the southeast.",
+    fullBiography:
+      "Founded in 1910 as a base for regional mining, Lubumbashi is the capital of Haut-Katanga Province and the country's principal industrial and mining hub, home to many of the DRC's largest copper and cobalt companies. The DRC produces more than 3% of the world's copper and roughly half its cobalt, most of it from the Katanga region. Known as \"the capital of copper,\" the city is the transportation and commercial center for mineral products from nearby mining towns including Likasi and Kolwezi.",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/8/8d/Lubumbashi-downtown-banner.jpg",
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:Lubumbashi-downtown-banner.jpg",
+    sourceName: "Photo: Oasisk, via Wikimedia Commons (CC BY-SA 3.0)",
+    keywords: ["lubumbashi", "katanga", "haut-katanga", "mining", "copper", "cobalt", "city"],
+    aliases: ["Élisabethville"],
+    active: true,
+    featured: true,
+    verified: true,
+  },
+  {
+    slug: "goma",
+    name: "Goma",
+    category: "Cities",
+    province: "North Kivu",
+    country: "DR Congo",
+    shortDescription:
+      "The capital of North Kivu, on the shore of Lake Kivu at the foot of the active Mount Nyiragongo volcano.",
+    fullBiography:
+      "Goma sits on the northern shore of Lake Kivu near the DRC's border with Rwanda, about 12 km south of Mount Nyiragongo, one of the world's most active volcanoes. A 2002 eruption killed more than 250 people and left 120,000 homeless; a 2021 eruption destroyed thousands of homes. Goma has long served as a hub for humanitarian operations in eastern Congo amid recurring conflict in North Kivu, including the M23 rebel offensive that took control of the city in January 2025.",
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/5/50/Goma%2C_Nord_Kivu%2C_RD_Congo_-_Vue_a%C3%A9rienne_partielle_de_la_ville_de_Goma._%2823720614532%29.jpg",
+    sourceUrl:
+      "https://commons.wikimedia.org/wiki/File:Goma,_Nord_Kivu,_RD_Congo_-_Vue_a%C3%A9rienne_partielle_de_la_ville_de_Goma._(23720614532).jpg",
+    sourceName: "Photo: MONUSCO/Michael Ali, via Wikimedia Commons (CC BY-SA 2.0)",
+    keywords: ["goma", "north kivu", "lake kivu", "nyiragongo", "city"],
+    aliases: [],
+    active: true,
+    featured: true,
+    verified: true,
+  },
+  {
+    slug: "kisangani",
+    name: "Kisangani",
+    category: "Cities",
+    province: "Tshopo",
+    country: "DR Congo",
+    shortDescription:
+      "The DRC's fifth-largest city, a historic river port at the northernmost navigable point of the Congo River.",
+    fullBiography:
+      "Founded by Europeans in 1883 and known successively as Falls Station and Stanleyville, Kisangani is the capital of Tshopo Province and sits at the junction of the Congo, Tshopo, and Lindi rivers, about 80 km from the equator. It marks the northern limit of navigation for large cargo vessels on the Congo River between Kinshasa and Kisangani, making it a key trading link between eastern and western Congo.",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/c/cb/Aerial_view_of_the_Congo_River_near_Kisangani.jpg",
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:Aerial_view_of_the_Congo_River_near_Kisangani.jpg",
+    sourceName: "Photo: MONUSCO/Myriam Asmani, via Wikimedia Commons (CC BY-SA 2.0)",
+    keywords: ["kisangani", "tshopo", "congo river", "city"],
+    aliases: ["Stanleyville", "Falls Station"],
+    active: true,
+    featured: false,
+    verified: true,
+  },
+  {
+    slug: "bukavu",
+    name: "Bukavu",
+    category: "Cities",
+    province: "South Kivu",
+    country: "DR Congo",
+    shortDescription:
+      "The capital of South Kivu, on the southwestern shore of Lake Kivu, known for its Belgian-era art deco architecture.",
+    fullBiography:
+      "Bukavu sits on a peninsula at the southwestern edge of Lake Kivu, across the Ruzizi River from Rwanda, and serves as South Kivu's provincial capital and a regional commercial and lake-port center. The city retains more than 100 art deco buildings from the Belgian colonial period. Like much of eastern Congo, Bukavu has been affected by recurring conflict, including its capture by M23 rebels in February 2025.",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/0/03/Laville_de_bukavu_vue_du_lac.jpg",
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:Laville_de_bukavu_vue_du_lac.jpg",
+    sourceName: "Photo: Cedrickarungu921, via Wikimedia Commons (CC0)",
+    keywords: ["bukavu", "south kivu", "lake kivu", "city"],
+    aliases: [],
+    active: true,
+    featured: false,
+    verified: true,
+  },
+  {
+    slug: "mbuji-mayi",
+    name: "Mbuji-Mayi",
+    category: "Cities",
+    province: "Kasaï-Oriental",
+    country: "DR Congo",
+    shortDescription:
+      "The capital of Kasaï-Oriental and the traditional center of the DRC's industrial diamond mining industry.",
+    fullBiography:
+      "Mbuji-Mayi, formerly known as Bakwanga, is among the DRC's most populous cities and sits atop one of the largest known diamond deposits in the world. The state mining company MIBA, headquartered in the city, was once the source of a majority of the world's industrial diamonds. Despite this mineral wealth, the city has faced significant economic hardship in recent decades.",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/5/5d/A%C3%A9roport_de_Mbuji-Mayi.jpg",
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:A%C3%A9roport_de_Mbuji-Mayi.jpg",
+    sourceName: "Photo: MONUSCO/Myriam Asmani, via Wikimedia Commons (CC BY-SA 2.0)",
+    keywords: ["mbuji-mayi", "kasai-oriental", "diamonds", "mining", "city"],
+    aliases: ["Bakwanga"],
+    active: true,
+    featured: false,
+    verified: true,
+  },
+  {
+    slug: "matadi",
+    name: "Matadi",
+    category: "Cities",
+    province: "Kongo Central",
+    country: "DR Congo",
+    shortDescription:
+      "The DRC's chief seaport and the capital of Kongo Central province, on the Congo River near the Atlantic coast.",
+    fullBiography:
+      "Founded by Henry Morton Stanley in 1879, Matadi is the last navigable port on the Congo River before the rapids that block further passage upstream, making it the DRC's principal maritime gateway. The Matadi–Kinshasa railway, built between 1890 and 1898, connected the port to the interior. The Matadi Bridge, completed in 1983, is the only bridge across the main stem of the Congo River.",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/9/96/Matadi_Bridge_DR_Congo.jpg",
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:Matadi_Bridge_DR_Congo.jpg",
+    sourceName: "Photo: Christos Immanuel, via Wikimedia Commons (CC BY-SA 4.0)",
+    keywords: ["matadi", "kongo central", "port", "matadi bridge", "city"],
+    aliases: [],
+    active: true,
+    featured: false,
+    verified: true,
+  },
 ];
 
 export default SEED_ITEMS;
