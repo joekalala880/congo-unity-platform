@@ -62,6 +62,7 @@ function Navbar() {
         <Link to="/directory" onClick={closeMenu}>Directory</Link>
         <Link to="/jobs" onClick={closeMenu}>Jobs</Link>
         <Link to="/diaspora" onClick={closeMenu}>Diaspora</Link>
+        <Link to="/congo-gallery" onClick={closeMenu}>Gallery</Link>
         <Link to="/east-crisis" onClick={closeMenu}>Crisis</Link>
         <Link to="/government-dashboard" onClick={closeMenu}>Government</Link>
 
