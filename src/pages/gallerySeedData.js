@@ -96,8 +96,13 @@ const SEED_ITEMS = [
     subcategory: "Memory & Crisis",
     shortDescription:
       "A place of pain, resilience, and courage. Congo Unity remembers the East.",
+    fullBiography:
+      "Eastern Congo — principally North Kivu, South Kivu, and Ituri — has experienced recurring armed conflict since the First and Second Congo Wars, driven by a mix of regional politics, control over mineral resources, and armed groups including remnants of the forces behind the 1994 Rwandan genocide and, more recently, the M23 rebel movement. Millions have been displaced over the past three decades, and the region remains the subject of ongoing UN peacekeeping (MONUSCO) and humanitarian efforts.",
     localImageKey: "eastern-congo",
-    keywords: ["crisis", "kivu", "memory"],
+    sourceName: "Wikipedia: Kivu conflict",
+    sourceUrl: "https://en.wikipedia.org/wiki/Kivu_conflict",
+    keywords: ["crisis", "kivu", "memory", "m23", "conflict"],
+    aliases: [],
     active: true,
     featured: false,
     verified: true,
@@ -516,6 +521,80 @@ const SEED_ITEMS = [
   // where a specific file's license was verified on its own Commons
   // page; left blank otherwise rather than guessing at rights.
   {
+    slug: "pre-colonial-congo",
+    name: "Pre-Colonial Congo: Kingdoms and Societies",
+    category: "History",
+    subcategory: "Historical Era",
+    shortDescription:
+      "Before European colonization, the Congo region was home to organized kingdoms, chiefdoms, and trading societies, including the Kongo, Luba, and Lunda.",
+    fullBiography:
+      "Long before the Berlin Conference and Leopold II's Congo Free State, the territory of the modern DRC held a range of organized societies — from centralized kingdoms such as Kongo (west), and Luba and Lunda (center and east), to smaller chiefdoms and decentralized communities across the Congo Basin. Bantu-speaking peoples migrated into the region beginning roughly 2000 BCE, gradually developing agriculture, ironworking, and long-distance trade networks in goods such as copper and salt. These societies developed their own systems of governance and law, and many of their cultural and artistic traditions continue to shape Congolese identity today.",
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/e/e7/African-civilizations-map-pre-colonial.svg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Pre-colonial_history_of_the_Democratic_Republic_of_the_Congo",
+    sourceName: "Wikipedia: Pre-colonial history of the Democratic Republic of the Congo",
+    keywords: ["pre-colonial", "kingdoms", "bantu", "history", "kongo", "luba", "lunda"],
+    aliases: [],
+    active: true,
+    featured: true,
+    verified: true,
+  },
+  {
+    slug: "kingdom-of-kongo",
+    name: "Kingdom of Kongo",
+    category: "History",
+    subcategory: "Historical Era",
+    shortDescription:
+      "A centralized West-Central African kingdom founded around 1390, spanning parts of the modern DRC, Angola, Congo-Brazzaville, and Gabon.",
+    fullBiography:
+      "The Kingdom of Kongo was founded around 1390 near the mouth of the Congo River, with its capital at Mbanza Kongo (in present-day Angola). At its height it stretched from the Atlantic coast to the Kwango River, encompassing parts of what are now the DRC, Angola, the Republic of Congo, and Gabon, and featured a centralized monarchy, provincial administration, and a shell-currency system. Portuguese explorers reached Kongo in 1483, and the kingdom's ruling elite converted to Christianity in 1491, beginning a long and often fraught relationship with Portugal. Civil war from 1665 and gradual fragmentation weakened central authority over the following two centuries; Kongo became a Portuguese vassal state in 1857, and Portugal formally abolished the titular monarchy in 1914.",
+    publishedDate: "1390-01-01",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/0/01/Kingdom_of_Kongo_1600.png",
+    sourceUrl: "https://en.wikipedia.org/wiki/Kingdom_of_Kongo",
+    sourceName: "Map: Jarle Grøhn, via Wikimedia Commons (CC BY 3.0); Wikipedia: Kingdom of Kongo",
+    keywords: ["kingdom of kongo", "mbanza kongo", "pre-colonial", "history"],
+    aliases: ["Kongo Kingdom"],
+    active: true,
+    featured: true,
+    verified: true,
+  },
+  {
+    slug: "luba-kingdom",
+    name: "Luba Kingdom",
+    category: "History",
+    subcategory: "Historical Era",
+    shortDescription:
+      "A pre-colonial kingdom centered in the Upemba Depression of southern DRC, ruled by a sacred king known as the Mulopwe.",
+    fullBiography:
+      "The Luba Kingdom arose in the marshy grasslands of the Upemba Depression in what is now southern DRC; historians disagree on the exact founding period, with estimates ranging from as early as the 8th century to shortly before the 15th. It was led by a sacred king, the Mulopwe, supported by court nobles (Bamfumu) and regional clan kings (Balopwe), with the Bambudye society preserving the kingdom's oral history and traditions across the realm. The kingdom weakened in the late 19th century as long-distance trade networks were disrupted by East African traders seeking slaves and ivory, and collapsed in 1889 following a succession dispute, after which its territory was absorbed into the Congo Free State.",
+    sourceUrl: "https://en.wikipedia.org/wiki/Luba_Kingdom",
+    sourceName: "Wikipedia: Luba Kingdom",
+    keywords: ["luba kingdom", "mulopwe", "upemba", "pre-colonial", "history"],
+    aliases: ["Luba Empire"],
+    active: true,
+    featured: false,
+    verified: true,
+  },
+  {
+    slug: "lunda-empire",
+    name: "Lunda Empire",
+    category: "History",
+    subcategory: "Historical Era",
+    shortDescription:
+      "A pre-colonial empire centered in what is now Katanga, ruled by a paramount king known as the Mwata Yamvo, at its height covering around 300,000 km².",
+    fullBiography:
+      "The Lunda Empire was established in the 17th century, with its central state in what is now Katanga Province, and grew through a system of tributary chieftainships that retained local autonomy in exchange for allegiance to a paramount ruler, the Mwata Yamvo, under a tradition of \"perpetual kingship\" in which successors adopted their predecessors' titles and roles. At its 19th-century height, the empire's influence extended across roughly 300,000 km² spanning parts of the modern DRC, Angola, and Zambia. It collapsed after invasions by Chokwe forces armed with firearms in the late 19th century, and by 1887 its former territory had been divided among Portuguese Angola, the Congo Free State, and British-administered Northern Rhodesia.",
+    publishedDate: "1665-01-01",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/f/fb/Lunda_Empire.png",
+    sourceUrl: "https://en.wikipedia.org/wiki/Lunda_Empire",
+    sourceName: "Map: U.S. Library of Congress, via Wikimedia Commons (public domain); Wikipedia: Lunda Empire",
+    keywords: ["lunda empire", "mwata yamvo", "katanga", "pre-colonial", "history"],
+    aliases: ["Lunda Kingdom"],
+    active: true,
+    featured: false,
+    verified: true,
+  },
+  {
     slug: "congo-free-state",
     name: "Congo Free State",
     category: "History",
@@ -558,6 +637,8 @@ const SEED_ITEMS = [
     subcategory: "Historical Event",
     shortDescription:
       "The Democratic Republic of the Congo declared independence from Belgium on June 30, 1960.",
+    fullBiography:
+      "Independence was granted on June 30, 1960, following a Round Table Conference held in Brussels earlier that year, in which Belgium agreed to a rapid transfer of power after growing nationalist unrest in the colony. Joseph Kasa-Vubu became the country's first president and Patrice Lumumba its first prime minister. The new state, initially named the Republic of the Congo, had almost no Congolese-trained administrators, army officers, or professionals at independence — a legacy of Belgian colonial policy — which contributed directly to the instability of the Congo Crisis that followed within days.",
     publishedDate: "1960-06-30",
     sourceName: "Wikipedia: Belgian Congo",
     sourceUrl: "https://en.wikipedia.org/wiki/Belgian_Congo",
@@ -574,6 +655,8 @@ const SEED_ITEMS = [
     subcategory: "Historical Event",
     shortDescription:
       "A period of political upheaval from 1960 to 1965 following independence, including the Katanga and South Kasai secessions and UN intervention.",
+    fullBiography:
+      "Days after independence, a mutiny in the Force Publique triggered a broader breakdown of order. Katanga, led by Moïse Tshombe, and South Kasai seceded shortly afterward, and the United Nations deployed a peacekeeping mission (ONUC) to help stabilize the country. Prime Minister Patrice Lumumba was dismissed by President Kasa-Vubu in a constitutional standoff, later captured and killed in January 1961. Colonel Joseph-Désiré Mobutu seized power in a first coup in 1960 and again, definitively, in 1965, ending the crisis period.",
     publishedDate: "1960-07-05",
     sourceName: "Wikipedia: Congo Crisis",
     sourceUrl: "https://en.wikipedia.org/wiki/Congo_Crisis",
@@ -596,9 +679,27 @@ const SEED_ITEMS = [
     sourceName: "Wikipedia: Zaire",
     sourceUrl: "https://en.wikipedia.org/wiki/Zaire",
     keywords: ["zaire", "mobutu", "authenticite", "history", "1971", "1997"],
-    aliases: ["Zairianization", "Mobutu era"],
+    aliases: ["Mobutu era"],
     active: true,
     featured: true,
+    verified: true,
+  },
+  {
+    slug: "zairianization",
+    name: "Zaireanization",
+    category: "History",
+    subcategory: "Historical Event",
+    shortDescription:
+      "A 1973–1974 economic policy under Mobutu Sese Seko that nationalized foreign-owned businesses and redistributed them to Zairian nationals.",
+    fullBiography:
+      "On November 30, 1973, Mobutu Sese Seko announced the nationalization of foreign-owned plantations, ranches, and commercial businesses as an economic extension of his authenticité policy. Ownership was transferred to roughly 300 politically connected Zairians — mostly senior party and government officials — with smaller enterprises allocated to local notables. Many new owners lacked business experience and rapidly liquidated inventories for short-term profit, causing severe shortages of food, textiles, and medicine and driving prices sharply higher. By 1977, the resulting economic collapse forced Mobutu to begin reversing the policy (a process known as \"retrocession\") and to court foreign investors back to the country.",
+    publishedDate: "1973-11-30",
+    sourceName: "Wikipedia: Authenticité (Zaire)",
+    sourceUrl: "https://en.wikipedia.org/wiki/Zairianization",
+    keywords: ["zaireanization", "zairianization", "mobutu", "nationalization", "economy", "history"],
+    aliases: ["Zairianization"],
+    active: true,
+    featured: false,
     verified: true,
   },
   {
@@ -608,6 +709,8 @@ const SEED_ITEMS = [
     subcategory: "Historical Event",
     shortDescription:
       "A 1996–1997 conflict that toppled Mobutu Sese Seko and brought Laurent-Désiré Kabila to power.",
+    fullBiography:
+      "The war began in October 1996 when the Alliance of Democratic Forces for the Liberation of Congo-Zaire (AFDL), led by Laurent-Désiré Kabila and backed by Rwanda and Uganda, launched an offensive from the east, initially targeting Hutu militias and refugee camps in the aftermath of the 1994 Rwandan genocide. Facing a collapsing and demoralized army, Mobutu Sese Seko's government fell in a matter of months; Kabila's forces took Kinshasa on May 17, 1997, and Kabila declared himself president, renaming Zaire the Democratic Republic of the Congo.",
     sourceName: "Wikipedia: First Congo War",
     sourceUrl: "https://en.wikipedia.org/wiki/First_Congo_War",
     keywords: ["first congo war", "1996", "1997", "mobutu", "kabila", "history"],
@@ -623,10 +726,30 @@ const SEED_ITEMS = [
     subcategory: "Historical Event",
     shortDescription:
       "A 1998–2003 multi-national conflict involving several African states, among the deadliest conflicts since World War II.",
+    fullBiography:
+      "War broke out in August 1998 after President Laurent-Désiré Kabila moved to expel the Rwandan and Ugandan forces that had helped bring him to power the previous year, prompting a new rebellion backed by Rwanda and Uganda. At its height, the war drew in the armed forces of at least six other African nations, either supporting Kabila's government (including Zimbabwe, Angola, and Namibia) or the rebel factions. A 1999 Lusaka Ceasefire Agreement failed to fully halt the fighting. Estimates of the war's toll vary widely, but it is often cited as the deadliest conflict since World War II, with millions of deaths attributed mostly to disease and malnutrition amid the collapse of health and food systems. The war formally ended with the 2002 Global and All-Inclusive Agreement, though armed conflict has continued intermittently in the eastern DRC since.",
     sourceName: "Wikipedia: Second Congo War",
     sourceUrl: "https://en.wikipedia.org/wiki/Second_Congo_War",
     keywords: ["second congo war", "1998", "2003", "history", "conflict"],
     aliases: ["Africa's World War"],
+    active: true,
+    featured: false,
+    verified: true,
+  },
+  {
+    slug: "inter-congolese-dialogue",
+    name: "Inter-Congolese Dialogue",
+    category: "History",
+    subcategory: "Historical Event",
+    shortDescription:
+      "The 2001–2002 peace negotiation process among the DRC's warring parties, facilitated by former Botswana president Ketumile Masire, that produced the agreements ending the Second Congo War.",
+    fullBiography:
+      "The Inter-Congolese Dialogue officially opened in Addis Ababa on October 15, 2001, facilitated by former Botswana president Sir Ketumile Masire under a mandate from the Organisation of African Unity. It brought together the DRC government, the Rwandan-backed RCD-Goma and Ugandan-backed MLC rebel movements, and unarmed opposition and civil-society groups. Talks continued at Sun City, South Africa, from February 25 to April 12, 2002, producing the partial Sun City Agreement, and negotiations concluded later that year with the more comprehensive Global and All-Inclusive Agreement.",
+    publishedDate: "2001-10-15",
+    sourceName: "Wikipedia: Sun City Agreement",
+    sourceUrl: "https://en.wikipedia.org/wiki/Sun_City_Agreement",
+    keywords: ["inter-congolese dialogue", "ketumile masire", "peace process", "history"],
+    aliases: ["ICD"],
     active: true,
     featured: false,
     verified: true,
@@ -650,12 +773,32 @@ const SEED_ITEMS = [
     verified: true,
   },
   {
+    slug: "transitional-government",
+    name: "Transitional Government of the DRC (2003–2006)",
+    category: "History",
+    subcategory: "Historical Era",
+    shortDescription:
+      "The power-sharing \"1+4\" government established by the Global and All-Inclusive Agreement, which governed the DRC until the 2006 elections.",
+    fullBiography:
+      "The transitional government took office under a formula known as \"1+4\": Joseph Kabila was sworn in as transitional president on April 7, 2003, alongside four vice presidents representing the former belligerents and the unarmed opposition — Abdoulaye Yerodia Ndombasi for Kabila's government, Jean-Pierre Bemba for the MLC, Azarias Ruberwa for the RCD-Goma, and Arthur Z'Ahidi Ngoma for the political opposition — who took office on July 17, 2003. The transitional period oversaw the drafting and adoption of the 2006 Constitution and ended with the completion of the 2006 general election, when Kabila was sworn in as elected president on December 6, 2006.",
+    publishedDate: "2003-04-07",
+    sourceName: "Wikipedia: Transitional Government of the Democratic Republic of the Congo",
+    sourceUrl: "https://en.wikipedia.org/wiki/Transitional_Government_of_the_Democratic_Republic_of_the_Congo",
+    keywords: ["transitional government", "1+4", "power-sharing", "history"],
+    aliases: ["1+4 government"],
+    active: true,
+    featured: false,
+    verified: true,
+  },
+  {
     slug: "2006-constitution",
     name: "2006 Constitution",
     category: "History",
     subcategory: "Constitutional Milestone",
     shortDescription:
       "The DRC's current constitution, adopted by referendum in December 2005 and promulgated in February 2006.",
+    fullBiography:
+      "Drafted during the 2003–2006 transitional period established by the Global and All-Inclusive Agreement, the constitution was approved by popular referendum in December 2005 and promulgated by transitional president Joseph Kabila on February 18, 2006. It is the DRC's sixth constitution since 1960, and the first adopted directly by popular vote. It established a decentralized semi-presidential republic with a separation of powers among the executive, legislature, and judiciary, and divided the country into provinces with defined central and provincial authority.",
     publishedDate: "2006-02-18",
     sourceName: "Wikipedia: Constitution of the Democratic Republic of the Congo",
     sourceUrl: "https://en.wikipedia.org/wiki/Constitution_of_the_Democratic_Republic_of_the_Congo",
@@ -663,6 +806,24 @@ const SEED_ITEMS = [
     aliases: [],
     active: true,
     featured: false,
+    verified: true,
+  },
+  {
+    slug: "first-peaceful-transfer-of-power",
+    name: "First Peaceful Transfer of Power (2019)",
+    category: "History",
+    subcategory: "National Milestone",
+    shortDescription:
+      "Félix Tshisekedi's January 2019 inauguration was widely described as the DRC's first peaceful transfer of presidential power since independence.",
+    fullBiography:
+      "Following the December 30, 2018 general election, Félix Tshisekedi was declared the winner and sworn in as president on January 24, 2019, succeeding Joseph Kabila. The transition was widely described in DRC and abroad as the country's first peaceful transfer of power between an outgoing and an incoming president since independence in 1960. The result was disputed, however: runner-up Martin Fayulu alleged the vote had been manipulated in Tshisekedi's favor and challenged it before the Constitutional Court, and independent observers including the Catholic Church's election-monitoring mission also raised doubts about the official count.",
+    publishedDate: "2019-01-24",
+    sourceName: "Wikipedia: 2018 Democratic Republic of the Congo general election",
+    sourceUrl: "https://en.wikipedia.org/wiki/2018_Democratic_Republic_of_the_Congo_general_election",
+    keywords: ["peaceful transfer of power", "2019", "tshisekedi", "national milestone", "history"],
+    aliases: [],
+    active: true,
+    featured: true,
     verified: true,
   },
   {
@@ -692,6 +853,8 @@ const SEED_ITEMS = [
     subcategory: "Historic Map",
     shortDescription:
       "A cartographic map of the Congo Free State published in 1896 by Léon de Moor, held by the Library of Congress.",
+    fullBiography:
+      "Published in 1896 by cartographer Léon de Moor for J. Lebègue & Co., this map depicts the Congo Free State roughly a decade before Belgium's 1908 annexation ended Leopold II's personal rule. It shows the territory's early administrative concession zones and settlements as recorded during that period, and is held today by the Library of Congress via the World Digital Library.",
     publishedDate: "1896-01-01",
     imageUrl: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Map_of_the_Belgian_Congo_WDL59.png",
     sourceUrl: "https://commons.wikimedia.org/wiki/File:Map_of_the_Belgian_Congo_WDL59.png",
@@ -710,6 +873,8 @@ const SEED_ITEMS = [
     subcategory: "Historic Map",
     shortDescription:
       "A reference map showing the Democratic Republic of the Congo's present-day borders and administrative divisions.",
+    fullBiography:
+      "This modern reference map shows the DRC's current national borders, useful for orienting the country's 26 provinces (following the 2015 territorial reorganization) against the historical eras, cities, and events documented elsewhere in this gallery.",
     imageUrl:
       "https://upload.wikimedia.org/wikipedia/commons/1/1b/Democratic_Republic_of_the_Congo_adm_location_map.svg",
     sourceUrl: "https://commons.wikimedia.org/wiki/File:Democratic_Republic_of_the_Congo_adm_location_map.svg",
