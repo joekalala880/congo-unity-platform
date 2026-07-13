@@ -4,33 +4,6 @@ function DiasporaHub() {
   return (
     <div className="diaspora-page">
       <section className="diaspora-hero">
-        <section className="crisis-section">
-  <h2>Eastern Congo Crisis</h2>
-
-  <div className="crisis-grid">
-
-    <div className="crisis-card">
-      <h3>Displaced People</h3>
-      <p>7,000,000+</p>
-    </div>
-
-    <div className="crisis-card">
-      <h3>Lives Lost</h3>
-      <p>Thousands</p>
-    </div>
-
-    <div className="crisis-card">
-      <h3>Communities Affected</h3>
-      <p>North Kivu, South Kivu, Ituri</p>
-    </div>
-
-    <div className="crisis-card">
-      <h3>Diaspora Mobilized</h3>
-      <p>Coming Soon</p>
-    </div>
-
-  </div>
-</section>
         <div className="diaspora-overlay">
           <h1>Diaspora Hub</h1>
           <h3>We are one, even when everything tries to divide us.</h3>
