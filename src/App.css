@@ -400,6 +400,18 @@ button {
   gap: 20px;
 }
 
+@media (max-width: 900px) {
+  .crisis-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .crisis-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .crisis-card {
   background: #1b1b1b;
   padding: 30px;
@@ -455,9 +467,67 @@ button {
   line-height: 1.7;
 }
 
+@media (max-width: 700px) {
+  .east-overlay h1 {
+    font-size: 40px;
+  }
+
+  .east-overlay h3 {
+    font-size: 20px;
+  }
+
+  .east-overlay p {
+    font-size: 17px;
+  }
+}
+
 .east-content {
   padding: 70px 8%;
   text-align: center;
+}
+
+/* .card/.cards are shared with light-page contexts (e.g. the homepage),
+   where they inherit dark text from body's default color. This page's
+   ancestor sets color:white for the dark theme, which otherwise leaves
+   these white cards with invisible white-on-white text. */
+.east-content h2 {
+  color: #d9a441;
+  font-size: 42px;
+  margin-bottom: 40px;
+}
+
+/* A later, duplicate .cards rule elsewhere in this file (display:flex,
+   no card widths) wins over the original 3-column grid definition,
+   collapsing cards to full-width stacked rows. Restoring the grid here,
+   scoped to this page, rather than editing the shared .cards class used
+   by other pages. */
+.east-content .cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  padding: 50px 0 0;
+}
+
+@media (max-width: 800px) {
+  .east-content .cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.east-content .card,
+.east-content .card h3,
+.east-content .card p {
+  color: #111827;
+}
+
+.east-content .card h3 {
+  color: #d4a948;
+}
+
+@media (max-width: 700px) {
+  .east-content h2 {
+    font-size: 32px;
+  }
 }
 .memory-page {
   background: #0d0d0d;
