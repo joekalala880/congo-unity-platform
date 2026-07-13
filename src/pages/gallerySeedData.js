@@ -463,62 +463,10 @@ const SEED_ITEMS = [
     verified: true,
   },
 
-  // ---- Politics: historical events and milestones. Dates/summaries kept
-  // to widely-documented facts; no images sourced for these (lower
-  // priority than portraits — falls back to the placeholder).
-  {
-    slug: "independence-1960",
-    name: "Independence (1960)",
-    category: "Politics",
-    subcategory: "Historical Event",
-    shortDescription:
-      "The Democratic Republic of the Congo declared independence from Belgium on June 30, 1960.",
-    publishedDate: "1960-06-30",
-    keywords: ["independence", "1960", "belgium", "history"],
-    aliases: ["Congolese independence", "30 June 1960"],
-    active: true,
-    featured: true,
-    verified: true,
-  },
-  {
-    slug: "congo-crisis",
-    name: "Congo Crisis",
-    category: "Politics",
-    subcategory: "Historical Event",
-    shortDescription:
-      "A period of political upheaval from 1960 to 1965 following independence, including the Katanga and South Kasai secessions and UN intervention.",
-    keywords: ["congo crisis", "katanga", "secession", "history", "1960s"],
-    aliases: [],
-    active: true,
-    featured: false,
-    verified: true,
-  },
-  {
-    slug: "first-congo-war",
-    name: "First Congo War",
-    category: "Politics",
-    subcategory: "Historical Event",
-    shortDescription:
-      "A 1996–1997 conflict that toppled Mobutu Sese Seko and brought Laurent-Désiré Kabila to power.",
-    keywords: ["first congo war", "1996", "1997", "mobutu", "kabila", "history"],
-    aliases: [],
-    active: true,
-    featured: false,
-    verified: true,
-  },
-  {
-    slug: "second-congo-war",
-    name: "Second Congo War",
-    category: "Politics",
-    subcategory: "Historical Event",
-    shortDescription:
-      "A 1998–2003 multi-national conflict involving several African states, among the deadliest conflicts since World War II.",
-    keywords: ["second congo war", "1998", "2003", "history", "conflict"],
-    aliases: ["Africa's World War"],
-    active: true,
-    featured: false,
-    verified: true,
-  },
+  // ---- Politics: elections. The independence/crisis/wars/agreement/
+  // constitution entries that used to live here moved to the History
+  // category below — they're historical narrative, not the ongoing
+  // political process these election entries describe.
   {
     slug: "2006-elections",
     name: "2006 Elections",
@@ -561,15 +509,141 @@ const SEED_ITEMS = [
     featured: false,
     verified: true,
   },
+
+  // ---- History: eras, wars, agreements, constitutional milestones, and
+  // maps. Every item here carries sourceName/sourceUrl per the History
+  // spec, written in neutral, factual language. Images are used only
+  // where a specific file's license was verified on its own Commons
+  // page; left blank otherwise rather than guessing at rights.
+  {
+    slug: "congo-free-state",
+    name: "Congo Free State",
+    category: "History",
+    subcategory: "Historical Era",
+    shortDescription:
+      "A personal colony of Belgium's King Leopold II from 1885 to 1908, notorious for a forced-labor rubber economy and widespread atrocities.",
+    fullBiography:
+      "The Congo Free State was established on August 1, 1885, after the Berlin Conference recognized King Leopold II of Belgium as sovereign over the territory — not as a Belgian colony, but as his personal possession, administered from Brussels through appointed officials. Leopold's administration ran a forced-labor system built around rubber and ivory quotas, enforced by the Force Publique, which caused mass suffering, mutilation, and death across the territory. Estimates of the death toll vary widely among historians, from roughly one million to ten million, reflecting the difficulty of counting a population that was never systematically recorded. International exposure of the abuses — including Roger Casement's 1903 report and the advocacy of the Congo Reform Association — forced Leopold to relinquish personal control, and Belgium formally annexed the territory as the Belgian Congo on November 15, 1908.",
+    publishedDate: "1885-08-01",
+    sourceName: "Wikipedia: Congo Free State",
+    sourceUrl: "https://en.wikipedia.org/wiki/Congo_Free_State",
+    keywords: ["congo free state", "leopold ii", "history", "colonial era", "1885"],
+    aliases: ["État indépendant du Congo", "Independent State of the Congo"],
+    active: true,
+    featured: true,
+    verified: true,
+  },
+  {
+    slug: "belgian-congo",
+    name: "Belgian Congo",
+    category: "History",
+    subcategory: "Historical Era",
+    shortDescription:
+      "The formal Belgian colony that succeeded the Congo Free State, lasting from 1908 until independence in 1960.",
+    fullBiography:
+      "Belgium's parliament voted to annex the Congo Free State on October 18, 1908, with the annexation taking formal effect on November 15, 1908, ending Leopold II's personal rule. As a state colony, the Belgian Congo was organized into provinces, districts, and territories under a Governor-General, with local indigenous courts operating under colonial oversight. The territory supplied significant raw materials during both World Wars, including uranium used in the Manhattan Project during World War II. Colonial rule continued, with limited political participation introduced only shortly before independence — the first municipal elections open to Black voters were held in 1957 — until the Belgian Congo became independent as the Republic of the Congo on June 30, 1960.",
+    publishedDate: "1908-11-15",
+    sourceName: "Wikipedia: Belgian Congo",
+    sourceUrl: "https://en.wikipedia.org/wiki/Belgian_Congo",
+    keywords: ["belgian congo", "colonial era", "history", "1908", "1960"],
+    aliases: ["Congo Belge"],
+    active: true,
+    featured: true,
+    verified: true,
+  },
+  {
+    slug: "independence-1960",
+    name: "Independence (1960)",
+    category: "History",
+    subcategory: "Historical Event",
+    shortDescription:
+      "The Democratic Republic of the Congo declared independence from Belgium on June 30, 1960.",
+    publishedDate: "1960-06-30",
+    sourceName: "Wikipedia: Belgian Congo",
+    sourceUrl: "https://en.wikipedia.org/wiki/Belgian_Congo",
+    keywords: ["independence", "1960", "belgium", "history"],
+    aliases: ["Congolese independence", "30 June 1960"],
+    active: true,
+    featured: true,
+    verified: true,
+  },
+  {
+    slug: "congo-crisis",
+    name: "Congo Crisis",
+    category: "History",
+    subcategory: "Historical Event",
+    shortDescription:
+      "A period of political upheaval from 1960 to 1965 following independence, including the Katanga and South Kasai secessions and UN intervention.",
+    publishedDate: "1960-07-05",
+    sourceName: "Wikipedia: Congo Crisis",
+    sourceUrl: "https://en.wikipedia.org/wiki/Congo_Crisis",
+    keywords: ["congo crisis", "katanga", "secession", "history", "1960s"],
+    aliases: [],
+    active: true,
+    featured: false,
+    verified: true,
+  },
+  {
+    slug: "zaire-era",
+    name: "Zaire Era",
+    category: "History",
+    subcategory: "Historical Era",
+    shortDescription:
+      "The 1971–1997 period under President Mobutu Sese Seko, during which the country was renamed Zaire as part of his authenticité program.",
+    fullBiography:
+      "On October 27, 1971, President Mobutu Sese Seko renamed the country Zaire as part of a broader authenticité policy intended to move away from colonial-era names and symbols — cities were renamed (Léopoldville became Kinshasa), citizens were required to adopt African names, and Western dress was officially discouraged in favor of the abacost. Politically, the era was defined by one-party rule under Mobutu's Popular Movement of the Revolution, with power concentrated in the presidency. The economy declined sharply over the period amid mismanagement and widespread corruption. The Zaire era ended as Mobutu fled the country on May 17, 1997, during the First Congo War; the new government under Laurent-Désiré Kabila restored the name Democratic Republic of the Congo on May 21, 1997.",
+    publishedDate: "1971-10-27",
+    sourceName: "Wikipedia: Zaire",
+    sourceUrl: "https://en.wikipedia.org/wiki/Zaire",
+    keywords: ["zaire", "mobutu", "authenticite", "history", "1971", "1997"],
+    aliases: ["Zairianization", "Mobutu era"],
+    active: true,
+    featured: true,
+    verified: true,
+  },
+  {
+    slug: "first-congo-war",
+    name: "First Congo War",
+    category: "History",
+    subcategory: "Historical Event",
+    shortDescription:
+      "A 1996–1997 conflict that toppled Mobutu Sese Seko and brought Laurent-Désiré Kabila to power.",
+    sourceName: "Wikipedia: First Congo War",
+    sourceUrl: "https://en.wikipedia.org/wiki/First_Congo_War",
+    keywords: ["first congo war", "1996", "1997", "mobutu", "kabila", "history"],
+    aliases: [],
+    active: true,
+    featured: false,
+    verified: true,
+  },
+  {
+    slug: "second-congo-war",
+    name: "Second Congo War",
+    category: "History",
+    subcategory: "Historical Event",
+    shortDescription:
+      "A 1998–2003 multi-national conflict involving several African states, among the deadliest conflicts since World War II.",
+    sourceName: "Wikipedia: Second Congo War",
+    sourceUrl: "https://en.wikipedia.org/wiki/Second_Congo_War",
+    keywords: ["second congo war", "1998", "2003", "history", "conflict"],
+    aliases: ["Africa's World War"],
+    active: true,
+    featured: false,
+    verified: true,
+  },
   {
     slug: "global-and-all-inclusive-agreement",
     name: "Global and All-Inclusive Agreement (2002)",
-    category: "Politics",
+    category: "History",
     subcategory: "Peace Agreement",
     shortDescription:
-      "The Pretoria/Sun City peace accord that formally ended the Second Congo War and established a transitional government.",
+      "The December 2002 peace accord that formally ended the Second Congo War and established a transitional government, building on the earlier Sun City Agreement.",
+    fullBiography:
+      "As the Second Congo War wound down, delegates to the Inter-Congolese Dialogue signed the Sun City Agreement on April 2, 2002 — a partial accord that most, but not all, of the warring parties endorsed. Negotiations continued under UN mediation, and on December 16–17, 2002, the parties signed the more comprehensive Global and All-Inclusive Agreement on the Transition in the DRC, formally ending the war and setting up a power-sharing transitional government that led to the 2006 elections.",
     publishedDate: "2002-12-17",
-    keywords: ["peace agreement", "sun city", "pretoria", "transitional government", "2002"],
+    sourceName: "Wikipedia: Sun City Agreement",
+    sourceUrl: "https://en.wikipedia.org/wiki/Sun_City_Agreement",
+    keywords: ["peace agreement", "sun city", "transitional government", "2002"],
     aliases: ["Sun City Agreement", "Pretoria Accord"],
     active: true,
     featured: false,
@@ -578,12 +652,69 @@ const SEED_ITEMS = [
   {
     slug: "2006-constitution",
     name: "2006 Constitution",
-    category: "Politics",
+    category: "History",
     subcategory: "Constitutional Milestone",
     shortDescription:
       "The DRC's current constitution, adopted by referendum in December 2005 and promulgated in February 2006.",
     publishedDate: "2006-02-18",
+    sourceName: "Wikipedia: Constitution of the Democratic Republic of the Congo",
+    sourceUrl: "https://en.wikipedia.org/wiki/Constitution_of_the_Democratic_Republic_of_the_Congo",
     keywords: ["constitution", "2006", "referendum", "constitutional milestone"],
+    aliases: [],
+    active: true,
+    featured: false,
+    verified: true,
+  },
+  {
+    slug: "name-changes-of-the-congo",
+    name: "Name Changes of the Congo",
+    category: "History",
+    subcategory: "National Milestone",
+    shortDescription:
+      "The country has carried five official names since 1885, each marking a distinct political era.",
+    fullBiography:
+      "The territory has been renamed five times: the Congo Free State (1885–1908), the Belgian Congo (1908–1960), the Republic of the Congo at independence in 1960 (often called Congo-Léopoldville to distinguish it from the neighboring Republic of the Congo), the Democratic Republic of the Congo from August 1964 under the Luluabourg Constitution, Zaire from October 27, 1971 under Mobutu Sese Seko's authenticité program, and back to the Democratic Republic of the Congo from May 21, 1997 under Laurent-Désiré Kabila.",
+    sourceName: "Britannica: Why did DR Congo change its name?",
+    sourceUrl: "https://www.britannica.com/question/Why-did-DR-Congo-change-its-name",
+    keywords: ["name change", "zaire", "congo-leopoldville", "national milestone", "history"],
+    aliases: [],
+    active: true,
+    featured: false,
+    verified: true,
+  },
+
+  // ---- History: maps. Only Commons files with a clearly verified,
+  // individually-checked license were used.
+  {
+    slug: "map-congo-free-state-1896",
+    name: "1896 Map of the Congo Free State",
+    category: "History",
+    subcategory: "Historic Map",
+    shortDescription:
+      "A cartographic map of the Congo Free State published in 1896 by Léon de Moor, held by the Library of Congress.",
+    publishedDate: "1896-01-01",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Map_of_the_Belgian_Congo_WDL59.png",
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:Map_of_the_Belgian_Congo_WDL59.png",
+    sourceName:
+      "Map: Léon de Moor, published by J. Lebègue & Co. (1896) — Library of Congress / World Digital Library, via Wikimedia Commons (public domain)",
+    keywords: ["map", "congo free state", "1896", "historic map", "cartography"],
+    aliases: [],
+    active: true,
+    featured: false,
+    verified: true,
+  },
+  {
+    slug: "map-drc-provinces",
+    name: "Map of the DRC's Provinces",
+    category: "History",
+    subcategory: "Historic Map",
+    shortDescription:
+      "A reference map showing the Democratic Republic of the Congo's present-day borders and administrative divisions.",
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/1/1b/Democratic_Republic_of_the_Congo_adm_location_map.svg",
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:Democratic_Republic_of_the_Congo_adm_location_map.svg",
+    sourceName: "Map: NordNordWest, via Wikimedia Commons (CC BY-SA 3.0 DE)",
+    keywords: ["map", "provinces", "administrative divisions", "cartography"],
     aliases: [],
     active: true,
     featured: false,
