@@ -244,5 +244,19 @@ service cloud.firestore {
 
       allow delete: if isSignedIn() && resource.data.userEmail == request.auth.token.email;
     }
+
+    // ---------- congoGalleryItems ----------
+    // Public knowledge/media database (music, politics, history, cities,
+    // nature, sports, culture). Anyone can read published content; only
+    // admins can write. This is Phase 4's end-state write model, adopted
+    // now rather than a temporary deny-all-writes placeholder, because it
+    // lets an admin seed/manage this collection from their own
+    // authenticated session — no separate service-account script needed.
+    // Deep per-field validation (allowed-field allowlists, category-aware
+    // required fields) is deferred to Phase 4 alongside the Admin CMS.
+    match /congoGalleryItems/{itemId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
   }
 }
