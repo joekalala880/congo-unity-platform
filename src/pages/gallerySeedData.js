@@ -1006,6 +1006,105 @@ const SEED_ITEMS = [
     featured: false,
     verified: true,
   },
+  {
+    slug: "kananga",
+    name: "Kananga",
+    category: "Cities",
+    province: "Kasaï-Central",
+    country: "DR Congo",
+    shortDescription:
+      "The capital of Kasaï-Central and one of the DRC's most populous cities, formerly known as Luluabourg.",
+    fullBiography:
+      "Founded around a station established by explorer Hermann Wissmann in the 1880s and later renamed Luluabourg after a nearby railway stop, the city was renamed Kananga in 1966 during Mobutu Sese Seko's campaign to replace colonial-era place names. It served briefly as the seat of the secessionist South Kasai state in the early 1960s and hosted the drafting of the DRC's first Congolese-written constitution in 1964. Kananga is today the capital of Kasaï-Central Province and one of the country's most populous urban centers.",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/f/f6/Aerial_photograph_of_Kananga.jpg",
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:Aerial_photograph_of_Kananga.jpg",
+    sourceName: "Photo: MONUSCO/Myriam Asmani, via Wikimedia Commons (CC BY-SA 2.0)",
+    keywords: ["kananga", "kasai-central", "luluabourg", "city"],
+    aliases: ["Luluabourg"],
+    active: true,
+    featured: false,
+    verified: true,
+  },
+  {
+    slug: "kolwezi",
+    name: "Kolwezi",
+    category: "Cities",
+    province: "Lualaba",
+    country: "DR Congo",
+    shortDescription:
+      "The capital of Lualaba Province, known as the DRC's mining center for copper and cobalt, home to some of the world's largest cobalt reserves.",
+    fullBiography:
+      "Industrial development at Kolwezi began around 1901, and the Belgian mining company Union Minière du Haut Katanga (predecessor of the state-owned Gécamines) established operations there in 1906, building the city into a major copper-mining center. Today Kolwezi sits atop a large share of the world's known cobalt reserves and remains central to global battery-metal supply chains, alongside continued copper production. The city was also the site of a violent 1978 conflict remembered as the Battle of Kolwezi.",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/c/c7/Kamoto_Mine_-_panoramio.jpg",
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:Kamoto_Mine_-_panoramio.jpg",
+    sourceName: "Photo: Martin Tuchscherer, via Wikimedia Commons (CC BY-SA 3.0)",
+    keywords: ["kolwezi", "lualaba", "cobalt", "copper", "mining", "city"],
+    aliases: [],
+    active: true,
+    featured: true,
+    verified: true,
+  },
+  {
+    slug: "boma",
+    name: "Boma",
+    category: "Cities",
+    province: "Kongo Central",
+    country: "DR Congo",
+    shortDescription:
+      "A historic port city on the Congo River near the Atlantic coast, and the former capital of the Congo Free State and Belgian Congo.",
+    fullBiography:
+      "Boma served as the capital of the Congo Free State and later the Belgian Congo from 1886 until 1923, when the colonial administration relocated the capital to Léopoldville (Kinshasa). Located roughly 100 km upstream from the Atlantic Ocean on the Congo River, Boma remains an active port handling exports including timber, bananas, cocoa, and palm products, and sits near the river's mouth, close to the country's border with Angola.",
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/f/f0/Boma%2C_Congo%2C_ca._1900-1915_%28IMP-CSCNWW33-OS11-74%29.jpg",
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:Boma,_Congo,_ca._1900-1915_(IMP-CSCNWW33-OS11-74).jpg",
+    sourceName:
+      "Photo: International Mission Photography Archive, Congo Balolo Mission collection, via Wikimedia Commons (public domain, pre-1931)",
+    keywords: ["boma", "kongo central", "port", "former capital", "congo free state", "city"],
+    aliases: [],
+    active: true,
+    featured: false,
+    verified: true,
+  },
+  {
+    slug: "bunia",
+    name: "Bunia",
+    category: "Cities",
+    province: "Ituri",
+    country: "DR Congo",
+    shortDescription:
+      "The capital of Ituri Province, established in 1946 to support the nearby Kilo-Moto gold mines.",
+    fullBiography:
+      "Bunia was founded in 1946 as an administrative center serving the Kilo-Moto gold mines, among the largest gold-mining operations in Africa, and sits on a plateau near Lake Albert in the Albertine Rift. It became the capital of Ituri Province following that province's creation in 2005. Bunia and the surrounding Ituri region saw intense fighting during the Ituri conflict between Hema and Lendu communities, particularly during the Second Congo War, and the city remains an important administrative and economic center for the province.",
+    publishedDate: "1946-01-01",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/c/c4/Bunia.JPG",
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:Bunia.JPG",
+    sourceName: "Photo: HokieRNB (Russell N. Brown), via Wikimedia Commons (public domain)",
+    keywords: ["bunia", "ituri", "kilo-moto", "city"],
+    aliases: [],
+    active: true,
+    featured: false,
+    verified: true,
+  },
+  {
+    slug: "uvira",
+    name: "Uvira",
+    category: "Cities",
+    province: "South Kivu",
+    country: "DR Congo",
+    shortDescription:
+      "A port city at the northern tip of Lake Tanganyika, in South Kivu, and a key trade hub bordering Burundi.",
+    fullBiography:
+      "Uvira sits at the northernmost point of Lake Tanganyika in South Kivu Province, near the DRC's border with Burundi. It developed from the early 1900s as a garrison of the Congo Free State, serving as an entry point via Lake Tanganyika and a base for monitoring nearby German East Africa. Its lake port, Kalundu, connects Uvira by boat to Kalemie, Kigoma (Tanzania), Bujumbura (Burundi), and Mpulungu (Zambia), making the city a regional trade hub. Uvira gained official city status by presidential decree in 2018, the second in South Kivu after Bukavu.",
+    publishedDate: "2018-01-01",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/f/fb/VILLE_D%27UVIRA.jpg",
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:VILLE_D%27UVIRA.jpg",
+    sourceName: "Photo: Mukengere karume, via Wikimedia Commons (CC0)",
+    keywords: ["uvira", "south kivu", "lake tanganyika", "city"],
+    aliases: [],
+    active: true,
+    featured: false,
+    verified: true,
+  },
 ];
 
 export default SEED_ITEMS;
