@@ -5,6 +5,23 @@ import { db, auth } from "../firebase";
 import { useProfilePhotoUpload } from "../hooks/useProfilePhotoUpload";
 import ProfilePhotoField from "../components/ProfilePhotoField";
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function mapAuthError(error) {
+  switch (error.code) {
+    case "auth/invalid-email":
+      return "Please enter a valid email address.";
+    case "auth/email-already-in-use":
+      return "An account already exists with this email.";
+    case "auth/weak-password":
+      return "Password must contain at least 6 characters.";
+    case "auth/network-request-failed":
+      return "Check your internet connection and try again.";
+    default:
+      return "Something went wrong creating your account. Please try again.";
+  }
+}
+
 function Register() {
   const [formData, setFormData] = useState({
     firstName: "",
@@ -20,6 +37,7 @@ function Register() {
     password: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState("");
   const photo = useProfilePhotoUpload();
 
   const handleChange = (e) => {
@@ -31,18 +49,27 @@ function Register() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    setFormError("");
+
+    const cleanEmail = formData.email.trim().toLowerCase();
+
+    if (!EMAIL_REGEX.test(cleanEmail)) {
+      setFormError("Please enter a valid email address.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     let userCredential;
     try {
       userCredential = await createUserWithEmailAndPassword(
         auth,
-        formData.email,
+        cleanEmail,
         formData.password
       );
     } catch (error) {
       console.error("Firebase error:", error);
-      alert(error.message);
+      setFormError(mapAuthError(error));
       setIsSubmitting(false);
       return;
     }
@@ -74,7 +101,7 @@ function Register() {
         village: formData.village,
         currentCountry: formData.currentCountry,
         phone: formData.phone,
-        email: formData.email,
+        email: cleanEmail,
         profileImageUrl,
         userId: userCredential.user.uid,
         role: "citizen",
@@ -105,6 +132,12 @@ function Register() {
       </div>
 
       <form className="register-form" onSubmit={handleRegister}>
+        {formError && (
+          <p className="register-form__error" role="alert">
+            {formError}
+          </p>
+        )}
+
         <input name="firstName" onChange={handleChange} placeholder="First Name" />
         <input name="middleName" onChange={handleChange} placeholder="Middle Name" />
         <input name="lastName" onChange={handleChange} placeholder="Last Name" />
