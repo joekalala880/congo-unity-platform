@@ -1,0 +1,31 @@
+rules_version = '2';
+
+// Congo Unity Platform — Firebase Storage security rules
+//
+// profilePhotos/{uid}/{fileName}: user-uploaded profile photos, written once
+// at registration (Register.jsx) and optionally replaced from Edit Profile
+// (EditProfile.jsx), always at the fixed path profilePhotos/{uid}/profile.
+// Reads are restricted to signed-in users, mirroring the Firestore
+// congoleseProfiles read policy (this data is treated as platform-internal,
+// not open to the public internet). Writes are restricted to the photo's
+// own owner, must be an image, and capped at 5 MB.
+//
+// Everything outside profilePhotos/ is denied by default — no other upload
+// paths exist in the app today, so there's nothing else to allow.
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    match /profilePhotos/{uid}/{fileName} {
+      allow read: if request.auth != null;
+
+      allow write: if request.auth != null
+        && request.auth.uid == uid
+        && request.resource.size <= 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
