@@ -73,7 +73,7 @@ service cloud.firestore {
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
             'firstName', 'middleName', 'lastName', 'phone',
             'province', 'territory', 'village', 'currentCountry',
-            'profileImage', 'followers'
+            'profileImageUrl', 'followers'
           ])
         )
         || (

@@ -8,8 +8,9 @@ import {
   getDocs,
   updateDoc,
   doc,
-  
 } from "firebase/firestore";
+import { useProfilePhotoUpload } from "../hooks/useProfilePhotoUpload";
+import ProfilePhotoField from "../components/ProfilePhotoField";
 
 function EditProfile() {
   const [profileId, setProfileId] = useState("");
@@ -19,8 +20,10 @@ function EditProfile() {
     phone: "",
     province: "",
     currentCountry: "",
-    profileImage: "",
+    profileImageUrl: "",
   });
+  const [isSaving, setIsSaving] = useState(false);
+  const photo = useProfilePhotoUpload();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -58,20 +61,51 @@ function EditProfile() {
       return;
     }
 
+    const user = auth.currentUser;
+    if (!user) {
+      alert("Please login first");
+      return;
+    }
+
+    setIsSaving(true);
+
+    const updates = {
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      phone: profile.phone,
+      province: profile.province,
+      currentCountry: profile.currentCountry,
+    };
+
+    // Only touch profileImageUrl if the user actually picked a replacement —
+    // otherwise the existing saved photo is left alone.
+    if (photo.file) {
+      try {
+        updates.profileImageUrl = await photo.uploadPhoto(user.uid);
+      } catch (error) {
+        console.error("Profile photo upload failed:", error);
+        alert(
+          "Your other profile changes were not saved because the new photo failed to upload. Please try again."
+        );
+        setIsSaving(false);
+        return;
+      }
+    }
+
     try {
-      await updateDoc(doc(db, "congoleseProfiles", profileId), {
-        firstName: profile.firstName,
-        lastName: profile.lastName,
-        phone: profile.phone,
-        province: profile.province,
-        currentCountry: profile.currentCountry,
-        profileImage: profile.profileImage,
-      });
+      await updateDoc(doc(db, "congoleseProfiles", profileId), updates);
+
+      if (updates.profileImageUrl) {
+        setProfile((prev) => ({ ...prev, profileImageUrl: updates.profileImageUrl }));
+        photo.removeFile();
+      }
 
       alert("Profile updated successfully!");
     } catch (error) {
       console.error(error);
       alert(error.message);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -117,14 +151,23 @@ function EditProfile() {
           onChange={handleChange}
           placeholder="Current Country"
         />
-        <input
-  name="profileImage"
-  value={profile.profileImage || ""}
-  onChange={handleChange}
-  placeholder="Profile Image URL"
-/>
 
-        <button type="submit">Save Changes</button>
+        <div className="register-form__full-width">
+          <ProfilePhotoField
+            previewUrl={photo.previewUrl}
+            existingImageUrl={profile.profileImageUrl}
+            error={photo.error}
+            isUploading={photo.isUploading}
+            uploadProgress={photo.uploadProgress}
+            disabled={isSaving}
+            onFileSelected={photo.selectFile}
+            onRemove={photo.removeFile}
+          />
+        </div>
+
+        <button type="submit" disabled={isSaving}>
+          {photo.isUploading ? "Uploading photo…" : isSaving ? "Saving…" : "Save Changes"}
+        </button>
       </form>
     </section>
   );

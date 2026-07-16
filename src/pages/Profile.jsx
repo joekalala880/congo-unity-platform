@@ -8,6 +8,7 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
+import { DEFAULT_AVATAR } from "../components/defaultAvatar";
 
 function Profile() {
   const [profile, setProfile] = useState(null);
@@ -40,6 +41,12 @@ function Profile() {
 
       {profile && (
         <div className="card">
+          <img
+            src={profile.profileImageUrl || DEFAULT_AVATAR}
+            alt={`${profile.firstName} ${profile.lastName}`}
+            className="profile-avatar"
+          />
+
           <h3>
             {profile.firstName} {profile.lastName}
           </h3>
