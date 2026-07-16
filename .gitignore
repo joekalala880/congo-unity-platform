@@ -12,6 +12,12 @@ dist
 dist-ssr
 *.local
 
+# Local environment variables (Cloudinary credentials, etc.) — see
+# .env.example for the variables this app expects.
+.env
+.env.*
+!.env.example
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
