@@ -12,17 +12,9 @@ import {
   seedInitialGalleryItems,
 } from "../services/galleryService";
 import SEED_ITEMS from "./gallerySeedData";
+import { CATEGORIES as GALLERY_CATEGORIES } from "./galleryCategories";
 
-const CATEGORIES = [
-  "All",
-  "Music",
-  "Politics",
-  "History",
-  "Cities",
-  "Nature",
-  "Sports",
-  "Culture",
-];
+const CATEGORIES = ["All", ...GALLERY_CATEGORIES];
 
 function CongoGallery() {
   const { isAdmin } = useIsAdmin();
