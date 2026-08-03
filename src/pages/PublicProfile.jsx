@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
+import Avatar from "../components/Avatar";
 
 function PublicProfile() {
   const { email } = useParams();
@@ -37,14 +38,7 @@ function PublicProfile() {
   return (
     <section className="register-section">
       <div className="register-header">
-        <img
-          src={
-            profile.profileImage ||
-            "https://cdn-icons-png.flaticon.com/512/149/149071.png"
-          }
-          alt="Profile"
-          className="feed-profile-img"
-        />
+        <Avatar src={profile.profileImageUrl} />
 
         <h1>
           {profile.firstName} {profile.lastName}

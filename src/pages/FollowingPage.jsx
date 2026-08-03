@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { auth, db } from "../firebase";
+import Avatar from "../components/Avatar";
 
 function FollowingPage() {
   const [myEmail, setMyEmail] = useState("");
@@ -52,14 +53,7 @@ function FollowingPage() {
         ) : (
           following.map((profile) => (
             <div className="card" key={profile.id}>
-              <img
-                src={
-                  profile.profileImage ||
-                  "https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                }
-                alt="Profile"
-                className="feed-profile-img"
-              />
+              <Avatar src={profile.profileImageUrl} />
 
               <h3>
                 {profile.firstName} {profile.lastName}

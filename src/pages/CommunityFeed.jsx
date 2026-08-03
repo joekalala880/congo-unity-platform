@@ -13,6 +13,7 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { auth, db } from "../firebase";
+import Avatar from "../components/Avatar";
 
 function CommunityFeed() {
   const [posts, setPosts] = useState([]);
@@ -231,14 +232,7 @@ function CommunityFeed() {
           return (
             <div className="card" key={post.id}>
               <div className="post-user">
-                <img
-                  src={
-                    profile?.profileImage ||
-                    "https://via.placeholder.com/80"
-                  }
-                  alt="Profile"
-                  className="feed-profile-img"
-                />
+                <Avatar src={profile?.profileImageUrl} />
 
                 <div>
                   <h3>
