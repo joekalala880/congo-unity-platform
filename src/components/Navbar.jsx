@@ -1,35 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { auth, db } from "../firebase";
+import { auth } from "../firebase";
+import useIsAdmin from "../hooks/useIsAdmin";
 
 function Navbar() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const { isAdmin } = useIsAdmin();
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-
-      if (!currentUser) {
-        setIsAdmin(false);
-        return;
-      }
-
-      try {
-        const profileQuery = query(
-          collection(db, "congoleseProfiles"),
-          where("userId", "==", currentUser.uid)
-        );
-        const snapshot = await getDocs(profileQuery);
-        setIsAdmin(snapshot.docs[0]?.data()?.role === "admin");
-      } catch (error) {
-        console.error("Failed to check admin role:", error);
-        setIsAdmin(false);
-      }
     });
 
     return () => unsubscribe();

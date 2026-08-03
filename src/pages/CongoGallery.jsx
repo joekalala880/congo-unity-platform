@@ -25,7 +25,7 @@ const CATEGORIES = [
 ];
 
 function CongoGallery() {
-  const isAdmin = useIsAdmin();
+  const { isAdmin } = useIsAdmin();
 
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchInput, setSearchInput] = useState("");
