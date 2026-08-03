@@ -1,19 +1,33 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Navigate } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
 import { collection, getDocs } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import Avatar from "../components/Avatar";
 
 function FollowingPage() {
+  const [authStatus, setAuthStatus] = useState("checking"); // checking | signed-out | ready
   const [myEmail, setMyEmail] = useState("");
   const [following, setFollowing] = useState([]);
+  // Tracks which uid we've already fetched Firestore data for, so a token
+  // refresh (onAuthStateChanged firing again for the same user) doesn't
+  // trigger a redundant profiles query.
+  const loadedForUid = useRef(null);
 
   useEffect(() => {
-    const fetchFollowing = async () => {
-      const user = auth.currentUser;
-
-      if (!user) return;
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        setAuthStatus("signed-out");
+        return;
+      }
 
       setMyEmail(user.email);
+
+      if (loadedForUid.current === user.uid) {
+        setAuthStatus("ready");
+        return;
+      }
+      loadedForUid.current = user.uid;
 
       const snapshot = await getDocs(collection(db, "congoleseProfiles"));
 
@@ -27,10 +41,26 @@ function FollowingPage() {
       );
 
       setFollowing(peopleIFollow);
-    };
+      setAuthStatus("ready");
+    });
 
-    fetchFollowing();
+    return () => unsubscribe();
   }, []);
+
+  if (authStatus === "checking") {
+    return (
+      <section className="register-section">
+        <div className="register-header">
+          <h1>Following</h1>
+          <p className="admin-checking">Checking your session...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (authStatus === "signed-out") {
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <section className="register-section">

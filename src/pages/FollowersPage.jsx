@@ -1,14 +1,32 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Navigate } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
 import { collection, getDocs } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import Avatar from "../components/Avatar";
 
 function FollowersPage() {
+  const [authStatus, setAuthStatus] = useState("checking"); // checking | signed-out | ready
   const [myProfile, setMyProfile] = useState(null);
   const [allProfiles, setAllProfiles] = useState([]);
+  // Tracks which uid we've already fetched Firestore data for, so a token
+  // refresh (onAuthStateChanged firing again for the same user) doesn't
+  // trigger a redundant profiles query.
+  const loadedForUid = useRef(null);
 
   useEffect(() => {
-    const fetchProfiles = async () => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        setAuthStatus("signed-out");
+        return;
+      }
+
+      if (loadedForUid.current === user.uid) {
+        setAuthStatus("ready");
+        return;
+      }
+      loadedForUid.current = user.uid;
+
       const snapshot = await getDocs(collection(db, "congoleseProfiles"));
 
       const profiles = snapshot.docs.map((document) => ({
@@ -17,20 +35,27 @@ function FollowersPage() {
       }));
 
       setAllProfiles(profiles);
+      setMyProfile(profiles.find((profile) => profile.email === user.email));
+      setAuthStatus("ready");
+    });
 
-      const user = auth.currentUser;
-
-      if (user) {
-        const currentProfile = profiles.find(
-          (profile) => profile.email === user.email
-        );
-
-        setMyProfile(currentProfile);
-      }
-    };
-
-    fetchProfiles();
+    return () => unsubscribe();
   }, []);
+
+  if (authStatus === "checking") {
+    return (
+      <section className="register-section">
+        <div className="register-header">
+          <h1>My Followers</h1>
+          <p className="admin-checking">Checking your session...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (authStatus === "signed-out") {
+    return <Navigate to="/login" replace />;
+  }
 
   const followers =
     allProfiles.filter((profile) =>
