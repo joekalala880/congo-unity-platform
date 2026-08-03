@@ -191,7 +191,7 @@ service cloud.firestore {
       allow create: if isSignedIn()
         && request.resource.data.userId == request.auth.uid
         && request.resource.data.email == request.auth.token.email
-        && isNonEmptyString(request.resource.data.fileURL)
+        && isNonEmptyString(request.resource.data.cloudinaryPublicId)
         && request.resource.data.status == "pending_review";
 
       // Only admins can change review status or remove a submission.

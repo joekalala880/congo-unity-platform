@@ -1,13 +1,19 @@
-import { useState, useEffect } from "react";
-import { auth, storage, db } from "../firebase";
+import { useEffect, useRef, useState } from "react";
+import { auth, db } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { collection, addDoc } from "firebase/firestore";
+import { useIdDocumentUpload } from "../hooks/useIdDocumentUpload";
 
 function UploadID() {
-  const [file, setFile] = useState(null);
   const [user, setUser] = useState(null);
-  const [uploading, setUploading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const idDoc = useIdDocumentUpload();
+  // Guards against a rapid double-click firing two submissions before React
+  // has re-rendered with isSubmitting: true — the disabled attribute alone
+  // isn't synchronous enough to rule that out.
+  const submittingRef = useRef(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -17,46 +23,57 @@ function UploadID() {
     return () => unsubscribe();
   }, []);
 
-  const handleUpload = async () => {
+  const handleUpload = async (e) => {
+    e.preventDefault();
+
+    if (submittingRef.current) return;
+
+    setSubmitError("");
+    setSuccessMessage("");
+
     if (!user) {
-      alert("Please login first");
+      setSubmitError("Please login first.");
       return;
     }
 
-    if (!file) {
-      alert("Please choose a file");
+    if (!idDoc.file) {
+      setSubmitError("Please choose a file.");
       return;
     }
+
+    submittingRef.current = true;
+    setIsSubmitting(true);
 
     try {
-      setUploading(true);
-
-      const filePath = `ids/${user.uid}/${Date.now()}-${file.name}`;
-      const fileRef = ref(storage, filePath);
-
-      await uploadBytes(fileRef, file);
-
-      const fileURL = await getDownloadURL(fileRef);
+      const idToken = await user.getIdToken();
+      const { publicId, resourceType } = await idDoc.uploadDocument(idToken);
 
       await addDoc(collection(db, "identityDocuments"), {
         userId: user.uid,
         email: user.email,
-        fileName: file.name,
-        fileURL: fileURL,
-        filePath: filePath,
+        fileName: idDoc.file.name,
+        cloudinaryPublicId: publicId,
+        resourceType,
         status: "pending_review",
         uploadedAt: new Date(),
       });
 
-      alert("ID uploaded successfully and saved for review!");
-      setFile(null);
+      setSuccessMessage("ID uploaded successfully and saved for review!");
+      idDoc.removeFile();
     } catch (error) {
       console.error("Upload error:", error);
-      alert(error.message);
+      setSubmitError(error?.message || "Upload failed. Please try again.");
     } finally {
-      setUploading(false);
+      submittingRef.current = false;
+      setIsSubmitting(false);
     }
   };
+
+  const submitLabel = idDoc.isUploading
+    ? `Uploading… ${idDoc.uploadProgress}%`
+    : isSubmitting
+    ? "Saving…"
+    : "Upload ID";
 
   return (
     <section className="register-section">
@@ -66,14 +83,36 @@ function UploadID() {
         <p>{user ? `Logged in as: ${user.email}` : "Loading user..."}</p>
       </div>
 
-      <input
-        type="file"
-        onChange={(e) => setFile(e.target.files[0])}
-      />
+      <form className="register-form" onSubmit={handleUpload}>
+        {submitError && (
+          <p className="register-form__error" role="alert">
+            {submitError}
+          </p>
+        )}
 
-      <button onClick={handleUpload} disabled={uploading}>
-        {uploading ? "Uploading..." : "Upload ID"}
-      </button>
+        {successMessage && (
+          <p className="register-form__success" role="status">
+            {successMessage}
+          </p>
+        )}
+
+        <input
+          type="file"
+          accept="image/jpeg,image/png,image/webp,application/pdf"
+          onChange={(e) => idDoc.selectFile(e.target.files[0])}
+          disabled={isSubmitting}
+        />
+
+        {idDoc.error && (
+          <p className="register-form__error" role="alert">
+            {idDoc.error}
+          </p>
+        )}
+
+        <button type="submit" disabled={isSubmitting}>
+          {submitLabel}
+        </button>
+      </form>
     </section>
   );
 }

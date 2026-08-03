@@ -25,6 +25,58 @@ These are safe to expose in client-side code: the app only ever performs
 unsigned Cloudinary uploads, so no Cloudinary API secret is used anywhere
 in this repository.
 
+## Identity document uploads
+
+Identity documents (passport/voter card/national ID, uploaded from
+`UploadID.jsx`) are **not** uploaded the same way as profile photos.
+Profile photos are meant to be public, so an unsigned Cloudinary preset is
+fine for them. ID documents are sensitive PII — an unsigned upload's
+resulting URL is publicly viewable by anyone who ever obtains it, with no
+expiry and no authentication, which isn't an acceptable exposure for a
+passport scan. So this feature uploads documents as Cloudinary
+`type: "authenticated"` assets, which Cloudinary won't serve without a
+valid signature.
+
+Generating that signature requires the Cloudinary **API secret**, which can
+never live in frontend code. That's what `api/cloudinary-sign.js` is for —
+a small serverless function (written for Vercel's Node.js runtime) that:
+
+1. Verifies the caller's Firebase ID token (via `firebase-admin`) before
+   doing anything.
+2. `action: "upload"` — mints a per-request Cloudinary upload signature
+   scoped to `identityDocuments/{uid}/`, `type: authenticated`. Only a
+   signed-in user can get one, and only for their own uid.
+3. `action: "view"` — checks the caller's `congoleseProfiles` document has
+   `role: "admin"` (server-side, via Firestore Admin SDK — not just
+   trusting the client), then returns a signed Cloudinary delivery URL for
+   a given document.
+
+### Deploying this function
+
+The function lives in this repo's `api/` directory, which Vercel picks up
+automatically if you deploy this project there (`vercel` CLI or the Vercel
+dashboard, no extra config needed — it'll build the Vite frontend and the
+`/api/cloudinary-sign` function together).
+
+It needs these environment variables set **on Vercel**, not in `.env`
+(these must never reach the browser):
+
+| Variable | Used for |
+| --- | --- |
+| `CLOUDINARY_CLOUD_NAME` | Your Cloudinary cloud name |
+| `CLOUDINARY_API_KEY` | Cloudinary dashboard → Settings → API Keys |
+| `CLOUDINARY_API_SECRET` | Same page — **never** put this in `VITE_`-prefixed vars or commit it |
+| `FIREBASE_SERVICE_ACCOUNT_KEY` | The full JSON from Firebase Console → Project Settings → Service Accounts → Generate new private key, as a single-line string |
+| `CLOUDINARY_DELIVERY_TOKEN_KEY` | Optional. Cloudinary dashboard → Settings → Security → Strict token authentication. If set, admin "view" URLs expire after 10 minutes instead of staying valid indefinitely. |
+
+Once deployed, set `VITE_ID_DOCUMENT_SIGNING_ENDPOINT` (in your `.env`, and
+in whatever hosts the frontend) to that function's URL, e.g.
+`https://your-app.vercel.app/api/cloudinary-sign`.
+
+There is currently no admin UI that calls the `"view"` action — it exists
+so a future review page can request a short-lived viewing link, but
+building that page wasn't part of this migration.
+
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
