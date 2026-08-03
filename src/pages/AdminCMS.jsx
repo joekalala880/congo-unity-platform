@@ -14,6 +14,15 @@ function AdminCMS() {
       <div className="cards">
 
         <div className="card">
+          <h3>🖼️ Gallery</h3>
+          <p>Add, edit, and manage Congo Memory & Influence Gallery content.</p>
+
+          <Link to="/admin/gallery">
+            <button>Manage Gallery</button>
+          </Link>
+        </div>
+
+        <div className="card">
           <h3>💼 Jobs</h3>
           <p>Create employment opportunities for Congolese people worldwide.</p>
 

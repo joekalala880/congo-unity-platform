@@ -17,6 +17,7 @@ import Issues from "./pages/Issues";
 import AdminDashboard from "./pages/AdminDashboard";
 import GovernmentDashboard from "./pages/GovernmentDashboard";
 import VerifyCitizens from "./pages/VerifyCitizens";
+import AdminGalleryManager from "./pages/AdminGalleryManager";
 import ProtectedAdmin from "./components/ProtectedAdmin";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
@@ -442,9 +443,25 @@ function App() {
           }
         />
 
+        <Route
+          path="/admin/gallery"
+          element={
+            <ProtectedAdmin>
+              <AdminGalleryManager />
+            </ProtectedAdmin>
+          }
+        />
+
         <Route path="/government-dashboard" element={<GovernmentDashboard />} />
         <Route path="/user-management" element={<UserManagement />} />
-        <Route path="/admin-cms" element={<AdminCMS />} />
+        <Route
+          path="/admin-cms"
+          element={
+            <ProtectedAdmin>
+              <AdminCMS />
+            </ProtectedAdmin>
+          }
+        />
         <Route path="/create-news" element={<CreateNews />} />
         <Route path="/create-business" element={<CreateBusiness />} />
         <Route path="/global-search" element={<GlobalSearch />} />
