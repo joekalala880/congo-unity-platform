@@ -405,6 +405,119 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // ---------- serviceApplications ----------
+    // Government service application workflow (Phase 4 pilot: birth
+    // certificate only). Deliberately one collection with a `serviceType`
+    // field rather than one collection per service, so future services can
+    // reuse the same review/audit infrastructure without a schema change —
+    // isValidServiceType() below is the whitelist to extend when that
+    // happens. Documents are never government-issued by this platform;
+    // that's enforced in the UI copy, not here.
+    function isValidServiceType() {
+      return request.resource.data.serviceType in ['birth_certificate'];
+    }
+
+    match /serviceApplications/{applicationId} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.applicantUserId == request.auth.uid);
+
+      allow create: if isSignedIn()
+        && request.resource.data.applicantUserId == request.auth.uid
+        && request.resource.data.applicantEmail == request.auth.token.email
+        && request.resource.data.citizenId
+             == get(/databases/$(database)/documents/congoleseProfiles/$(request.auth.uid)).data.citizenId
+        && isValidServiceType()
+        && isNonEmptyString(request.resource.data.applicantFullName)
+        && request.resource.data.status in ['draft', 'submitted']
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp
+        && request.resource.data.reviewerId == null
+        && request.resource.data.reviewedAt == null
+        && request.resource.data.keys().hasOnly([
+             'applicantUserId', 'applicantEmail', 'serviceType', 'citizenId', 'memberNumber',
+             'applicantFullName', 'dateOfBirth', 'placeOfBirth', 'provinceOfBirth', 'territoryOfBirth',
+             'fatherFullName', 'motherFullName', 'reasonForRequest', 'deliveryPreference',
+             'supportingDocuments', 'status', 'submittedAt', 'reviewedAt', 'reviewedBy', 'reviewerId',
+             'rejectionReason', 'requestMoreInfoMessage', 'createdAt', 'updatedAt'
+           ]);
+
+      // Admins may change anything (review decisions, etc). Otherwise the
+      // applicant may only touch their OWN application while it's still in
+      // an editable state:
+      //  - draft -> draft (keep editing), draft -> submitted (submit), or
+      //    draft -> withdrawn (give up before ever submitting)
+      //  - submitted -> withdrawn (withdraw before review begins — once an
+      //    admin marks it under_review, withdrawal is no longer allowed)
+      //  - more_information_required -> submitted (add documents / edit
+      //    fields and resubmit)
+      // reviewerId/reviewedAt/reviewedBy/rejectionReason/
+      // requestMoreInfoMessage are always admin-only; applicantUserId/
+      // citizenId/serviceType/createdAt are immutable history.
+      allow update: if isAdmin()
+        || (
+          isSignedIn() && resource.data.applicantUserId == request.auth.uid
+          && request.resource.data.applicantUserId == resource.data.applicantUserId
+          && request.resource.data.citizenId == resource.data.citizenId
+          && request.resource.data.reviewerId == resource.data.reviewerId
+          && request.resource.data.reviewedAt == resource.data.reviewedAt
+          && request.resource.data.createdAt == resource.data.createdAt
+          && (
+            (resource.data.status == 'draft' && request.resource.data.status in ['draft', 'submitted', 'withdrawn'])
+            || (resource.data.status == 'submitted' && request.resource.data.status == 'withdrawn')
+            || (resource.data.status == 'more_information_required' && request.resource.data.status == 'submitted')
+          )
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+               'applicantFullName', 'dateOfBirth', 'placeOfBirth', 'provinceOfBirth', 'territoryOfBirth',
+               'fatherFullName', 'motherFullName', 'reasonForRequest', 'deliveryPreference',
+               'supportingDocuments', 'status', 'submittedAt', 'updatedAt'
+             ])
+        );
+
+      allow delete: if isAdmin();
+
+      // Internal admin notes — never visible to the applicant, even though
+      // they can read the parent application. Append-only.
+      match /reviewNotes/{noteId} {
+        allow read: if isAdmin();
+
+        allow create: if isAdmin()
+          && request.resource.data.authorId == request.auth.uid
+          && isNonEmptyString(request.resource.data.message)
+          && request.resource.data.createdAt is timestamp
+          && request.resource.data.keys().hasOnly(['authorId', 'authorEmail', 'message', 'createdAt']);
+
+        allow update, delete: if false;
+      }
+    }
+
+    // ---------- serviceApplicationAuditLogs ----------
+    // Append-only trail for the government service application workflow —
+    // same shape and guarantees as verificationAuditLogs, kept as a
+    // separate collection since its event vocabulary (application
+    // creation/submission/withdrawal) is specific to this workflow rather
+    // than identity verification.
+    match /serviceApplicationAuditLogs/{logId} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+
+      allow create: if isSignedIn()
+        && request.resource.data.actorId == request.auth.uid
+        && request.resource.data.userId is string
+        && request.resource.data.applicationId is string
+        && request.resource.data.type in [
+             'creation', 'submission', 'review_started', 'approval', 'rejection',
+             'request_more_info', 'withdrawal'
+           ]
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.keys().hasOnly([
+             'type', 'applicationId', 'userId', 'actorId', 'actorRole', 'message', 'createdAt'
+           ])
+        && (
+          (request.resource.data.actorRole == 'citizen' && request.resource.data.userId == request.auth.uid)
+          || (request.resource.data.actorRole == 'admin' && isAdmin())
+        );
+
+      allow update, delete: if false;
+    }
+
     // ---------- messages (direct messages) ----------
     // Only the sender or recipient may ever read a message.
     match /messages/{messageId} {
