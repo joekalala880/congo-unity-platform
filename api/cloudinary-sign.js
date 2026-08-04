@@ -113,14 +113,14 @@ export default async function handler(req, res) {
       return;
     }
 
+    // Doc-ID lookup, matching firestore.rules' isAdmin() helper and the
+    // client-side useIsAdmin hook exactly (see useIsAdmin.js for why a
+    // where("userId","==",uid) query here could disagree with what the
+    // rules — and this endpoint — actually treat as "admin").
     const db = getFirestore(app);
-    const profileSnap = await db
-      .collection("congoleseProfiles")
-      .where("userId", "==", decodedToken.uid)
-      .limit(1)
-      .get();
+    const profileSnap = await db.collection("congoleseProfiles").doc(decodedToken.uid).get();
 
-    const isAdmin = !profileSnap.empty && profileSnap.docs[0].data().role === "admin";
+    const isAdmin = profileSnap.exists && profileSnap.data().role === "admin";
 
     if (!isAdmin) {
       res.status(403).json({ error: "Admin access required." });
