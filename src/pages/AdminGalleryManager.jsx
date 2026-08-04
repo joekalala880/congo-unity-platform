@@ -5,11 +5,14 @@ import {
   matchesSearchTerm,
   updateGalleryItem,
   deleteGalleryItem,
+  getImportPreview,
+  seedInitialGalleryItems,
 } from "../services/galleryService";
 import { CATEGORIES } from "./galleryCategories";
 import { resolveGalleryImage } from "./galleryLocalImages";
 import GalleryItemForm from "../components/admin/GalleryItemForm";
 import GalleryDetail from "../components/gallery/GalleryDetail";
+import SEED_ITEMS from "./gallerySeedData";
 import "./AdminGalleryManager.css";
 
 const PAGE_SIZE = 20;
@@ -28,6 +31,10 @@ function AdminGalleryManager() {
   const [formMode, setFormMode] = useState(null); // null | "new" | item object
   const [previewItem, setPreviewItem] = useState(null);
   const [busySlug, setBusySlug] = useState(null);
+
+  const [importPreview, setImportPreview] = useState(null);
+  const [checkingImport, setCheckingImport] = useState(false);
+  const [importing, setImporting] = useState(false);
 
   // Callable on demand (after save/delete, or a manual retry) without
   // itself being an effect dependency — see the mount-time effect below,
@@ -120,6 +127,40 @@ function AdminGalleryManager() {
     }
   };
 
+  const checkImport = async () => {
+    setCheckingImport(true);
+    setError("");
+
+    try {
+      const preview = await getImportPreview(SEED_ITEMS);
+      setImportPreview(preview);
+    } catch (err) {
+      console.error("Failed to check import preview:", err);
+      setError("Couldn't check what would be imported. Please try again.");
+    } finally {
+      setCheckingImport(false);
+    }
+  };
+
+  const confirmImport = async () => {
+    setImporting(true);
+    setError("");
+
+    try {
+      await seedInitialGalleryItems(SEED_ITEMS);
+      setImportPreview(null);
+      await loadItems();
+      showSuccess(
+        `Import complete: ${importPreview.willAdd} item${importPreview.willAdd === 1 ? "" : "s"} added, ${importPreview.willUpdate} updated.`
+      );
+    } catch (err) {
+      console.error("Failed to import gallery data:", err);
+      setError("Import failed. Please try again.");
+    } finally {
+      setImporting(false);
+    }
+  };
+
   const handleDelete = async (item) => {
     if (!window.confirm(`Delete "${item.name}"? This cannot be undone.`)) return;
 
@@ -147,9 +188,33 @@ function AdminGalleryManager() {
 
         <div className="gm-header-actions">
           <Link to="/admin-cms" className="gm-back-link">← Admin CMS</Link>
+          <button type="button" className="gm-import-button" onClick={checkImport} disabled={checkingImport}>
+            {checkingImport ? "Checking…" : "Import Existing Gallery Data"}
+          </button>
           <button type="button" onClick={() => setFormMode("new")}>Add Item</button>
         </div>
       </div>
+
+      {importPreview && (
+        <div className="gm-import-panel">
+          <h3>Import Preview</h3>
+          <p>This reads every item in <code>gallerySeedData.js</code> and writes it to Firestore, keyed by slug — existing items are updated in place, nothing is duplicated.</p>
+
+          <div className="gm-import-stats">
+            <div><strong>{importPreview.total}</strong><span>Total items in gallerySeedData.js</span></div>
+            <div><strong>{importPreview.alreadyInFirestore}</strong><span>Already in Firestore</span></div>
+            <div><strong>{importPreview.willAdd}</strong><span>Will be added (new)</span></div>
+            <div><strong>{importPreview.willUpdate}</strong><span>Will be updated (existing)</span></div>
+          </div>
+
+          <div className="gm-import-actions">
+            <button type="button" onClick={() => setImportPreview(null)} disabled={importing}>Cancel</button>
+            <button type="button" onClick={confirmImport} disabled={importing}>
+              {importing ? "Importing…" : "Confirm Import"}
+            </button>
+          </div>
+        </div>
+      )}
 
       {successMessage && (
         <p className="register-form__success" role="status">{successMessage}</p>

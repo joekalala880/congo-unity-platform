@@ -108,6 +108,24 @@ export async function seedInitialGalleryItems(items) {
   );
 }
 
+// Preview for the admin "Import existing gallery data" action: compares
+// gallerySeedData.js against what's already in Firestore (by slug/doc ID)
+// without writing anything, so the admin can see exactly what a click of
+// "Import" would do before doing it.
+export async function getImportPreview(items) {
+  const snapshot = await getDocs(collection(db, COLLECTION));
+  const existingSlugs = new Set(snapshot.docs.map((d) => d.id));
+
+  const willUpdate = items.filter((item) => existingSlugs.has(item.slug)).length;
+
+  return {
+    total: items.length,
+    alreadyInFirestore: willUpdate,
+    willAdd: items.length - willUpdate,
+    willUpdate,
+  };
+}
+
 // Admin manager list: unlike fetchGalleryPage/fetchAllForSearch, this
 // deliberately does NOT filter on active — the manager needs to see (and
 // toggle) inactive items too. Gated to admins by firestore.rules only
