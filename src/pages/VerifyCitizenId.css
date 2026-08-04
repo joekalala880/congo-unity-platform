@@ -31,35 +31,10 @@
   color: #cfcfcf;
 }
 
-.vfy-badge {
-  display: inline-block;
-  padding: 4px 14px;
-  border-radius: 100px;
-  font-size: 12px;
-  font-weight: bold;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
+/* Verification status badge styling now lives in
+   src/components/identity/VerificationBadge.css (shared across pages). */
+.vfy-card .vbadge {
   margin-bottom: 20px;
-}
-
-.vfy-badge-pending {
-  background: rgba(217, 164, 65, 0.18);
-  color: #d9a441;
-}
-
-.vfy-badge-review {
-  background: rgba(90, 150, 220, 0.18);
-  color: #6ea8e8;
-}
-
-.vfy-badge-verified {
-  background: rgba(63, 168, 92, 0.18);
-  color: #4cbf6f;
-}
-
-.vfy-badge-suspended {
-  background: rgba(154, 154, 154, 0.25);
-  color: #cfcfcf;
 }
 
 .vfy-grid {
@@ -85,4 +60,23 @@
   color: white;
   font-size: 14px;
   word-break: break-word;
+}
+
+.vfy-statement {
+  color: #4cbf6f;
+  font-weight: bold;
+  font-size: 13px;
+  border-top: 1px solid #2a2a2a;
+  padding-top: 16px;
+  margin: 20px 0 0;
+}
+
+.vfy-statement-warning {
+  color: #e07b73;
+}
+
+.vfy-timestamp {
+  color: #6a6a6a;
+  font-size: 11px;
+  margin: 12px 0 0;
 }
