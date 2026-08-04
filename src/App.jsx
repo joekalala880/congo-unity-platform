@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import UploadID from "./pages/UploadID";
 import IdentityDocuments from "./pages/IdentityDocuments";
+import IdentityDashboard from "./pages/IdentityDashboard";
 import VerifyCitizenId from "./pages/VerifyCitizenId";
 import Directory from "./pages/Directory";
 import Profile from "./pages/Profile";
@@ -361,6 +362,14 @@ function App() {
         <Route path="/edit-profile" element={<EditProfile />} />
         <Route path="/profile-picture" element={<ProfilePicture />} />
         <Route path="/uploadid" element={<UploadID />} />
+        <Route
+          path="/identity"
+          element={
+            <ProtectedRoute>
+              <IdentityDashboard />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/identity/documents"
           element={

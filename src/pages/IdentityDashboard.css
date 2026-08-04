@@ -1,0 +1,231 @@
+/* Scoped styles for /identity. Prefixed "iddash-" so nothing here collides
+   with the id-, db-, iddoc-, or idcard- rules elsewhere. */
+
+.iddash-page {
+  background: #0d0d0d;
+  min-height: 100vh;
+  padding: 40px 6% 80px;
+  color: white;
+}
+
+.iddash-signed-out {
+  text-align: center;
+  padding: 80px 0;
+}
+
+.iddash-signed-out h1 {
+  color: #d9a441;
+}
+
+.iddash-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.iddash-header h1 {
+  color: #d9a441;
+  font-size: 30px;
+  margin: 0 0 6px;
+}
+
+.iddash-header p {
+  color: #cfcfcf;
+  margin: 0;
+}
+
+.iddash-alerts {
+  margin-bottom: 20px;
+}
+
+.iddash-alert {
+  background: rgba(224, 123, 115, 0.12);
+  border: 1px solid rgba(224, 123, 115, 0.4);
+  color: #e07b73;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 13px;
+  margin: 0 0 8px;
+}
+
+.iddash-section {
+  margin-bottom: 32px;
+}
+
+.iddash-section h2 {
+  color: #d9a441;
+  font-size: 18px;
+  margin: 0 0 14px;
+}
+
+.iddash-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.iddash-stat-card {
+  background: #1b1b1b;
+  border-top: 3px solid #d9a441;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.iddash-stat-label {
+  color: #9a9a9a;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 6px;
+}
+
+.iddash-stat-value {
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0 0 8px;
+}
+
+.iddash-stat-mono {
+  font-family: monospace;
+  font-size: 16px;
+}
+
+.iddash-progress-track {
+  background: #2a2a2a;
+  border-radius: 100px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.iddash-progress-fill {
+  background: #d9a441;
+  height: 100%;
+  border-radius: 100px;
+  transition: width 0.3s ease;
+}
+
+.iddash-checklist {
+  background: #1b1b1b;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.iddash-checklist p {
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+.iddash-check-done {
+  color: #4cbf6f;
+}
+
+.iddash-check-pending {
+  color: #9a9a9a;
+}
+
+.iddash-doc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.iddash-doc-list {
+  background: #1b1b1b;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.iddash-doc-list h3 {
+  color: white;
+  font-size: 14px;
+  margin: 0 0 10px;
+}
+
+.iddash-doc-row {
+  color: #cfcfcf;
+  font-size: 13px;
+  margin: 6px 0;
+}
+
+.iddash-doc-row-rejected {
+  color: #e07b73;
+}
+
+.iddash-doc-row-info {
+  color: #6ea8e8;
+}
+
+.iddash-empty {
+  color: #9a9a9a;
+  font-size: 13px;
+  margin: 0;
+}
+
+.iddash-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.iddash-action-button {
+  background: #1b1b1b;
+  border: 1px solid #333;
+  color: white;
+  border-radius: 10px;
+  padding: 14px;
+  text-align: center;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+}
+
+.iddash-action-button:hover {
+  border-color: #d9a441;
+  color: #d9a441;
+}
+
+.iddash-activity {
+  background: #1b1b1b;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.iddash-activity-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid #2a2a2a;
+  font-size: 13px;
+}
+
+.iddash-activity-item:last-child {
+  border-bottom: none;
+}
+
+.iddash-activity-item p {
+  margin: 0;
+  color: white;
+}
+
+.iddash-activity-item span {
+  color: #6a6a6a;
+  white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+  .iddash-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .iddash-activity-item {
+    flex-direction: column;
+    gap: 2px;
+  }
+}
