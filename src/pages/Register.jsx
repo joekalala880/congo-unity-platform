@@ -117,6 +117,7 @@ function Register() {
         role: "citizen",
         createdAt: new Date(),
         status: "pending_verification",
+        visibility: "public",
       });
 
       alert(`Account created and profile saved successfully!${photoWarning}`);

@@ -16,6 +16,7 @@ import { DOCUMENT_TYPE_LABELS, STATUS_LABELS } from "../services/identityDocumen
 import { listMyDocuments } from "../services/identityDocumentsService";
 import { logAuditEvent } from "../services/verificationAuditService";
 import { maybeFinalizeVerification } from "../services/verificationService";
+import { syncPublicVerificationStatus } from "../services/identityService";
 import "./AdminVerificationQueue.css";
 
 const SIGNING_ENDPOINT = import.meta.env.VITE_ID_DOCUMENT_SIGNING_ENDPOINT;
@@ -286,6 +287,14 @@ function AdminVerificationQueue() {
         status: "suspended",
         previousStatus: profile.status || "pending_verification",
       });
+
+      if (profile.citizenId) {
+        await syncPublicVerificationStatus(profile.citizenId, {
+          status: "suspended",
+          verifiedAt: profile.verifiedAt || null,
+          verifiedBy: profile.verifiedBy || null,
+        }).catch((err) => console.error("Failed to sync public verification status:", err));
+      }
 
       await logAuditEvent({
         type: "profile_verification_change",

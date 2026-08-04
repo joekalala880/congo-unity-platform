@@ -3,8 +3,9 @@ import { db } from "../firebase";
 
 // Append-only audit trail for the identity verification workflow — see the
 // verificationAuditLogs rules block in firestore.rules for why entries can
-// never be edited or deleted once written, and why they're admin-readable
-// only (this is a security/audit tool, not a citizen-facing feed).
+// never be edited or deleted once written. Readable by admins and by the
+// citizen the entry is about (Identity Dashboard "recent activity"); never
+// by anyone else.
 //
 // actorRole must match who's actually calling: 'citizen' entries can only
 // be about the caller's own userId, 'admin' entries require the caller to

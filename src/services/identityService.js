@@ -75,6 +75,8 @@ export async function generateCitizenIdentity(profileDocId, existingProfile) {
     registrationDate,
     verifiedAt: null,
     verifiedBy: null,
+    province: existingProfile.province || "",
+    currentCountry: existingProfile.currentCountry || "",
   });
 
   await batch.commit();
@@ -89,14 +91,34 @@ export function getVerificationUrl(citizenId) {
   return `${window.location.origin}/verify/${citizenId}`;
 }
 
-// Keeps the public mirror's display fields (name/photo) current after an
-// EditProfile.jsx save. Owner-writable per firestore.rules, but only for
-// exactly these fields — status/verifiedAt/verifiedBy stay admin-only.
-export async function syncPublicVerificationDisplayFields(citizenId, { firstName, lastName, preferredName, profileImageUrl }) {
+// Keeps the public mirror's display fields (name/photo/province/country)
+// current after an EditProfile.jsx save. Owner-writable per
+// firestore.rules, but only for exactly these fields — status/verifiedAt/
+// verifiedBy stay admin-only, and nothing else from the private profile
+// (email, phone, DOB, exact address) is ever mirrored here.
+export async function syncPublicVerificationDisplayFields(
+  citizenId,
+  { firstName, lastName, preferredName, profileImageUrl, province, currentCountry }
+) {
   await updateDoc(doc(db, "publicVerifications", citizenId), {
     firstName: firstName || "",
     lastName: lastName || "",
     preferredName: preferredName || "",
     profileImageUrl: profileImageUrl || "",
+    province: province || "",
+    currentCountry: currentCountry || "",
   });
+}
+
+// Keeps the public mirror's status in sync whenever an admin changes a
+// profile's verification status directly (approve/reject/suspend/reactivate
+// in AdminUserManagement.jsx, suspend in AdminVerificationQueue.jsx) —
+// separate from maybeFinalizeVerification()'s own auto-verify path in
+// verificationService.js, which already updates both documents in one
+// batch. Without this, /verify/:citizenId could keep showing a citizen as
+// "verified" after their account was suspended or rejected. No-ops if the
+// profile has no citizenId yet (nothing to sync).
+export async function syncPublicVerificationStatus(citizenId, { status, verifiedAt = null, verifiedBy = null }) {
+  if (!citizenId) return;
+  await updateDoc(doc(db, "publicVerifications", citizenId), { status, verifiedAt, verifiedBy });
 }

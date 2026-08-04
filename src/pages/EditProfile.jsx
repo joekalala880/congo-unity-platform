@@ -30,6 +30,8 @@ function EditProfile() {
     currentCountry: "",
     currentCity: "",
     profileImageUrl: "",
+    emergencyContact: "",
+    visibility: "public",
   });
   const [isSaving, setIsSaving] = useState(false);
   const photo = useProfilePhotoUpload();
@@ -92,6 +94,8 @@ function EditProfile() {
       village: profile.village,
       currentCountry: profile.currentCountry,
       currentCity: profile.currentCity,
+      emergencyContact: profile.emergencyContact,
+      visibility: profile.visibility || "public",
     };
 
     // Only touch profileImageUrl if the user actually picked a replacement —
@@ -126,6 +130,8 @@ function EditProfile() {
           lastName: updates.lastName,
           preferredName: updates.preferredName,
           profileImageUrl: updates.profileImageUrl || profile.profileImageUrl,
+          province: updates.province,
+          currentCountry: updates.currentCountry,
         }).catch((err) => console.error("Failed to sync public verification display fields:", err));
       }
 
@@ -237,6 +243,22 @@ function EditProfile() {
           onChange={handleChange}
           placeholder="Current City (optional)"
         />
+
+        <input
+          name="emergencyContact"
+          value={profile.emergencyContact || ""}
+          onChange={handleChange}
+          placeholder="Emergency Contact (optional)"
+        />
+
+        <label className="register-form__full-width">
+          <span>Profile Visibility</span>
+          <select name="visibility" value={profile.visibility || "public"} onChange={handleChange}>
+            <option value="public">Public — visible to any signed-in member</option>
+            <option value="verified-only">Verified members only</option>
+            <option value="private">Private — only me and admins</option>
+          </select>
+        </label>
 
         <div className="register-form__full-width">
           <ProfilePhotoField

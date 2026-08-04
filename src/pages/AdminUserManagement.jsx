@@ -3,6 +3,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import Avatar from "../components/Avatar";
+import { syncPublicVerificationStatus } from "../services/identityService";
 import "./AdminUserManagement.css";
 
 const STATUS_LABELS = {
@@ -110,6 +111,21 @@ function AdminUserManagement() {
     try {
       await updateDoc(doc(db, "congoleseProfiles", profile.id), updates);
       setProfiles((prev) => prev.map((p) => (p.id === profile.id ? { ...p, ...updates } : p)));
+
+      // Keeps /verify/:citizenId accurate — without this, a suspended or
+      // rejected citizen's public page could keep showing "verified". None
+      // of these actions change verifiedAt/verifiedBy on congoleseProfiles
+      // itself, so the mirror preserves whatever those already were rather
+      // than wiping them (a later reactivate back to "verified" should
+      // still show its original verification date).
+      if (updates.status && profile.citizenId) {
+        syncPublicVerificationStatus(profile.citizenId, {
+          status: updates.status,
+          verifiedAt: profile.verifiedAt || null,
+          verifiedBy: profile.verifiedBy || null,
+        }).catch((err) => console.error("Failed to sync public verification status:", err));
+      }
+
       showSuccess(message);
     } catch (err) {
       console.error("Failed to update user:", err);
