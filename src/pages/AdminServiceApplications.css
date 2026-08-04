@@ -1,0 +1,162 @@
+/* Scoped styles for /admin/service-applications. Prefixed "admapp-" so
+   nothing here collides with rules elsewhere. */
+
+.admapp-page {
+  background: #0d0d0d;
+  min-height: 100vh;
+  padding: 40px 6% 80px;
+  color: white;
+}
+
+.admapp-header {
+  margin-bottom: 24px;
+}
+
+.admapp-header h1 {
+  color: #d9a441;
+  font-size: 30px;
+  margin: 0 0 6px;
+}
+
+.admapp-header p {
+  color: #cfcfcf;
+  margin: 0;
+}
+
+.admapp-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+  align-items: flex-end;
+}
+
+.admapp-filters input,
+.admapp-filters select {
+  background: #1b1b1b;
+  border: 1px solid #333;
+  color: white;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+}
+
+.admapp-filters input[type="text"] {
+  flex: 1;
+  min-width: 220px;
+}
+
+.admapp-date-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+  color: #9a9a9a;
+}
+
+.admapp-count {
+  color: #9a9a9a;
+  font-size: 13px;
+  margin: 0 0 14px;
+}
+
+.admapp-empty {
+  color: #9a9a9a;
+  padding: 40px 0;
+  text-align: center;
+}
+
+.admapp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.admapp-row {
+  display: block;
+  background: #1b1b1b;
+  border-top: 3px solid #d9a441;
+  border-radius: 12px;
+  padding: 16px;
+  text-decoration: none;
+}
+
+.admapp-row-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admapp-row-title strong {
+  color: white;
+}
+
+.admapp-row-meta {
+  color: #9a9a9a;
+  font-size: 13px;
+  margin: 4px 0 0;
+}
+
+.admapp-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.admapp-badge-draft {
+  background: rgba(154, 154, 154, 0.25);
+  color: #cfcfcf;
+}
+
+.admapp-badge-submitted {
+  background: rgba(217, 164, 65, 0.18);
+  color: #d9a441;
+}
+
+.admapp-badge-review {
+  background: rgba(90, 150, 220, 0.18);
+  color: #6ea8e8;
+}
+
+.admapp-badge-approved {
+  background: rgba(63, 168, 92, 0.18);
+  color: #4cbf6f;
+}
+
+.admapp-badge-rejected {
+  background: rgba(224, 123, 115, 0.18);
+  color: #e07b73;
+}
+
+.admapp-badge-info {
+  background: rgba(90, 150, 220, 0.18);
+  color: #6ea8e8;
+}
+
+.admapp-badge-withdrawn {
+  background: rgba(154, 154, 154, 0.25);
+  color: #cfcfcf;
+}
+
+.admapp-skeleton {
+  background: linear-gradient(90deg, #1b1b1b 25%, #262626 37%, #1b1b1b 63%);
+  background-size: 400% 100%;
+  animation: admapp-shimmer 1.4s ease infinite;
+  border-radius: 8px;
+}
+
+@keyframes admapp-shimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+@media (max-width: 700px) {
+  .admapp-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
