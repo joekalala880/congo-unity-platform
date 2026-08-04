@@ -86,7 +86,19 @@ export default async function handler(req, res) {
 
   if (action === "upload") {
     const timestamp = Math.floor(Date.now() / 1000);
-    const folder = `identityDocuments/${decodedToken.uid}`;
+
+    // Whitelisted service->folder mapping, not a client-supplied path —
+    // keeps identity documents and government-service application
+    // documents organized separately in Cloudinary without letting a
+    // caller write anywhere outside their own uid-scoped folder tree.
+    // Unrecognized/omitted service falls back to the original identity
+    // folder, so existing callers (UploadID.jsx) need no changes.
+    const FOLDER_BY_SERVICE = {
+      identity: `identityDocuments/${decodedToken.uid}`,
+      birthCertificate: `serviceApplications/${decodedToken.uid}/birthCertificate`,
+    };
+    const { service } = req.body || {};
+    const folder = FOLDER_BY_SERVICE[service] || FOLDER_BY_SERVICE.identity;
     const type = "authenticated";
 
     const signature = cloudinary.utils.api_sign_request(

@@ -1,13 +1,15 @@
 import { useCallback, useState } from "react";
 
-// Identity-document upload for UploadID.jsx. Kept separate from
+// Signed document upload, originally for UploadID.jsx and now also reused
+// by the Phase 4 government service application forms. Kept separate from
 // useProfilePhotoUpload: validation differs (PDFs are allowed, size cap is
 // larger), and — critically — the upload itself must be signed rather than
 // posted to an unsigned preset. A leaked profile-photo URL is a non-issue;
 // a leaked passport scan is not, so these documents are uploaded to
 // Cloudinary with type: "authenticated" using a signature minted per-request
 // by the /api/cloudinary-sign backend (which verifies the caller's Firebase
-// session first). See api/cloudinary-sign.js for the server side of this.
+// session first). See api/cloudinary-sign.js for the server side of this,
+// including the whitelisted `service` -> folder mapping.
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp", "application/pdf"];
 const MAX_SIZE_BYTES = 10 * 1024 * 1024;
 const UPLOAD_TIMEOUT_MS = 30000;
@@ -48,7 +50,7 @@ export function useIdDocumentUpload() {
   }, []);
 
   const uploadDocument = useCallback(
-    async (idToken) => {
+    async (idToken, service) => {
       if (!file) {
         const message = "Please choose a file first.";
         setError(message);
@@ -74,7 +76,9 @@ export function useIdDocumentUpload() {
               "Content-Type": "application/json",
               Authorization: `Bearer ${idToken}`,
             },
-            body: JSON.stringify({ action: "upload" }),
+            // `service` is optional — omitting it (as UploadID.jsx does)
+            // keeps the original identity-document folder behavior.
+            body: JSON.stringify({ action: "upload", service }),
           });
         } catch {
           throw new Error("Could not reach the upload service. Please check your connection and try again.");
