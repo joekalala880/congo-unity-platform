@@ -14,6 +14,8 @@ import Avatar from "../components/Avatar";
 import VerificationBadge from "../components/identity/VerificationBadge";
 import { fetchGalleryPage } from "../services/galleryService";
 import { computeProfileCompletion } from "../services/profileCompletion";
+import { listMyApplications } from "../services/serviceApplicationsService";
+import { STATUS_LABELS as APPLICATION_STATUS_LABELS } from "../services/serviceApplicationTypes";
 import { resolveGalleryImage } from "./galleryLocalImages";
 import "./Dashboard.css";
 
@@ -85,6 +87,9 @@ function Dashboard() {
 
   const [recentPosts, setRecentPosts] = useState([]);
   const [activityLoading, setActivityLoading] = useState(true);
+
+  const [applications, setApplications] = useState([]);
+  const [applicationsLoading, setApplicationsLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -212,6 +217,18 @@ function Dashboard() {
         setActivityLoading(false);
       }
     })();
+
+    (async () => {
+      setApplicationsLoading(true);
+      try {
+        const apps = await listMyApplications(user.uid);
+        setApplications(apps);
+      } catch (error) {
+        console.error("Failed to load government applications:", error);
+      } finally {
+        setApplicationsLoading(false);
+      }
+    })();
   }, [user]);
 
   if (authChecked && !user) {
@@ -229,6 +246,8 @@ function Dashboard() {
 
   const completion = computeProfileCompletion(profile);
   const followersCount = profile?.followers?.length || 0;
+  const activeApplications = applications.filter((a) => !["approved", "rejected", "withdrawn"].includes(a.status));
+  const mostRecentApplication = applications[0];
 
   return (
     <div className="db-page">
@@ -315,6 +334,20 @@ function Dashboard() {
               <p className="db-stat-sub">View following</p>
             </Link>
           )}
+
+          {applicationsLoading ? (
+            <StatSkeleton />
+          ) : (
+            <Link to="/government/applications" className="db-stat-card">
+              <p className="db-stat-label">Government Applications</p>
+              <p className="db-stat-value">{activeApplications.length}</p>
+              <p className="db-stat-sub">
+                {mostRecentApplication
+                  ? `Most recent: ${APPLICATION_STATUS_LABELS[mostRecentApplication.status] || mostRecentApplication.status}`
+                  : "No applications yet"}
+              </p>
+            </Link>
+          )}
         </div>
       </section>
 
@@ -325,6 +358,7 @@ function Dashboard() {
 
         <div className="db-actions-grid">
           <Link to="/identity" className="db-action-button">Identity Dashboard</Link>
+          <Link to="/government/services/birth-certificate" className="db-action-button">Request Birth Certificate</Link>
           <Link to="/edit-profile" className="db-action-button">Edit Profile</Link>
           <Link to="/uploadid" className="db-action-button">Upload ID</Link>
           <Link to="/search-users" className="db-action-button">Find People</Link>

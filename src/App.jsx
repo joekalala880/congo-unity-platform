@@ -10,6 +10,12 @@ import Dashboard from "./pages/Dashboard";
 import UploadID from "./pages/UploadID";
 import IdentityDocuments from "./pages/IdentityDocuments";
 import IdentityDashboard from "./pages/IdentityDashboard";
+import GovernmentServices from "./pages/GovernmentServices";
+import BirthCertificateApplication from "./pages/BirthCertificateApplication";
+import GovernmentApplications from "./pages/GovernmentApplications";
+import GovernmentApplicationDetail from "./pages/GovernmentApplicationDetail";
+import AdminServiceApplications from "./pages/AdminServiceApplications";
+import AdminServiceApplicationDetail from "./pages/AdminServiceApplicationDetail";
 import VerifyCitizenId from "./pages/VerifyCitizenId";
 import Directory from "./pages/Directory";
 import Profile from "./pages/Profile";
@@ -380,6 +386,32 @@ function App() {
         />
         <Route path="/verify/:citizenId" element={<VerifyCitizenId />} />
 
+        <Route path="/government/services" element={<GovernmentServices />} />
+        <Route
+          path="/government/services/birth-certificate"
+          element={
+            <ProtectedRoute>
+              <BirthCertificateApplication />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/government/applications"
+          element={
+            <ProtectedRoute>
+              <GovernmentApplications />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/government/applications/:applicationId"
+          element={
+            <ProtectedRoute>
+              <GovernmentApplicationDetail />
+            </ProtectedRoute>
+          }
+        />
+
         <Route path="/directory" element={<Directory />} />
         <Route path="/search-users" element={<SearchUsers />} />
         <Route path="/follow" element={<FollowSystem />} />
@@ -490,6 +522,23 @@ function App() {
           element={
             <ProtectedAdmin>
               <AdminVerificationQueue />
+            </ProtectedAdmin>
+          }
+        />
+
+        <Route
+          path="/admin/service-applications"
+          element={
+            <ProtectedAdmin>
+              <AdminServiceApplications />
+            </ProtectedAdmin>
+          }
+        />
+        <Route
+          path="/admin/service-applications/:applicationId"
+          element={
+            <ProtectedAdmin>
+              <AdminServiceApplicationDetail />
             </ProtectedAdmin>
           }
         />
