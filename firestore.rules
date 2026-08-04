@@ -44,6 +44,17 @@ service cloud.firestore {
         );
     }
 
+    // National Digital Identity fields (citizenId, memberNumber,
+    // registrationDate) are generated once by generateCitizenIdentity()
+    // (src/services/identityService.js) and must never change afterward,
+    // even by their own owner — a citizen ID that could be edited client-side
+    // wouldn't be trustworthy. True (not present yet, i.e. first-time
+    // generation) or unchanged; false if it would actually modify an
+    // existing value.
+    function isValidIdentityFieldChange(field) {
+      return !(field in resource.data) || request.resource.data[field] == resource.data[field];
+    }
+
     // Shared validation for the "Create*" pages (jobs, events, scholarships,
     // news, businesses, announcements), which all follow the same shape:
     // authenticated create, createdBy set to the author's own email, a
@@ -85,10 +96,15 @@ service cloud.firestore {
         || (
           isSignedIn() && resource.data.userId == request.auth.uid
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-            'firstName', 'middleName', 'lastName', 'phone',
-            'province', 'territory', 'village', 'currentCountry',
-            'profileImageUrl', 'followers'
+            'firstName', 'middleName', 'lastName', 'preferredName', 'gender',
+            'placeOfBirth', 'nationality', 'phone',
+            'province', 'territory', 'village', 'currentCountry', 'currentCity',
+            'profileImageUrl', 'followers',
+            'citizenId', 'memberNumber', 'registrationDate'
           ])
+          && isValidIdentityFieldChange('citizenId')
+          && isValidIdentityFieldChange('memberNumber')
+          && isValidIdentityFieldChange('registrationDate')
         )
         || (
           isSignedIn()
@@ -276,6 +292,30 @@ service cloud.firestore {
     match /congoGalleryItems/{itemId} {
       allow read: if true;
       allow create, update, delete: if isAdmin();
+    }
+
+    // ---------- counters ----------
+    // Backs sequential Citizen ID / Member Number generation
+    // (src/services/identityService.js) via an atomic Firestore
+    // transaction. Deliberately allows any signed-in user to write, but
+    // only ever by exactly +1 — a client-side counter has to trust the
+    // caller not to jump or reset the value, so the rule enforces the one
+    // operation that's actually safe rather than gating on isAdmin(),
+    // since every citizen needs to be able to claim their own next number.
+    // create only fires once, the very first time the counter doc doesn't
+    // exist yet, and only at the correct starting value.
+    match /counters/{counterId} {
+      allow read: if isSignedIn();
+
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly(['value'])
+        && request.resource.data.value == 1;
+
+      allow update: if isSignedIn()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['value'])
+        && request.resource.data.value == resource.data.value + 1;
+
+      allow delete: if false;
     }
   }
 }
