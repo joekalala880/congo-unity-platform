@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   collection,
   query,
@@ -76,6 +77,10 @@ function Notifications() {
                 <strong>Status:</strong>{" "}
                 {notification.read ? "Read" : "Unread"}
               </p>
+
+              {notification.relatedRoute && (
+                <Link to={notification.relatedRoute}>View details</Link>
+              )}
 
               {!notification.read && (
                 <button onClick={() => markAsRead(notification.id)}>

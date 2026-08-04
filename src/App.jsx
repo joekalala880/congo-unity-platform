@@ -18,6 +18,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 import GovernmentDashboard from "./pages/GovernmentDashboard";
 import VerifyCitizens from "./pages/VerifyCitizens";
 import AdminGalleryManager from "./pages/AdminGalleryManager";
+import AdminUserManagement from "./pages/AdminUserManagement";
+import AdminVerificationQueue from "./pages/AdminVerificationQueue";
 import ProtectedAdmin from "./components/ProtectedAdmin";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
@@ -448,6 +450,24 @@ function App() {
           element={
             <ProtectedAdmin>
               <AdminGalleryManager />
+            </ProtectedAdmin>
+          }
+        />
+
+        <Route
+          path="/admin/users"
+          element={
+            <ProtectedAdmin>
+              <AdminUserManagement />
+            </ProtectedAdmin>
+          }
+        />
+
+        <Route
+          path="/admin/verifications"
+          element={
+            <ProtectedAdmin>
+              <AdminVerificationQueue />
             </ProtectedAdmin>
           }
         />

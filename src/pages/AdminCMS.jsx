@@ -96,19 +96,19 @@ function AdminCMS() {
 
         <div className="card">
           <h3>👥 User Management</h3>
-          <p>Manage registered members and verify citizen accounts.</p>
+          <p>Search users, review verification status, and suspend accounts.</p>
 
-          <Link to="/user-management">
+          <Link to="/admin/users">
             <button>Manage Users</button>
           </Link>
         </div>
 
         <div className="card">
-          <h3>✅ Verify Citizens</h3>
-          <p>Review submitted documents and verify Congolese citizens.</p>
+          <h3>✅ Verification Queue</h3>
+          <p>Review submitted identity documents and approve or reject them.</p>
 
-          <Link to="/verify-citizens">
-            <button>Verify Citizens</button>
+          <Link to="/admin/verifications">
+            <button>Review Verifications</button>
           </Link>
         </div>
 
