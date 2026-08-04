@@ -10,6 +10,7 @@ import {
 } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import Avatar from "../components/Avatar";
+import VerificationBadge from "../components/identity/VerificationBadge";
 
 function SearchUsers() {
   const [profiles, setProfiles] = useState([]);
@@ -100,6 +101,8 @@ function SearchUsers() {
                   {profile.firstName} {profile.lastName}
                 </h3>
               </Link>
+
+              <VerificationBadge status={profile.status} />
 
               <p>
                 <strong>Email:</strong> {profile.email}

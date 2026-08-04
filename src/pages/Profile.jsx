@@ -7,23 +7,8 @@ import { DEFAULT_AVATAR } from "../components/defaultAvatar";
 import { useIdentity } from "../hooks/useIdentity";
 import { getVerificationUrl } from "../services/identityService";
 import QRCodeDisplay from "../components/identity/QRCodeDisplay";
+import VerificationBadge from "../components/identity/VerificationBadge";
 import "./Profile.css";
-
-const STATUS_LABELS = {
-  pending_verification: "Pending",
-  under_review: "Under Review",
-  verified: "Verified",
-  rejected: "Rejected",
-  suspended: "Suspended",
-};
-
-function statusBadgeClass(status) {
-  if (status === "verified") return "id-badge-verified";
-  if (status === "under_review") return "id-badge-review";
-  if (status === "rejected") return "id-badge-rejected";
-  if (status === "suspended") return "id-badge-suspended";
-  return "id-badge-pending";
-}
 
 function formatDate(value) {
   if (!value) return "—";
@@ -54,8 +39,6 @@ function Profile() {
 
   const { identity, generating, error: identityError } = useIdentity(profileId, profile);
 
-  const status = profile?.status || "pending_verification";
-  const badge = { label: STATUS_LABELS[status] || status, className: statusBadgeClass(status) };
   const publicProfileUrl = profile ? `${window.location.origin}/profile/${encodeURIComponent(profile.email)}` : "";
 
   return (
@@ -78,7 +61,7 @@ function Profile() {
               <h3>
                 {profile.preferredName || profile.firstName} {profile.lastName}
               </h3>
-              <span className={`id-badge ${badge.className}`}>{badge.label}</span>
+              <VerificationBadge status={profile.status} />
             </div>
           </div>
 
@@ -131,10 +114,15 @@ function Profile() {
               <div><span className="id-label">Current City</span><span className="id-value">{profile.currentCity || "—"}</span></div>
               <div><span className="id-label">Phone</span><span className="id-value">{profile.phone || "—"}</span></div>
               <div><span className="id-label">Email</span><span className="id-value">{profile.email}</span></div>
+              <div><span className="id-label">Emergency Contact</span><span className="id-value">{profile.emergencyContact || "—"}</span></div>
+              <div><span className="id-label">Profile Visibility</span><span className="id-value">{profile.visibility || "public"}</span></div>
             </div>
           </div>
 
           <div className="id-actions">
+            <Link to="/identity">
+              <button>View My ID Card</button>
+            </Link>
             <Link to="/edit-profile">
               <button>Edit Profile</button>
             </Link>

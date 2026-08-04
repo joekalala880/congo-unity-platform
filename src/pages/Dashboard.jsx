@@ -11,44 +11,11 @@ import {
 } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import Avatar from "../components/Avatar";
+import VerificationBadge from "../components/identity/VerificationBadge";
 import { fetchGalleryPage } from "../services/galleryService";
+import { computeProfileCompletion } from "../services/profileCompletion";
 import { resolveGalleryImage } from "./galleryLocalImages";
 import "./Dashboard.css";
-
-const PROFILE_FIELDS = [
-  "firstName",
-  "lastName",
-  "phone",
-  "province",
-  "territory",
-  "village",
-  "currentCountry",
-  "dateOfBirth",
-  "profileImageUrl",
-];
-
-function computeProfileCompletion(profile) {
-  if (!profile) return { percent: 0, filled: 0, total: PROFILE_FIELDS.length };
-
-  const filled = PROFILE_FIELDS.filter((field) => {
-    const value = profile[field];
-    return typeof value === "string" ? value.trim().length > 0 : Boolean(value);
-  }).length;
-
-  return {
-    percent: Math.round((filled / PROFILE_FIELDS.length) * 100),
-    filled,
-    total: PROFILE_FIELDS.length,
-  };
-}
-
-function statusBadge(status) {
-  if (status === "verified") return { label: "Verified", className: "db-badge-verified" };
-  if (status === "under_review") return { label: "Under Review", className: "db-badge-review" };
-  if (status === "rejected") return { label: "Rejected", className: "db-badge-rejected" };
-  if (status === "suspended") return { label: "Suspended", className: "db-badge-suspended" };
-  return { label: "Pending Verification", className: "db-badge-pending" };
-}
 
 function toDate(value) {
   if (!value) return null;
@@ -261,7 +228,6 @@ function Dashboard() {
   }
 
   const completion = computeProfileCompletion(profile);
-  const badge = statusBadge(profile?.status);
   const followersCount = profile?.followers?.length || 0;
 
   return (
@@ -306,7 +272,7 @@ function Dashboard() {
           ) : (
             <div className="db-stat-card">
               <p className="db-stat-label">Verification Status</p>
-              <span className={`db-badge ${badge.className}`}>{badge.label}</span>
+              <VerificationBadge status={profile?.status} />
             </div>
           )}
 
@@ -358,6 +324,7 @@ function Dashboard() {
         </div>
 
         <div className="db-actions-grid">
+          <Link to="/identity" className="db-action-button">Identity Dashboard</Link>
           <Link to="/edit-profile" className="db-action-button">Edit Profile</Link>
           <Link to="/uploadid" className="db-action-button">Upload ID</Link>
           <Link to="/search-users" className="db-action-button">Find People</Link>

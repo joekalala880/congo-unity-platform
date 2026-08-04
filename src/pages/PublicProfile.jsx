@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 import Avatar from "../components/Avatar";
+import VerificationBadge from "../components/identity/VerificationBadge";
 
 function PublicProfile() {
   const { email } = useParams();
@@ -50,7 +51,7 @@ function PublicProfile() {
       <div className="card">
         <p><strong>Province:</strong> {profile.province}</p>
         <p><strong>Country:</strong> {profile.currentCountry}</p>
-        <p><strong>Status:</strong> {profile.status}</p>
+        <p><strong>Status:</strong> <VerificationBadge status={profile.status} /></p>
         <p><strong>Followers:</strong> {profile.followers?.length || 0}</p>
 
         <Link to="/direct-messages">

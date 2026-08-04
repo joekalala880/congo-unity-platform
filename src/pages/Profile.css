@@ -30,40 +30,8 @@
   margin: 0 0 8px;
 }
 
-.id-badge {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 100px;
-  font-size: 12px;
-  font-weight: bold;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-
-.id-badge-pending {
-  background: rgba(217, 164, 65, 0.18);
-  color: #d9a441;
-}
-
-.id-badge-review {
-  background: rgba(90, 150, 220, 0.18);
-  color: #6ea8e8;
-}
-
-.id-badge-verified {
-  background: rgba(63, 168, 92, 0.18);
-  color: #4cbf6f;
-}
-
-.id-badge-rejected {
-  background: rgba(224, 123, 115, 0.18);
-  color: #e07b73;
-}
-
-.id-badge-suspended {
-  background: rgba(154, 154, 154, 0.25);
-  color: #cfcfcf;
-}
+/* Verification status badge styling now lives in
+   src/components/identity/VerificationBadge.css (shared across pages). */
 
 .id-section {
   border-top: 1px solid #2a2a2a;

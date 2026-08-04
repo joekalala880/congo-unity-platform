@@ -1,0 +1,38 @@
+/* Shared verification-status badge. Prefixed "vbadge-" so it never
+   collides with page-scoped badge classes (id-badge-*, db-badge-*, etc). */
+
+.vbadge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.vbadge-pending {
+  background: rgba(217, 164, 65, 0.18);
+  color: #d9a441;
+}
+
+.vbadge-review {
+  background: rgba(90, 150, 220, 0.18);
+  color: #6ea8e8;
+}
+
+.vbadge-verified {
+  background: rgba(63, 168, 92, 0.18);
+  color: #4cbf6f;
+}
+
+.vbadge-rejected {
+  background: rgba(224, 123, 115, 0.18);
+  color: #e07b73;
+}
+
+.vbadge-suspended {
+  background: rgba(154, 154, 154, 0.25);
+  color: #cfcfcf;
+}

@@ -14,6 +14,7 @@ import {
 } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import Avatar from "../components/Avatar";
+import VerificationBadge from "../components/identity/VerificationBadge";
 
 function CommunityFeed() {
   const [posts, setPosts] = useState([]);
@@ -239,6 +240,7 @@ function CommunityFeed() {
                     {profile
                       ? `${profile.firstName} ${profile.lastName}`
                       : post.email}
+                    {profile && <VerificationBadge status={profile.status} />}
                   </h3>
 
                   <p>{profile?.province || "Province not set"}</p>
