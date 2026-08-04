@@ -154,9 +154,19 @@
   color: #4cbf6f;
 }
 
+.db-badge-review {
+  background: rgba(90, 150, 220, 0.18);
+  color: #6ea8e8;
+}
+
 .db-badge-rejected {
   background: rgba(224, 123, 115, 0.18);
   color: #e07b73;
+}
+
+.db-badge-suspended {
+  background: rgba(154, 154, 154, 0.25);
+  color: #cfcfcf;
 }
 
 /* Quick actions */

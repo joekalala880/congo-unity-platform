@@ -116,6 +116,11 @@
   color: #d9a441;
 }
 
+.um-badge-review {
+  background: rgba(90, 150, 220, 0.18);
+  color: #6ea8e8;
+}
+
 .um-badge-verified {
   background: rgba(63, 168, 92, 0.18);
   color: #4cbf6f;

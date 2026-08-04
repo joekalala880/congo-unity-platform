@@ -7,6 +7,7 @@ import "./AdminUserManagement.css";
 
 const STATUS_LABELS = {
   pending_verification: "Pending Verification",
+  under_review: "Under Review",
   verified: "Verified",
   rejected: "Rejected",
   suspended: "Suspended",
@@ -14,6 +15,7 @@ const STATUS_LABELS = {
 
 function statusBadgeClass(status) {
   if (status === "verified") return "um-badge-verified";
+  if (status === "under_review") return "um-badge-review";
   if (status === "rejected") return "um-badge-rejected";
   if (status === "suspended") return "um-badge-suspended";
   return "um-badge-pending";
@@ -120,6 +122,9 @@ function AdminUserManagement() {
   const approve = (profile) =>
     runAction(profile, { status: "verified", rejectionReason: "" }, `${profile.firstName || profile.email} approved.`);
 
+  const markUnderReview = (profile) =>
+    runAction(profile, { status: "under_review" }, `${profile.firstName || profile.email} marked under review.`);
+
   const reject = (profile) => {
     const reason = window.prompt(`Reason for rejecting ${profile.firstName || profile.email}?`);
     if (reason === null) return;
@@ -179,6 +184,7 @@ function AdminUserManagement() {
         <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} aria-label="Filter by verification status">
           <option value="all">All statuses</option>
           <option value="pending_verification">Pending Verification</option>
+          <option value="under_review">Under Review</option>
           <option value="verified">Verified</option>
           <option value="rejected">Rejected</option>
           <option value="suspended">Suspended</option>
@@ -220,6 +226,10 @@ function AdminUserManagement() {
 
                   <div className="um-row-actions">
                     <button type="button" onClick={() => setSelectedProfile(profile)}>View</button>
+
+                    {status !== "under_review" && status !== "verified" && (
+                      <button type="button" onClick={() => markUnderReview(profile)} disabled={busyId === profile.id}>Mark Under Review</button>
+                    )}
 
                     {status !== "verified" && (
                       <button type="button" onClick={() => approve(profile)} disabled={busyId === profile.id}>Approve</button>

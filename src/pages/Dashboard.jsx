@@ -44,7 +44,9 @@ function computeProfileCompletion(profile) {
 
 function statusBadge(status) {
   if (status === "verified") return { label: "Verified", className: "db-badge-verified" };
+  if (status === "under_review") return { label: "Under Review", className: "db-badge-review" };
   if (status === "rejected") return { label: "Rejected", className: "db-badge-rejected" };
+  if (status === "suspended") return { label: "Suspended", className: "db-badge-suspended" };
   return { label: "Pending Verification", className: "db-badge-pending" };
 }
 
