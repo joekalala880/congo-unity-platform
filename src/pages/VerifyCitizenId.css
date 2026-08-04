@@ -1,0 +1,88 @@
+/* Scoped styles for the public /verify/:citizenId page. Prefixed "vfy-" so
+   nothing here collides with the id-, um-, vq-, or iddoc- rules elsewhere.
+   .profile-avatar and .register-section/.register-header come from App.css. */
+
+.vfy-loading {
+  color: #9a9a9a;
+  text-align: center;
+}
+
+.vfy-card {
+  background: #151515;
+  border-top: 4px solid #d9a441;
+  border-radius: 15px;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 30px;
+  text-align: center;
+}
+
+.vfy-card .profile-avatar {
+  margin: 0 auto 16px;
+}
+
+.vfy-card h3 {
+  color: white;
+  font-size: 22px;
+  margin: 0 0 12px;
+}
+
+.vfy-not-found p {
+  color: #cfcfcf;
+}
+
+.vfy-badge {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.vfy-badge-pending {
+  background: rgba(217, 164, 65, 0.18);
+  color: #d9a441;
+}
+
+.vfy-badge-review {
+  background: rgba(90, 150, 220, 0.18);
+  color: #6ea8e8;
+}
+
+.vfy-badge-verified {
+  background: rgba(63, 168, 92, 0.18);
+  color: #4cbf6f;
+}
+
+.vfy-badge-suspended {
+  background: rgba(154, 154, 154, 0.25);
+  color: #cfcfcf;
+}
+
+.vfy-grid {
+  border-top: 1px solid #2a2a2a;
+  padding-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+  text-align: left;
+}
+
+.vfy-label {
+  display: block;
+  color: #9a9a9a;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.vfy-value {
+  display: block;
+  color: white;
+  font-size: 14px;
+  word-break: break-word;
+}

@@ -11,6 +11,7 @@ import {
 } from "firebase/firestore";
 import { useProfilePhotoUpload } from "../hooks/useProfilePhotoUpload";
 import ProfilePhotoField from "../components/ProfilePhotoField";
+import { syncPublicVerificationDisplayFields } from "../services/identityService";
 
 function EditProfile() {
   const [profileId, setProfileId] = useState("");
@@ -114,6 +115,18 @@ function EditProfile() {
       if (updates.profileImageUrl) {
         setProfile((prev) => ({ ...prev, profileImageUrl: updates.profileImageUrl }));
         photo.removeFile();
+      }
+
+      // Best-effort: keeps the public /verify/:citizenId page showing the
+      // current name/photo. Never blocks the save itself — a citizen who
+      // hasn't generated a Citizen ID yet has no mirror doc to update.
+      if (profile.citizenId) {
+        syncPublicVerificationDisplayFields(profile.citizenId, {
+          firstName: updates.firstName,
+          lastName: updates.lastName,
+          preferredName: updates.preferredName,
+          profileImageUrl: updates.profileImageUrl || profile.profileImageUrl,
+        }).catch((err) => console.error("Failed to sync public verification display fields:", err));
       }
 
       alert("Profile updated successfully!");

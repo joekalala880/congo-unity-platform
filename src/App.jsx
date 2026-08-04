@@ -8,6 +8,8 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import UploadID from "./pages/UploadID";
+import IdentityDocuments from "./pages/IdentityDocuments";
+import VerifyCitizenId from "./pages/VerifyCitizenId";
 import Directory from "./pages/Directory";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
@@ -359,6 +361,15 @@ function App() {
         <Route path="/edit-profile" element={<EditProfile />} />
         <Route path="/profile-picture" element={<ProfilePicture />} />
         <Route path="/uploadid" element={<UploadID />} />
+        <Route
+          path="/identity/documents"
+          element={
+            <ProtectedRoute>
+              <IdentityDocuments />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/verify/:citizenId" element={<VerifyCitizenId />} />
 
         <Route path="/directory" element={<Directory />} />
         <Route path="/search-users" element={<SearchUsers />} />
