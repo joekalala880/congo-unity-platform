@@ -38,7 +38,8 @@ export function useIdentity(profileDocId, profile) {
       } catch (err) {
         console.error("Failed to generate citizen identity:", err);
         if (!cancelled) {
-          setError("Couldn't set up your Digital ID right now. Please refresh to try again.");
+          const code = err.code ? ` (${err.code})` : "";
+          setError(`Couldn't set up your Digital ID right now${code}. Please refresh to try again.`);
         }
       } finally {
         if (!cancelled) setGenerating(false);
