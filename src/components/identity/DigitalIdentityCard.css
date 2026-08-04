@@ -1,0 +1,271 @@
+/* Reusable Digital Identity Card. Prefixed "idcard-" so nothing here
+   collides with page-scoped classes elsewhere. */
+
+.idcard-wrap {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.idcard-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.idcard-tab {
+  flex: 1;
+  background: #1b1b1b;
+  border: 1px solid #333;
+  color: #cfcfcf;
+  border-radius: 8px;
+  padding: 8px 0;
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+}
+
+.idcard-tab-active {
+  background: #d9a441;
+  color: #0d0d0d;
+  border-color: #d9a441;
+}
+
+.idcard-stage {
+  position: relative;
+}
+
+.idcard {
+  aspect-ratio: 1013 / 638;
+  width: 100%;
+  background: linear-gradient(155deg, #151515 0%, #1c1c1c 100%);
+  border: 2px solid #d9a441;
+  border-radius: 18px;
+  padding: 5%;
+  flex-direction: column;
+  justify-content: space-between;
+  color: white;
+  box-sizing: border-box;
+}
+
+.idcard-loading {
+  display: flex;
+}
+
+.idcard-skeleton {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #1b1b1b 25%, #262626 37%, #1b1b1b 63%);
+  background-size: 400% 100%;
+  animation: idcard-shimmer 1.4s ease infinite;
+}
+
+@keyframes idcard-shimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+.idcard-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(217, 164, 65, 0.35);
+  padding-bottom: 3%;
+}
+
+.idcard-logo {
+  color: #d9a441;
+  font-weight: bold;
+  font-size: clamp(12px, 3.2vw, 17px);
+}
+
+.idcard-subtitle {
+  color: #9a9a9a;
+  font-size: clamp(8px, 2vw, 11px);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.idcard-body {
+  display: flex;
+  align-items: center;
+  gap: 4%;
+  flex: 1;
+}
+
+.idcard-photo {
+  width: 22%;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 2px solid #d9a441;
+  flex-shrink: 0;
+}
+
+.idcard-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.idcard-name {
+  margin: 0 0 6px;
+  font-size: clamp(13px, 3.4vw, 19px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.idcard-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
+  margin: 8px 0 0;
+}
+
+.idcard-fields dt {
+  color: #9a9a9a;
+  font-size: clamp(7px, 1.7vw, 10px);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.idcard-fields dd {
+  color: white;
+  font-size: clamp(9px, 2.2vw, 13px);
+  margin: 0;
+  word-break: break-word;
+}
+
+.idcard-qr {
+  flex-shrink: 0;
+  width: 26%;
+  aspect-ratio: 1;
+  background: white;
+  border-radius: 8px;
+  padding: 8%;
+  box-sizing: border-box;
+  display: flex;
+}
+
+.idcard-qr canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+.idcard-footer {
+  display: flex;
+  justify-content: space-between;
+  color: #6a6a6a;
+  font-size: clamp(7px, 1.6vw, 10px);
+  border-top: 1px solid rgba(217, 164, 65, 0.35);
+  padding-top: 2%;
+}
+
+.idcard-back-body {
+  display: flex;
+  gap: 4%;
+  flex: 1;
+  align-items: center;
+}
+
+.idcard-back-body .idcard-fields {
+  grid-template-columns: 1fr;
+  flex: 1;
+}
+
+.idcard-back-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  width: 30%;
+}
+
+.idcard-back-right .idcard-qr {
+  width: 100%;
+}
+
+.idcard-url {
+  font-size: clamp(7px, 1.6vw, 9px);
+  color: #9a9a9a;
+  text-align: center;
+  word-break: break-all;
+  margin: 0;
+  max-width: 120px;
+}
+
+.idcard-privacy {
+  font-size: clamp(6px, 1.4vw, 9px);
+  color: #6a6a6a;
+  line-height: 1.4;
+  margin: 3% 0;
+}
+
+.idcard-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.idcard-actions button {
+  background: transparent;
+  border: 1px solid #444;
+  color: #cfcfcf;
+  border-radius: 6px;
+  padding: 9px 16px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.idcard-actions button:hover {
+  border-color: #d9a441;
+  color: #d9a441;
+}
+
+.idcard-actions button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .idcard-wrap,
+  .idcard-wrap * {
+    visibility: visible;
+  }
+
+  .idcard-wrap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .idcard-no-print,
+  .idcard-tabs {
+    display: none !important;
+  }
+
+  .idcard {
+    display: flex !important;
+    width: 90vw;
+    margin: 5vh auto;
+    box-shadow: none;
+  }
+
+  .idcard-back {
+    page-break-before: always;
+  }
+}
