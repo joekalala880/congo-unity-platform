@@ -27,11 +27,16 @@ function Register() {
     firstName: "",
     middleName: "",
     lastName: "",
+    preferredName: "",
+    gender: "",
     dateOfBirth: "",
+    placeOfBirth: "",
+    nationality: "",
     province: "",
     territory: "",
     village: "",
     currentCountry: "",
+    currentCity: "",
     phone: "",
     email: "",
     password: "",
@@ -95,11 +100,16 @@ function Register() {
         firstName: formData.firstName,
         middleName: formData.middleName,
         lastName: formData.lastName,
+        preferredName: formData.preferredName,
+        gender: formData.gender,
         dateOfBirth: formData.dateOfBirth,
+        placeOfBirth: formData.placeOfBirth,
+        nationality: formData.nationality,
         province: formData.province,
         territory: formData.territory,
         village: formData.village,
         currentCountry: formData.currentCountry,
+        currentCity: formData.currentCity,
         phone: formData.phone,
         email: cleanEmail,
         profileImageUrl,
@@ -141,12 +151,25 @@ function Register() {
         <input name="firstName" onChange={handleChange} placeholder="First Name" />
         <input name="middleName" onChange={handleChange} placeholder="Middle Name" />
         <input name="lastName" onChange={handleChange} placeholder="Last Name" />
+        <input name="preferredName" onChange={handleChange} placeholder="Preferred Name (optional)" />
+
+        <select name="gender" onChange={handleChange} defaultValue="">
+          <option value="">Gender (optional)</option>
+          <option value="female">Female</option>
+          <option value="male">Male</option>
+          <option value="other">Other</option>
+          <option value="prefer_not_to_say">Prefer not to say</option>
+        </select>
         <input name="dateOfBirth" onChange={handleChange} type="date" />
+
+        <input name="placeOfBirth" onChange={handleChange} placeholder="Place of Birth (optional)" />
+        <input name="nationality" onChange={handleChange} placeholder="Nationality (optional)" />
 
         <input name="province" onChange={handleChange} placeholder="Province" />
         <input name="territory" onChange={handleChange} placeholder="Territory" />
         <input name="village" onChange={handleChange} placeholder="Village / City" />
         <input name="currentCountry" onChange={handleChange} placeholder="Current Country" />
+        <input name="currentCity" onChange={handleChange} placeholder="Current City (optional)" />
 
         <input name="phone" onChange={handleChange} placeholder="Phone Number" />
         <input name="email" onChange={handleChange} type="email" placeholder="Email Address" />

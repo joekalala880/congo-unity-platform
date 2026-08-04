@@ -16,10 +16,18 @@ function EditProfile() {
   const [profileId, setProfileId] = useState("");
   const [profile, setProfile] = useState({
     firstName: "",
+    middleName: "",
     lastName: "",
+    preferredName: "",
+    gender: "",
+    placeOfBirth: "",
+    nationality: "",
     phone: "",
     province: "",
+    territory: "",
+    village: "",
     currentCountry: "",
+    currentCity: "",
     profileImageUrl: "",
   });
   const [isSaving, setIsSaving] = useState(false);
@@ -71,10 +79,18 @@ function EditProfile() {
 
     const updates = {
       firstName: profile.firstName,
+      middleName: profile.middleName,
       lastName: profile.lastName,
+      preferredName: profile.preferredName,
+      gender: profile.gender,
+      placeOfBirth: profile.placeOfBirth,
+      nationality: profile.nationality,
       phone: profile.phone,
       province: profile.province,
+      territory: profile.territory,
+      village: profile.village,
       currentCountry: profile.currentCountry,
+      currentCity: profile.currentCity,
     };
 
     // Only touch profileImageUrl if the user actually picked a replacement —
@@ -125,10 +141,46 @@ function EditProfile() {
         />
 
         <input
+          name="middleName"
+          value={profile.middleName || ""}
+          onChange={handleChange}
+          placeholder="Middle Name"
+        />
+
+        <input
           name="lastName"
           value={profile.lastName || ""}
           onChange={handleChange}
           placeholder="Last Name"
+        />
+
+        <input
+          name="preferredName"
+          value={profile.preferredName || ""}
+          onChange={handleChange}
+          placeholder="Preferred Name (optional)"
+        />
+
+        <select name="gender" value={profile.gender || ""} onChange={handleChange}>
+          <option value="">Gender (optional)</option>
+          <option value="female">Female</option>
+          <option value="male">Male</option>
+          <option value="other">Other</option>
+          <option value="prefer_not_to_say">Prefer not to say</option>
+        </select>
+
+        <input
+          name="placeOfBirth"
+          value={profile.placeOfBirth || ""}
+          onChange={handleChange}
+          placeholder="Place of Birth (optional)"
+        />
+
+        <input
+          name="nationality"
+          value={profile.nationality || ""}
+          onChange={handleChange}
+          placeholder="Nationality (optional)"
         />
 
         <input
@@ -146,10 +198,31 @@ function EditProfile() {
         />
 
         <input
+          name="territory"
+          value={profile.territory || ""}
+          onChange={handleChange}
+          placeholder="Territory"
+        />
+
+        <input
+          name="village"
+          value={profile.village || ""}
+          onChange={handleChange}
+          placeholder="Village / City"
+        />
+
+        <input
           name="currentCountry"
           value={profile.currentCountry || ""}
           onChange={handleChange}
           placeholder="Current Country"
+        />
+
+        <input
+          name="currentCity"
+          value={profile.currentCity || ""}
+          onChange={handleChange}
+          placeholder="Current City (optional)"
         />
 
         <div className="register-form__full-width">
