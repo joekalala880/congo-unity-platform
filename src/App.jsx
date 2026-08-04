@@ -18,6 +18,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import GovernmentDashboard from "./pages/GovernmentDashboard";
 import VerifyCitizens from "./pages/VerifyCitizens";
 import AdminGalleryManager from "./pages/AdminGalleryManager";
+import AccountSuspended from "./pages/AccountSuspended";
 import AdminUserManagement from "./pages/AdminUserManagement";
 import AdminVerificationQueue from "./pages/AdminVerificationQueue";
 import ProtectedAdmin from "./components/ProtectedAdmin";
@@ -350,6 +351,7 @@ function App() {
 
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/account-suspended" element={<AccountSuspended />} />
         <Route path="/dashboard" element={<Dashboard />} />
 
         <Route path="/profile" element={<Profile />} />

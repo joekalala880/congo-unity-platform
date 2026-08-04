@@ -73,9 +73,39 @@ Once deployed, set `VITE_ID_DOCUMENT_SIGNING_ENDPOINT` (in your `.env`, and
 in whatever hosts the frontend) to that function's URL, e.g.
 `https://your-app.vercel.app/api/cloudinary-sign`.
 
-There is currently no admin UI that calls the `"view"` action — it exists
-so a future review page can request a short-lived viewing link, but
-building that page wasn't part of this migration.
+The `"view"` action is called from `/admin/verifications`' "View Document"
+button.
+
+## Account suspension — current limits and a proposed fix
+
+`/admin/users` can "suspend" an account, and `ProtectedRoute`/`ProtectedAdmin`
+block a suspended user from every route they gate, redirecting to
+`/account-suspended`. **This is an app-level status flag, not a true Firebase
+Auth account lock.** A suspended user's email/password still work — Firebase
+Auth itself has no idea they've been suspended. Only this app's own checks
+(`useAccountStatus`, read on every protected-route render) treat them as
+restricted. If you called Firebase's REST/Admin APIs directly, or a future
+feature forgot to route through `ProtectedRoute`, that boundary wouldn't
+apply.
+
+Actually disabling sign-in requires the **Admin SDK** (`admin.auth().updateUser(uid, { disabled: true })`),
+which — like the Cloudinary signing endpoint above — can only run
+server-side, never in the browser. This isn't built. A proposed design,
+following the same pattern as `api/cloudinary-sign.js`:
+
+1. A new serverless function, e.g. `api/admin-suspend-user.js`, verifying
+   the caller's Firebase ID token and that their own profile has
+   `role: "admin"` (same pattern as the `"view"` action).
+2. On suspend: call `admin.auth().updateUser(targetUid, { disabled: true })`,
+   then write `status: "suspended"` to Firestore (so the existing UI/rules
+   layer stays in sync) — Firebase Auth would then reject the user's
+   *existing* session token on next refresh and block any new sign-in
+   attempt outright, not just app-level routes.
+3. On reactivate: `admin.auth().updateUser(targetUid, { disabled: false })`,
+   then restore the Firestore status.
+4. Reuses the same `FIREBASE_SERVICE_ACCOUNT_KEY` env var already required
+   for `api/cloudinary-sign.js` — no new secret needed, just a new function
+   and a call to it from `/admin/users`' suspend/reactivate buttons.
 
 ## Expanding the ESLint configuration
 
