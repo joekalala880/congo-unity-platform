@@ -1,0 +1,292 @@
+/* Scoped styles for /identity/documents. Prefixed "iddoc-" so nothing here
+   collides with the id-, um-, or vq- rules elsewhere. Reuses
+   .register-form__error/__success and .register-section/.register-header
+   from App.css. */
+
+.iddoc-add-button {
+  background: #d9a441;
+  color: #0d0d0d;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.iddoc-add-button:hover {
+  background: #f0bb55;
+}
+
+.iddoc-form-card {
+  background: #151515;
+  border-top: 4px solid #d9a441;
+  border-radius: 15px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.iddoc-form-card h3 {
+  color: white;
+  margin: 0 0 16px;
+}
+
+.iddoc-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.iddoc-form-grid input,
+.iddoc-form-grid select {
+  background: #1b1b1b;
+  border: 1px solid #333;
+  color: white;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  width: 100%;
+}
+
+.iddoc-date-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  color: #9a9a9a;
+}
+
+.iddoc-file-field {
+  border-top: 1px solid #2a2a2a;
+  padding-top: 16px;
+  margin-bottom: 16px;
+}
+
+.iddoc-file-field input[type="file"] {
+  color: #cfcfcf;
+  font-size: 13px;
+}
+
+.iddoc-file-hint {
+  color: #9a9a9a;
+  font-size: 13px;
+  margin: 8px 0;
+}
+
+.iddoc-preview {
+  max-width: 220px;
+  max-height: 220px;
+  border-radius: 8px;
+  border: 2px solid #d9a441;
+  margin-top: 10px;
+  display: block;
+  object-fit: cover;
+}
+
+.iddoc-remove-file {
+  background: transparent;
+  border: 1px solid #444;
+  color: #cfcfcf;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.iddoc-remove-file:hover {
+  border-color: #e07b73;
+  color: #e07b73;
+}
+
+.iddoc-form-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.iddoc-form-actions button {
+  background: transparent;
+  border: 1px solid #444;
+  color: #cfcfcf;
+  border-radius: 6px;
+  padding: 9px 16px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.iddoc-form-actions button:hover {
+  border-color: #d9a441;
+  color: #d9a441;
+}
+
+.iddoc-form-actions button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.iddoc-empty {
+  color: #9a9a9a;
+  padding: 40px 0;
+  text-align: center;
+}
+
+.iddoc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.iddoc-row {
+  background: #1b1b1b;
+  border-top: 3px solid #d9a441;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.iddoc-row-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.iddoc-row-title strong {
+  color: white;
+}
+
+.iddoc-row-meta {
+  color: #9a9a9a;
+  font-size: 13px;
+  margin: 6px 0 0;
+}
+
+.iddoc-reason {
+  color: #e07b73;
+  font-size: 13px;
+  margin: 8px 0 0;
+}
+
+.iddoc-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.iddoc-badge-draft {
+  background: rgba(154, 154, 154, 0.25);
+  color: #cfcfcf;
+}
+
+.iddoc-badge-submitted {
+  background: rgba(217, 164, 65, 0.18);
+  color: #d9a441;
+}
+
+.iddoc-badge-review {
+  background: rgba(90, 150, 220, 0.18);
+  color: #6ea8e8;
+}
+
+.iddoc-badge-approved {
+  background: rgba(63, 168, 92, 0.18);
+  color: #4cbf6f;
+}
+
+.iddoc-badge-rejected {
+  background: rgba(224, 123, 115, 0.18);
+  color: #e07b73;
+}
+
+.iddoc-badge-info {
+  background: rgba(90, 150, 220, 0.18);
+  color: #6ea8e8;
+}
+
+.iddoc-badge-replaced {
+  background: rgba(154, 154, 154, 0.25);
+  color: #cfcfcf;
+}
+
+.iddoc-respond-box {
+  margin-top: 12px;
+  border-top: 1px solid #2a2a2a;
+  padding-top: 12px;
+}
+
+.iddoc-respond-box textarea {
+  width: 100%;
+  min-height: 80px;
+  background: #0d0d0d;
+  border: 1px solid #333;
+  color: white;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-family: inherit;
+  margin-bottom: 10px;
+  resize: vertical;
+}
+
+.iddoc-row-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.iddoc-row-actions button {
+  background: transparent;
+  border: 1px solid #444;
+  color: #cfcfcf;
+  border-radius: 6px;
+  padding: 7px 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.iddoc-row-actions button:hover {
+  border-color: #d9a441;
+  color: #d9a441;
+}
+
+.iddoc-row-actions button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.iddoc-delete-button {
+  border-color: #7a2f2f !important;
+  color: #e07b73 !important;
+}
+
+.iddoc-delete-button:hover {
+  border-color: #e07b73 !important;
+}
+
+.iddoc-skeleton {
+  background: linear-gradient(90deg, #1b1b1b 25%, #262626 37%, #1b1b1b 63%);
+  background-size: 400% 100%;
+  animation: iddoc-shimmer 1.4s ease infinite;
+  border-radius: 8px;
+}
+
+@keyframes iddoc-shimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+@media (max-width: 700px) {
+  .iddoc-form-actions {
+    flex-direction: column;
+  }
+
+  .iddoc-form-actions button {
+    width: 100%;
+  }
+}

@@ -134,9 +134,14 @@ function Profile() {
             </div>
           </div>
 
-          <Link to="/edit-profile">
-            <button>Edit Profile</button>
-          </Link>
+          <div className="id-actions">
+            <Link to="/edit-profile">
+              <button>Edit Profile</button>
+            </Link>
+            <Link to="/identity/documents">
+              <button>Manage Identity Documents</button>
+            </Link>
+          </div>
         </div>
       )}
     </section>
