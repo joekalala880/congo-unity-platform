@@ -122,6 +122,85 @@
   color: #e07b73;
 }
 
+.vq-badge-review {
+  background: rgba(90, 150, 220, 0.18);
+  color: #6ea8e8;
+}
+
+.vq-badge-info {
+  background: rgba(90, 150, 220, 0.18);
+  color: #6ea8e8;
+}
+
+.vq-badge-replaced {
+  background: rgba(154, 154, 154, 0.25);
+  color: #cfcfcf;
+}
+
+.vq-badge-legacy {
+  background: rgba(154, 154, 154, 0.25);
+  color: #9a9a9a;
+}
+
+.vq-row-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.vq-history {
+  background: #151515;
+  border: 1px solid #2a2a2a;
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  padding: 16px;
+  margin-top: -4px;
+}
+
+.vq-history h4 {
+  color: #d9a441;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 12px 0 6px;
+}
+
+.vq-history h4:first-child {
+  margin-top: 0;
+}
+
+.vq-note-form {
+  margin-top: 10px;
+}
+
+.vq-note-form textarea {
+  width: 100%;
+  min-height: 60px;
+  background: #0d0d0d;
+  border: 1px solid #333;
+  color: white;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-family: inherit;
+  margin-bottom: 8px;
+  resize: vertical;
+}
+
+.vq-note-form button {
+  background: transparent;
+  border: 1px solid #444;
+  color: #cfcfcf;
+  border-radius: 6px;
+  padding: 7px 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.vq-note-form button:hover {
+  border-color: #d9a441;
+  color: #d9a441;
+}
+
 .vq-row-actions {
   display: flex;
   gap: 8px;
