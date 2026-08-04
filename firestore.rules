@@ -30,6 +30,15 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/congoleseProfiles/$(request.auth.uid)).data.role == "admin";
     }
 
+    // Backs the 'verified-only' profile visibility option (Phase 3) — same
+    // canonical doc-ID-equals-Auth-UID lookup as isAdmin(), just checking
+    // status instead of role.
+    function callerIsVerified() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/congoleseProfiles/$(request.auth.uid))
+        && get(/databases/$(database)/documents/congoleseProfiles/$(request.auth.uid)).data.status == "verified";
+    }
+
     // Blocks an admin from demoting or suspending themselves via the User
     // Management page — losing the admin role (or getting suspended) on
     // your own account, by accident, mid-review-session, would otherwise
@@ -75,8 +84,19 @@ service cloud.firestore {
     // ---------- congoleseProfiles ----------
     // Public directory data, but contains PII (phone, DOB, village/province,
     // photo) — restricted to signed-in users rather than the public internet.
+    // Phase 3 adds a `visibility` field (private/verified-only/public,
+    // default public for any profile that predates this field, so nothing
+    // existing loses visibility). Owner and admins can always read their
+    // own/any profile regardless of visibility; a collection query (e.g.
+    // SearchUsers.jsx fetching the whole collection) simply omits documents
+    // the caller isn't allowed to see rather than erroring, so this cascades
+    // privacy everywhere without touching those pages.
     match /congoleseProfiles/{profileId} {
-      allow read: if isSignedIn();
+      allow read: if isAdmin()
+        || (isSignedIn() && resource.data.userId == request.auth.uid)
+        || !('visibility' in resource.data)
+        || resource.data.visibility == 'public'
+        || (resource.data.visibility == 'verified-only' && callerIsVerified());
 
       allow create: if isSignedIn()
         && request.resource.data.userId == request.auth.uid
@@ -99,7 +119,7 @@ service cloud.firestore {
             'firstName', 'middleName', 'lastName', 'preferredName', 'gender',
             'placeOfBirth', 'nationality', 'phone',
             'province', 'territory', 'village', 'currentCountry', 'currentCity',
-            'profileImageUrl', 'followers',
+            'profileImageUrl', 'followers', 'emergencyContact', 'visibility',
             'citizenId', 'memberNumber', 'registrationDate'
           ])
           && isValidIdentityFieldChange('citizenId')
@@ -316,12 +336,19 @@ service cloud.firestore {
     // ---------- verificationAuditLogs ----------
     // Append-only trail of every identity-verification-related event
     // (upload, submission, review started, approval, rejection, request for
-    // more info, replacement, deletion, profile verification change).
-    // Admin-readable only — this is a security/audit tool, not a
-    // citizen-facing feed. actorRole is cross-checked against the real
-    // caller so a citizen can't write a log entry claiming to be an admin.
+    // more info, replacement, deletion, profile verification change, card
+    // reissue). Admin-readable always; Phase 3 also lets the citizen an
+    // entry is ABOUT read their own history (Identity Dashboard "recent
+    // activity") — never any other citizen's. Internal admin notes
+    // (identityDocuments/{id}/reviewNotes) stay admin-only and separate from
+    // this, so nothing reviewer-private leaks through here. actorRole is
+    // cross-checked against the real caller so a citizen can't write a log
+    // entry claiming to be an admin.
     match /verificationAuditLogs/{logId} {
-      allow read: if isAdmin();
+      // No `resource != null` guard needed here (unlike identityDocuments):
+      // audit log entries are never deleted (delete: if false below), so a
+      // read-after-delete null-resource case can't occur for this collection.
+      allow read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
 
       allow create: if isSignedIn()
         && request.resource.data.actorId == request.auth.uid
@@ -329,7 +356,7 @@ service cloud.firestore {
         && request.resource.data.type in [
              'upload', 'submission', 'review_started', 'approval', 'rejection',
              'request_more_info', 'document_replacement', 'deletion',
-             'profile_verification_change'
+             'profile_verification_change', 'card_reissued'
            ]
         && request.resource.data.createdAt is timestamp
         && request.resource.data.keys().hasOnly([
@@ -361,14 +388,18 @@ service cloud.firestore {
         && request.resource.data.status is string
         && request.resource.data.keys().hasOnly([
              'userId', 'citizenId', 'firstName', 'lastName', 'preferredName',
-             'profileImageUrl', 'status', 'registrationDate', 'verifiedAt', 'verifiedBy'
+             'profileImageUrl', 'status', 'registrationDate', 'verifiedAt', 'verifiedBy',
+             'province', 'currentCountry'
            ]);
 
+      // province/currentCountry are owner-editable display fields, same as
+      // name/photo — optional-to-show on the public verify page (Phase 3),
+      // never a substitute for the full private address on congoleseProfiles.
       allow update: if isAdmin()
         || (
           isSignedIn() && resource.data.userId == request.auth.uid
           && request.resource.data.diff(resource.data).affectedKeys()
-               .hasOnly(['firstName', 'lastName', 'preferredName', 'profileImageUrl'])
+               .hasOnly(['firstName', 'lastName', 'preferredName', 'profileImageUrl', 'province', 'currentCountry'])
         );
 
       allow delete: if isAdmin();
