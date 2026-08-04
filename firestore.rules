@@ -30,6 +30,20 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/congoleseProfiles/$(request.auth.uid)).data.role == "admin";
     }
 
+    // Blocks an admin from demoting or suspending themselves via the User
+    // Management page — losing the admin role (or getting suspended) on
+    // your own account, by accident, mid-review-session, would otherwise
+    // lock you out with no other admin necessarily around to undo it.
+    // Only applies to profileId == the caller's own uid; admins can still
+    // freely demote/suspend *other* admins.
+    function isSelfLockout(profileId) {
+      return request.auth.uid == profileId
+        && (
+          request.resource.data.role != resource.data.role
+          || (request.resource.data.status == "suspended" && resource.data.status != "suspended")
+        );
+    }
+
     // Shared validation for the "Create*" pages (jobs, events, scholarships,
     // news, businesses, announcements), which all follow the same shape:
     // authenticated create, createdBy set to the author's own email, a
@@ -67,7 +81,7 @@ service cloud.firestore {
       // what stops a user from self-promoting to admin.
       // Separately, ANY signed-in user may update only the `followers` field,
       // which is how the follow/unfollow feature writes to *other* profiles.
-      allow update: if isAdmin()
+      allow update: if (isAdmin() && !isSelfLockout(profileId))
         || (
           isSignedIn() && resource.data.userId == request.auth.uid
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
@@ -218,10 +232,15 @@ service cloud.firestore {
     match /notifications/{notificationId} {
       allow read: if isSignedIn() && resource.data.to == request.auth.token.email;
 
-      // No client code path creates notifications today. Reserved for a
-      // trusted backend (Cloud Function/Admin SDK), which bypasses these
-      // rules entirely — see summary for why this is deliberately locked down.
-      allow create: if false;
+      // Admin actions (verification approve/reject) create notifications to
+      // the affected user. Validated so an admin can't be tricked into
+      // writing an arbitrary payload — to/message are required, and it
+      // always starts unread regardless of what's sent.
+      allow create: if isAdmin()
+        && isNonEmptyString(request.resource.data.to)
+        && isNonEmptyString(request.resource.data.message)
+        && request.resource.data.read == false
+        && request.resource.data.createdAt is timestamp;
 
       // Recipient may only flip `read` to true; nothing else.
       allow update: if isSignedIn()
