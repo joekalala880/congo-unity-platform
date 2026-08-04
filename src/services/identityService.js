@@ -1,4 +1,4 @@
-import { doc, runTransaction, updateDoc, writeBatch } from "firebase/firestore";
+import { doc, getDoc, runTransaction, setDoc, updateDoc, writeBatch } from "firebase/firestore";
 import { db } from "../firebase";
 
 const COUNTER_DOC = doc(db, "counters", "citizenId");
@@ -10,6 +10,23 @@ function formatCitizenId(sequence) {
 
 function formatMemberNumber(sequence) {
   return `CU-${String(sequence).padStart(6, "0")}`;
+}
+
+function buildPublicVerificationDoc(existingProfile, citizenId, registrationDate) {
+  return {
+    userId: existingProfile.userId,
+    citizenId,
+    firstName: existingProfile.firstName || "",
+    lastName: existingProfile.lastName || "",
+    preferredName: existingProfile.preferredName || "",
+    profileImageUrl: existingProfile.profileImageUrl || "",
+    status: existingProfile.status || "pending_verification",
+    registrationDate,
+    verifiedAt: existingProfile.verifiedAt || null,
+    verifiedBy: existingProfile.verifiedBy || null,
+    province: existingProfile.province || "",
+    currentCountry: existingProfile.currentCountry || "",
+  };
 }
 
 // Runs once per user, the first time their profile is missing a
@@ -28,6 +45,24 @@ function formatMemberNumber(sequence) {
 // before this feature existed, that backfill could happen much later.
 export async function generateCitizenIdentity(profileDocId, existingProfile) {
   if (existingProfile?.citizenId) {
+    // Backfill: users whose citizenId was generated before the
+    // publicVerifications mirror existed (or before this session added
+    // it) would otherwise never get one, since this early-return path
+    // used to skip straight past it — discovered via a production check
+    // that found publicVerifications empty despite real citizens already
+    // having Citizen IDs. Cheap no-op for everyone else (one extra read).
+    try {
+      const mirrorSnap = await getDoc(doc(db, "publicVerifications", existingProfile.citizenId));
+      if (!mirrorSnap.exists()) {
+        await setDoc(
+          doc(db, "publicVerifications", existingProfile.citizenId),
+          buildPublicVerificationDoc(existingProfile, existingProfile.citizenId, existingProfile.registrationDate)
+        );
+      }
+    } catch (err) {
+      console.error("Failed to backfill publicVerifications mirror:", err);
+    }
+
     return {
       citizenId: existingProfile.citizenId,
       memberNumber: existingProfile.memberNumber,
@@ -64,20 +99,7 @@ export async function generateCitizenIdentity(profileDocId, existingProfile) {
     registrationDate,
   });
 
-  batch.set(doc(db, "publicVerifications", citizenId), {
-    userId: existingProfile.userId,
-    citizenId,
-    firstName: existingProfile.firstName || "",
-    lastName: existingProfile.lastName || "",
-    preferredName: existingProfile.preferredName || "",
-    profileImageUrl: existingProfile.profileImageUrl || "",
-    status: existingProfile.status || "pending_verification",
-    registrationDate,
-    verifiedAt: null,
-    verifiedBy: null,
-    province: existingProfile.province || "",
-    currentCountry: existingProfile.currentCountry || "",
-  });
+  batch.set(doc(db, "publicVerifications", citizenId), buildPublicVerificationDoc(existingProfile, citizenId, registrationDate));
 
   await batch.commit();
 
