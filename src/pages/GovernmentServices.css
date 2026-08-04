@@ -1,0 +1,54 @@
+/* Scoped styles for /government/services. Prefixed "govsvc-" so nothing
+   here collides with rules elsewhere. Reuses .register-section/.register-header from App.css. */
+
+.govsvc-disclaimer {
+  background: #1b1b1b;
+  border-left: 3px solid #d9a441;
+  color: #cfcfcf;
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 14px 18px;
+  border-radius: 8px;
+  max-width: 720px;
+  margin: 0 auto 30px;
+}
+
+.govsvc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.govsvc-card {
+  background: #151515;
+  border-top: 4px solid #d9a441;
+  border-radius: 15px;
+  padding: 24px;
+}
+
+.govsvc-card h3 {
+  color: white;
+  margin: 0 0 10px;
+}
+
+.govsvc-card p {
+  color: #cfcfcf;
+  font-size: 14px;
+  margin: 0 0 16px;
+}
+
+.govsvc-card-disabled {
+  border-top-color: #444;
+  opacity: 0.6;
+}
+
+.govsvc-links {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.govsvc-links a {
+  color: #d9a441;
+}

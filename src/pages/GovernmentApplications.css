@@ -1,0 +1,118 @@
+/* Scoped styles for /government/applications. Prefixed "govapp-" so
+   nothing here collides with rules elsewhere. */
+
+.govapp-actions {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.govapp-actions button {
+  background: #d9a441;
+  color: #0d0d0d;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.govapp-actions button:hover {
+  background: #f0bb55;
+}
+
+.govapp-empty {
+  color: #9a9a9a;
+  padding: 40px 0;
+  text-align: center;
+}
+
+.govapp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.govapp-row {
+  display: block;
+  background: #1b1b1b;
+  border-top: 3px solid #d9a441;
+  border-radius: 12px;
+  padding: 16px;
+  text-decoration: none;
+}
+
+.govapp-row-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.govapp-row-title strong {
+  color: white;
+}
+
+.govapp-row-meta {
+  color: #9a9a9a;
+  font-size: 13px;
+  margin: 6px 0 0;
+}
+
+.govapp-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.govapp-badge-draft {
+  background: rgba(154, 154, 154, 0.25);
+  color: #cfcfcf;
+}
+
+.govapp-badge-submitted {
+  background: rgba(217, 164, 65, 0.18);
+  color: #d9a441;
+}
+
+.govapp-badge-review {
+  background: rgba(90, 150, 220, 0.18);
+  color: #6ea8e8;
+}
+
+.govapp-badge-approved {
+  background: rgba(63, 168, 92, 0.18);
+  color: #4cbf6f;
+}
+
+.govapp-badge-rejected {
+  background: rgba(224, 123, 115, 0.18);
+  color: #e07b73;
+}
+
+.govapp-badge-info {
+  background: rgba(90, 150, 220, 0.18);
+  color: #6ea8e8;
+}
+
+.govapp-badge-withdrawn {
+  background: rgba(154, 154, 154, 0.25);
+  color: #cfcfcf;
+}
+
+.govapp-skeleton {
+  background: linear-gradient(90deg, #1b1b1b 25%, #262626 37%, #1b1b1b 63%);
+  background-size: 400% 100%;
+  animation: govapp-shimmer 1.4s ease infinite;
+  border-radius: 8px;
+}
+
+@keyframes govapp-shimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
