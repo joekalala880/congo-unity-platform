@@ -1,0 +1,193 @@
+/* Scoped styles for /admin/verifications. Prefixed "vq-" so nothing here
+   collides with the cg-, db-, gm-, um-, or hub- rules elsewhere. */
+
+.vq-page {
+  background: #0d0d0d;
+  min-height: 100vh;
+  padding: 40px 6% 80px;
+  color: white;
+}
+
+.vq-header {
+  margin-bottom: 24px;
+}
+
+.vq-header h1 {
+  color: #d9a441;
+  font-size: 30px;
+  margin: 0 0 6px;
+}
+
+.vq-header p {
+  color: #cfcfcf;
+  margin: 0;
+}
+
+.vq-filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.vq-filters select {
+  background: #1b1b1b;
+  border: 1px solid #333;
+  color: white;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+}
+
+.vq-count {
+  color: #9a9a9a;
+  font-size: 13px;
+  margin: 0 0 14px;
+}
+
+.vq-empty {
+  color: #9a9a9a;
+  padding: 40px 0;
+  text-align: center;
+}
+
+.vq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.vq-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  background: #1b1b1b;
+  border-top: 3px solid #d9a441;
+  border-radius: 12px;
+  padding: 16px;
+  flex-wrap: wrap;
+}
+
+.vq-row-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #d9a441;
+  flex-shrink: 0;
+}
+
+.vq-row-body {
+  flex: 1;
+  min-width: 220px;
+}
+
+.vq-row-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.vq-row-meta {
+  color: #9a9a9a;
+  font-size: 13px;
+  margin: 4px 0 0;
+}
+
+.vq-rejection-reason {
+  color: #e07b73;
+}
+
+.vq-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.vq-badge-pending {
+  background: rgba(217, 164, 65, 0.18);
+  color: #d9a441;
+}
+
+.vq-badge-approved {
+  background: rgba(63, 168, 92, 0.18);
+  color: #4cbf6f;
+}
+
+.vq-badge-rejected {
+  background: rgba(224, 123, 115, 0.18);
+  color: #e07b73;
+}
+
+.vq-row-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.vq-row-actions button {
+  background: transparent;
+  border: 1px solid #444;
+  color: #cfcfcf;
+  border-radius: 6px;
+  padding: 7px 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.vq-row-actions button:hover {
+  border-color: #d9a441;
+  color: #d9a441;
+}
+
+.vq-row-actions button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.vq-reject-button {
+  border-color: #7a2f2f !important;
+  color: #e07b73 !important;
+}
+
+.vq-reject-button:hover {
+  border-color: #e07b73 !important;
+}
+
+.vq-skeleton {
+  background: linear-gradient(90deg, #1b1b1b 25%, #262626 37%, #1b1b1b 63%);
+  background-size: 400% 100%;
+  animation: vq-shimmer 1.4s ease infinite;
+  border-radius: 8px;
+}
+
+@keyframes vq-shimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+.vq-skeleton-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.vq-skeleton-line {
+  height: 14px;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 700px) {
+  .vq-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .vq-row-actions {
+    width: 100%;
+  }
+}
