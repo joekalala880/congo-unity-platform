@@ -1,0 +1,144 @@
+/* Scoped styles for the Digital Identity Profile page. Prefixed "id-" so
+   nothing here collides with the cg-, db-, gm-, um-, vq-, or hub- rules
+   elsewhere. .profile-avatar and .register-form__error come from App.css. */
+
+.id-card {
+  background: #151515;
+  border-top: 4px solid #d9a441;
+  border-radius: 15px;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 30px;
+  text-align: left;
+}
+
+.id-card-top {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.id-card-top .profile-avatar {
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.id-card-heading h3 {
+  color: white;
+  font-size: 22px;
+  margin: 0 0 8px;
+}
+
+.id-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.id-badge-pending {
+  background: rgba(217, 164, 65, 0.18);
+  color: #d9a441;
+}
+
+.id-badge-review {
+  background: rgba(90, 150, 220, 0.18);
+  color: #6ea8e8;
+}
+
+.id-badge-verified {
+  background: rgba(63, 168, 92, 0.18);
+  color: #4cbf6f;
+}
+
+.id-badge-rejected {
+  background: rgba(224, 123, 115, 0.18);
+  color: #e07b73;
+}
+
+.id-badge-suspended {
+  background: rgba(154, 154, 154, 0.25);
+  color: #cfcfcf;
+}
+
+.id-section {
+  border-top: 1px solid #2a2a2a;
+  padding-top: 20px;
+  margin-bottom: 20px;
+}
+
+.id-section h4 {
+  color: #d9a441;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 16px;
+}
+
+.id-generating {
+  color: #9a9a9a;
+  font-size: 13px;
+  margin: 0 0 12px;
+}
+
+.id-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.id-label {
+  display: block;
+  color: #9a9a9a;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.id-value {
+  display: block;
+  color: white;
+  font-size: 14px;
+  word-break: break-word;
+}
+
+.id-link {
+  color: #d9a441;
+  text-decoration: none;
+}
+
+.id-link:hover {
+  text-decoration: underline;
+}
+
+.id-qr {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.id-qr canvas {
+  border-radius: 8px;
+  border: 2px solid #d9a441;
+}
+
+.id-qr-caption {
+  color: #9a9a9a;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+@media (max-width: 600px) {
+  .id-card {
+    padding: 20px;
+  }
+
+  .id-card-top {
+    flex-direction: column;
+    text-align: center;
+  }
+}
