@@ -215,17 +215,163 @@ service cloud.firestore {
 
     // ---------- identityDocuments ----------
     // Sensitive: government ID uploads. Owner and admins only, ever.
+    // Phase 2 schema: documentType/status carry the full verification
+    // workflow (draft -> submitted -> under_review -> approved/rejected/
+    // more_information_required -> replaced). citizenId is cross-checked
+    // against the caller's own profile (doc ID == Auth UID, same canonical
+    // pattern as isAdmin()) so it can't be spoofed to point at someone
+    // else's identity. Older documents written before this schema (plain
+    // pending_review/approved/rejected, no documentType) remain readable
+    // and admin-writable under this same match block — no migration
+    // required, matches the lazy-backfill approach used elsewhere.
+    function isValidDocumentTypeSubmit() {
+      return request.resource.data.documentType in [
+        'national_id', 'passport', 'birth_certificate', 'driver_license',
+        'residence_permit', 'refugee_card', 'student_id', 'selfie', 'other'
+      ];
+    }
+
     match /identityDocuments/{documentId} {
-      allow read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+      // resource != null guards a read of a deleted/nonexistent document —
+      // without it, resource.data throws an evaluation error instead of a
+      // clean deny (discovered via a test that reads a doc right after
+      // deleting it, e.g. to confirm the delete worked).
+      allow read: if isAdmin() || (isSignedIn() && resource != null && resource.data.userId == request.auth.uid);
 
       allow create: if isSignedIn()
         && request.resource.data.userId == request.auth.uid
         && request.resource.data.email == request.auth.token.email
+        && request.resource.data.citizenId
+             == get(/databases/$(database)/documents/congoleseProfiles/$(request.auth.uid)).data.citizenId
+        && isValidDocumentTypeSubmit()
         && isNonEmptyString(request.resource.data.cloudinaryPublicId)
-        && request.resource.data.status == "pending_review";
+        && isNonEmptyString(request.resource.data.fileType)
+        && request.resource.data.fileSize is number
+        && request.resource.data.fileSize > 0
+        && request.resource.data.fileSize <= 10485760
+        && request.resource.data.status in ['draft', 'submitted']
+        && request.resource.data.submittedAt is timestamp
+        && request.resource.data.updatedAt is timestamp
+        && request.resource.data.reviewerId == null
+        && request.resource.data.reviewedAt == null
+        && request.resource.data.keys().hasOnly([
+             'userId', 'citizenId', 'email', 'documentType', 'documentNumber',
+             'issuingCountry', 'issueDate', 'expirationDate', 'cloudinaryPublicId',
+             'resourceType', 'fileType', 'fileSize', 'submittedAt', 'updatedAt',
+             'status', 'rejectionReason', 'requestMoreInfoMessage', 'reviewerId',
+             'reviewedAt', 'replacesDocumentId', 'ownerResponseMessage'
+           ]);
 
-      // Only admins can change review status or remove a submission.
-      allow update, delete: if isAdmin();
+      // Admins may change anything (review decisions, etc). Otherwise, the
+      // owner may only touch a document that isn't actively under review or
+      // already decided-and-final:
+      //  - draft -> draft (keep editing) or draft -> submitted (submit)
+      //  - rejected -> replaced (paired with creating a new doc client-side)
+      //  - more_information_required -> submitted (respond in place) or
+      //    -> replaced (upload a new file instead)
+      // reviewerId/reviewedAt/submittedAt/userId/citizenId can never be
+      // touched by the owner — those are either admin-only or immutable
+      // history.
+      allow update: if isAdmin()
+        || (
+          isSignedIn() && resource.data.userId == request.auth.uid
+          && request.resource.data.userId == resource.data.userId
+          && request.resource.data.citizenId == resource.data.citizenId
+          && request.resource.data.reviewerId == resource.data.reviewerId
+          && request.resource.data.reviewedAt == resource.data.reviewedAt
+          && request.resource.data.submittedAt == resource.data.submittedAt
+          && (
+            (resource.data.status == 'draft' && request.resource.data.status in ['draft', 'submitted'])
+            || (resource.data.status == 'rejected' && request.resource.data.status == 'replaced')
+            || (resource.data.status == 'more_information_required'
+                && request.resource.data.status in ['submitted', 'replaced'])
+          )
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+               'documentType', 'documentNumber', 'issuingCountry', 'issueDate',
+               'expirationDate', 'cloudinaryPublicId', 'resourceType', 'fileType',
+               'fileSize', 'status', 'updatedAt', 'ownerResponseMessage'
+             ])
+        );
+
+      // Only a draft (never submitted) may be deleted by its owner; admins
+      // may remove any submission.
+      allow delete: if isAdmin()
+        || (isSignedIn() && resource.data.userId == request.auth.uid && resource.data.status == 'draft');
+
+      // Internal admin notes on a submission — never visible to the owner,
+      // even though the owner can read the parent document. Append-only.
+      match /reviewNotes/{noteId} {
+        allow read: if isAdmin();
+
+        allow create: if isAdmin()
+          && request.resource.data.authorId == request.auth.uid
+          && isNonEmptyString(request.resource.data.message)
+          && request.resource.data.createdAt is timestamp
+          && request.resource.data.keys().hasOnly(['authorId', 'authorEmail', 'message', 'createdAt']);
+
+        allow update, delete: if false;
+      }
+    }
+
+    // ---------- verificationAuditLogs ----------
+    // Append-only trail of every identity-verification-related event
+    // (upload, submission, review started, approval, rejection, request for
+    // more info, replacement, deletion, profile verification change).
+    // Admin-readable only — this is a security/audit tool, not a
+    // citizen-facing feed. actorRole is cross-checked against the real
+    // caller so a citizen can't write a log entry claiming to be an admin.
+    match /verificationAuditLogs/{logId} {
+      allow read: if isAdmin();
+
+      allow create: if isSignedIn()
+        && request.resource.data.actorId == request.auth.uid
+        && request.resource.data.userId is string
+        && request.resource.data.type in [
+             'upload', 'submission', 'review_started', 'approval', 'rejection',
+             'request_more_info', 'document_replacement', 'deletion',
+             'profile_verification_change'
+           ]
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.keys().hasOnly([
+             'type', 'documentId', 'userId', 'actorId', 'actorRole', 'message', 'createdAt'
+           ])
+        && (
+          (request.resource.data.actorRole == 'citizen' && request.resource.data.userId == request.auth.uid)
+          || (request.resource.data.actorRole == 'admin' && isAdmin())
+        );
+
+      allow update, delete: if false;
+    }
+
+    // ---------- publicVerifications ----------
+    // Minimal public-safe mirror of a verified/pending identity, keyed by
+    // citizenId. Firestore rules are document-level, not field-level, so
+    // this is the only way to let /verify/:citizenId be readable by anyone
+    // without exposing the full congoleseProfiles document (email, phone,
+    // DOB, documents, etc). Created by the owner the moment their citizenId
+    // is generated (see identityService.js); display fields (name/photo)
+    // stay owner-editable, but status/verifiedAt/verifiedBy are admin-only —
+    // a citizen must never be able to mark their own public page "verified".
+    match /publicVerifications/{citizenId} {
+      allow read: if true;
+
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.citizenId == citizenId
+        && request.resource.data.status is string
+        && request.resource.data.keys().hasOnly([
+             'userId', 'citizenId', 'firstName', 'lastName', 'preferredName',
+             'profileImageUrl', 'status', 'registrationDate', 'verifiedAt', 'verifiedBy'
+           ]);
+
+      allow update: if isAdmin()
+        || (
+          isSignedIn() && resource.data.userId == request.auth.uid
+          && request.resource.data.diff(resource.data).affectedKeys()
+               .hasOnly(['firstName', 'lastName', 'preferredName', 'profileImageUrl'])
+        );
+
+      allow delete: if isAdmin();
     }
 
     // ---------- messages (direct messages) ----------
