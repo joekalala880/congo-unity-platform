@@ -91,6 +91,9 @@ function Dashboard() {
   const [applications, setApplications] = useState([]);
   const [applicationsLoading, setApplicationsLoading] = useState(true);
 
+  const [savedJobsCount, setSavedJobsCount] = useState(0);
+  const [savedJobsLoading, setSavedJobsLoading] = useState(true);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -229,6 +232,21 @@ function Dashboard() {
         setApplicationsLoading(false);
       }
     })();
+
+    (async () => {
+      setSavedJobsLoading(true);
+      try {
+        const snapshot = await getDocs(
+          query(collection(db, "savedItems"), where("userEmail", "==", user.email))
+        );
+        const count = snapshot.docs.filter((d) => d.data().type === "job" && d.data().removed !== true).length;
+        setSavedJobsCount(count);
+      } catch (error) {
+        console.error("Failed to load saved jobs:", error);
+      } finally {
+        setSavedJobsLoading(false);
+      }
+    })();
   }, [user]);
 
   if (authChecked && !user) {
@@ -346,6 +364,16 @@ function Dashboard() {
                   ? `Most recent: ${APPLICATION_STATUS_LABELS[mostRecentApplication.status] || mostRecentApplication.status}`
                   : "No applications yet"}
               </p>
+            </Link>
+          )}
+
+          {savedJobsLoading ? (
+            <StatSkeleton />
+          ) : (
+            <Link to="/saved" className="db-stat-card">
+              <p className="db-stat-label">Saved Jobs</p>
+              <p className="db-stat-value">{savedJobsCount}</p>
+              <p className="db-stat-sub">View saved items</p>
             </Link>
           )}
         </div>
