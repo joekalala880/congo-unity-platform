@@ -359,6 +359,7 @@ function Dashboard() {
         <div className="db-actions-grid">
           <Link to="/identity" className="db-action-button">Identity Dashboard</Link>
           <Link to="/government/services/birth-certificate" className="db-action-button">Request Birth Certificate</Link>
+          <Link to="/government/services/passport" className="db-action-button">Apply for Passport</Link>
           <Link to="/edit-profile" className="db-action-button">Edit Profile</Link>
           <Link to="/uploadid" className="db-action-button">Upload ID</Link>
           <Link to="/search-users" className="db-action-button">Find People</Link>

@@ -12,6 +12,7 @@ import IdentityDocuments from "./pages/IdentityDocuments";
 import IdentityDashboard from "./pages/IdentityDashboard";
 import GovernmentServices from "./pages/GovernmentServices";
 import BirthCertificateApplication from "./pages/BirthCertificateApplication";
+import PassportApplication from "./pages/PassportApplication";
 import GovernmentApplications from "./pages/GovernmentApplications";
 import GovernmentApplicationDetail from "./pages/GovernmentApplicationDetail";
 import AdminServiceApplications from "./pages/AdminServiceApplications";
@@ -392,6 +393,14 @@ function App() {
           element={
             <ProtectedRoute>
               <BirthCertificateApplication />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/government/services/passport"
+          element={
+            <ProtectedRoute>
+              <PassportApplication />
             </ProtectedRoute>
           }
         />
