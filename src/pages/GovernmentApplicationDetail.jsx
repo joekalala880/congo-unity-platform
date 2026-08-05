@@ -4,7 +4,12 @@ import { onAuthStateChanged } from "firebase/auth";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import { getApplication, withdrawApplication } from "../services/serviceApplicationsService";
-import { BIRTH_CERT_DOCUMENT_TYPES, STATUS_LABELS, statusBadgeSuffix } from "../services/serviceApplicationTypes";
+import {
+  DOCUMENT_TYPES_BY_SERVICE,
+  SERVICE_TYPES,
+  STATUS_LABELS,
+  statusBadgeSuffix,
+} from "../services/serviceApplicationTypes";
 import "./GovernmentApplicationDetail.css";
 
 function formatDateTime(value) {
@@ -112,11 +117,13 @@ function GovernmentApplicationDetail() {
   }
 
   const canWithdraw = application.status === "draft" || application.status === "submitted";
+  const serviceInfo = SERVICE_TYPES[application.serviceType];
+  const documentTypes = DOCUMENT_TYPES_BY_SERVICE[application.serviceType] || [];
 
   return (
     <section className="register-section">
       <div className="register-header">
-        <h1>Birth Certificate Request</h1>
+        <h1>{serviceInfo?.label || "Application"}</h1>
         <p>Congo Unity Platform request — track your application status below.</p>
       </div>
 
@@ -139,7 +146,7 @@ function GovernmentApplicationDetail() {
         {application.status === "more_information_required" && application.requestMoreInfoMessage && (
           <div className="govdet-info-request">
             <p>Admin requested: {application.requestMoreInfoMessage}</p>
-            <Link to="/government/services/birth-certificate">
+            <Link to={`/government/services/${serviceInfo?.route || ""}`}>
               <button type="button">Respond & Resubmit</button>
             </Link>
           </div>
@@ -152,7 +159,7 @@ function GovernmentApplicationDetail() {
           ) : (
             application.supportingDocuments.map((d) => (
               <p key={d.cloudinaryPublicId} className="govdet-doc-row">
-                {BIRTH_CERT_DOCUMENT_TYPES.find((t) => t.value === d.documentType)?.label || d.documentType}
+                {documentTypes.find((t) => t.value === d.documentType)?.label || d.documentType}
               </p>
             ))
           )}

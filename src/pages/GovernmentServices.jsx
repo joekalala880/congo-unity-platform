@@ -3,7 +3,7 @@ import "./GovernmentServices.css";
 
 // Public menu page — no auth required to browse what's available; starting
 // an actual application requires sign-in (enforced by ProtectedRoute on
-// /government/services/birth-certificate).
+// each /government/services/:service route).
 function GovernmentServices() {
   return (
     <section className="register-section">
@@ -27,6 +27,19 @@ function GovernmentServices() {
             Identity, supporting documents, and birth/parent information.
           </p>
           <Link to="/government/services/birth-certificate">
+            <button>Start Application</button>
+          </Link>
+        </div>
+
+        <div className="govsvc-card">
+          <h3>Passport Application / Renewal</h3>
+          <p>
+            Apply for a new passport or renew an existing one using your verified Digital
+            Identity, supporting documents, and passport details. Congo Unity does not currently
+            issue an official DRC passport — approval means approved within this platform's
+            review process.
+          </p>
+          <Link to="/government/services/passport">
             <button>Start Application</button>
           </Link>
         </div>

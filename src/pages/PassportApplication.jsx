@@ -10,31 +10,35 @@ import {
   saveDraftFields,
   submitApplication,
 } from "../services/serviceApplicationsService";
-import { BIRTH_CERT_DOCUMENT_TYPES, DELIVERY_PREFERENCES } from "../services/serviceApplicationTypes";
+import { APPLICATION_MODES, PASSPORT_DOCUMENT_TYPES, PASSPORT_TYPES } from "../services/serviceApplicationTypes";
+// Reuses the Birth Certificate form's styles (same "bcapp-" prefixed dark
+// step-card look) rather than duplicating an identical stylesheet.
 import "./BirthCertificateApplication.css";
 
-const STEPS = ["Applicant Info", "Birth & Parent Info", "Documents", "Review & Submit"];
+const STEPS = ["Applicant Info", "Passport & Emergency Contact", "Documents", "Review & Submit"];
 
 const EMPTY_FIELDS = {
   applicantFullName: "",
   dateOfBirth: "",
   placeOfBirth: "",
-  provinceOfBirth: "",
-  territoryOfBirth: "",
-  fatherFullName: "",
-  motherFullName: "",
+  passportType: "ordinary",
+  applicationMode: "new",
+  currentPassportNumber: "",
+  currentPassportIssueDate: "",
+  currentPassportExpirationDate: "",
   reasonForRequest: "",
-  deliveryPreference: "digital",
+  emergencyContactName: "",
+  emergencyContactPhone: "",
 };
 
-function BirthCertificateApplication() {
+function PassportApplication() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [applicationId, setApplicationId] = useState(null);
   const [loadedStatus, setLoadedStatus] = useState(null);
   const [fields, setFields] = useState(EMPTY_FIELDS);
-  const [documents, setDocuments] = useState([]); // uploaded docs, by documentType
+  const [documents, setDocuments] = useState([]);
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -65,19 +69,12 @@ function BirthCertificateApplication() {
           setProfile(loadedProfile);
         }
 
-        // Resume the most recent editable application, if one exists —
-        // either a draft ("Continue Later") or one an admin sent back for
-        // more information (the same multi-step form doubles as the
-        // "respond" flow for that state).
         const draftSnap = await getDocs(
-          query(
-            collection(db, "serviceApplications"),
-            where("applicantUserId", "==", currentUser.uid)
-          )
+          query(collection(db, "serviceApplications"), where("applicantUserId", "==", currentUser.uid))
         );
         const drafts = draftSnap.docs
           .map((d) => ({ id: d.id, ...d.data() }))
-          .filter((a) => a.serviceType === "birth_certificate" && ["draft", "more_information_required"].includes(a.status))
+          .filter((a) => a.serviceType === "passport" && ["draft", "more_information_required"].includes(a.status))
           .sort((a, b) => (b.updatedAt?.toMillis?.() || 0) - (a.updatedAt?.toMillis?.() || 0));
 
         if (drafts.length > 0) {
@@ -88,12 +85,14 @@ function BirthCertificateApplication() {
             applicantFullName: draft.applicantFullName || "",
             dateOfBirth: draft.dateOfBirth || "",
             placeOfBirth: draft.placeOfBirth || "",
-            provinceOfBirth: draft.provinceOfBirth || "",
-            territoryOfBirth: draft.territoryOfBirth || "",
-            fatherFullName: draft.fatherFullName || "",
-            motherFullName: draft.motherFullName || "",
+            passportType: draft.passportType || "ordinary",
+            applicationMode: draft.applicationMode || "new",
+            currentPassportNumber: draft.currentPassportNumber || "",
+            currentPassportIssueDate: draft.currentPassportIssueDate || "",
+            currentPassportExpirationDate: draft.currentPassportExpirationDate || "",
             reasonForRequest: draft.reasonForRequest || "",
-            deliveryPreference: draft.deliveryPreference || "digital",
+            emergencyContactName: draft.emergencyContactName || "",
+            emergencyContactPhone: draft.emergencyContactPhone || "",
           });
           setDocuments(draft.supportingDocuments || []);
         } else if (loadedProfile) {
@@ -102,8 +101,7 @@ function BirthCertificateApplication() {
             applicantFullName: `${loadedProfile.firstName || ""} ${loadedProfile.lastName || ""}`.trim(),
             dateOfBirth: loadedProfile.dateOfBirth || "",
             placeOfBirth: loadedProfile.placeOfBirth || "",
-            provinceOfBirth: loadedProfile.province || "",
-            territoryOfBirth: loadedProfile.territory || "",
+            emergencyContactName: loadedProfile.emergencyContact || "",
           }));
         }
       } catch (err) {
@@ -121,19 +119,24 @@ function BirthCertificateApplication() {
     setFields((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  const isRenewal = fields.applicationMode === "renewal";
+  // A passport is a higher-stakes document than a birth certificate record,
+  // so unlike the birth-cert flow (which only needs a citizenId to exist),
+  // this requires a fully verified Digital Identity plus a profile photo —
+  // both are "required documents" per spec, sourced from the profile
+  // rather than collected as a new upload here.
+  const identityReady = profile?.status === "verified" && !!profile?.profileImageUrl;
+
   const ensureDraftExists = async () => {
     if (applicationId) return applicationId;
     if (!profile?.citizenId) {
       throw new Error("Your Digital ID hasn't finished setting up yet. Visit My Profile first.");
     }
-    const id = await createDraft(user, profile, "birth_certificate", { ...fields, supportingDocuments: documents });
+    const id = await createDraft(user, profile, "passport", { ...fields, supportingDocuments: documents });
     setApplicationId(id);
     return id;
   };
 
-  // Not available once an admin has sent this back for more information —
-  // firestore.rules only allows that state to move forward to 'submitted'
-  // in one step, not stay in place while edits are saved separately.
   const canSaveDraft = loadedStatus !== "more_information_required";
 
   const handleSaveDraft = async () => {
@@ -165,7 +168,7 @@ function BirthCertificateApplication() {
 
     try {
       const idToken = await user.getIdToken();
-      const { publicId, resourceType } = await idDoc.uploadDocument(idToken, "birthCertificate");
+      const { publicId, resourceType } = await idDoc.uploadDocument(idToken, "passport");
 
       const newDoc = {
         documentType,
@@ -190,7 +193,13 @@ function BirthCertificateApplication() {
     setDocuments((prev) => prev.filter((d) => d.documentType !== documentType));
   };
 
-  const hasRequiredDocument = documents.some((d) => d.documentType === "applicant_id");
+  const hasRequiredDocument =
+    documents.some((d) => d.documentType === "national_id_or_birth_cert") &&
+    (!isRenewal || documents.some((d) => d.documentType === "existing_passport"));
+
+  const missingDocumentMessage = isRenewal
+    ? "National ID/Birth Certificate and your existing passport are required before continuing."
+    : "National ID or Birth Certificate is required before continuing.";
 
   const goNext = () => {
     setError("");
@@ -200,8 +209,13 @@ function BirthCertificateApplication() {
       return;
     }
 
+    if (step === 2 && isRenewal && !fields.currentPassportNumber.trim()) {
+      setError("Current passport number is required for a renewal.");
+      return;
+    }
+
     if (step === 3 && !hasRequiredDocument) {
-      setError("Applicant identification is required before continuing.");
+      setError(missingDocumentMessage);
       return;
     }
 
@@ -214,13 +228,13 @@ function BirthCertificateApplication() {
     setError("");
 
     if (!hasRequiredDocument) {
-      setError("Applicant identification is required before submitting.");
+      setError(missingDocumentMessage);
       return;
     }
 
     const confirmMessage = loadedStatus === "more_information_required"
       ? "Resubmit this application for review?"
-      : "Submit this birth certificate request for review?";
+      : "Submit this passport application for review?";
     if (!window.confirm(confirmMessage)) return;
 
     setIsSaving(true);
@@ -253,8 +267,26 @@ function BirthCertificateApplication() {
     return (
       <section className="register-section">
         <div className="register-header">
-          <h1>Birth Certificate Request</h1>
+          <h1>Passport Application / Renewal</h1>
           <p>Please log in to start an application.</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (!identityReady) {
+    return (
+      <section className="register-section">
+        <div className="register-header">
+          <h1>Passport Application / Renewal</h1>
+          <p>A Congo Unity Platform request workflow — not an official DRC-issued passport.</p>
+        </div>
+        <div className="bcapp-form-card">
+          <h3>Verified Digital Identity Required</h3>
+          <p className="bcapp-hint">
+            A passport application requires a verified Digital Identity and a profile photo on
+            file. Visit My Profile to complete verification and add a photo before applying.
+          </p>
         </div>
       </section>
     );
@@ -263,8 +295,8 @@ function BirthCertificateApplication() {
   return (
     <section className="register-section">
       <div className="register-header">
-        <h1>Birth Certificate Request</h1>
-        <p>A Congo Unity Platform request workflow — not an official DRC government-issued certificate.</p>
+        <h1>Passport Application / Renewal</h1>
+        <p>A Congo Unity Platform request workflow — Congo Unity does not currently issue an official DRC passport.</p>
       </div>
 
       <div className="bcapp-steps" role="list" aria-label="Application progress">
@@ -307,35 +339,53 @@ function BirthCertificateApplication() {
 
       {step === 2 && (
         <div className="bcapp-form-card">
-          <h3>Birth & Parent Information</h3>
+          <h3>Passport & Emergency Contact</h3>
           <div className="bcapp-form-grid">
             <label>
-              <span>Province of Birth</span>
-              <input name="provinceOfBirth" value={fields.provinceOfBirth} onChange={handleChange} />
+              <span>Passport Type</span>
+              <select name="passportType" value={fields.passportType} onChange={handleChange}>
+                {PASSPORT_TYPES.map((t) => (
+                  <option key={t.value} value={t.value}>{t.label}</option>
+                ))}
+              </select>
             </label>
             <label>
-              <span>Territory of Birth</span>
-              <input name="territoryOfBirth" value={fields.territoryOfBirth} onChange={handleChange} />
+              <span>Application Type</span>
+              <select name="applicationMode" value={fields.applicationMode} onChange={handleChange}>
+                {APPLICATION_MODES.map((m) => (
+                  <option key={m.value} value={m.value}>{m.label}</option>
+                ))}
+              </select>
             </label>
-            <label>
-              <span>Father's Full Name</span>
-              <input name="fatherFullName" value={fields.fatherFullName} onChange={handleChange} />
-            </label>
-            <label>
-              <span>Mother's Full Name</span>
-              <input name="motherFullName" value={fields.motherFullName} onChange={handleChange} />
-            </label>
+
+            {isRenewal && (
+              <>
+                <label>
+                  <span>Current Passport Number</span>
+                  <input name="currentPassportNumber" value={fields.currentPassportNumber} onChange={handleChange} />
+                </label>
+                <label>
+                  <span>Current Passport Issue Date</span>
+                  <input name="currentPassportIssueDate" type="date" value={fields.currentPassportIssueDate} onChange={handleChange} />
+                </label>
+                <label>
+                  <span>Current Passport Expiration Date</span>
+                  <input name="currentPassportExpirationDate" type="date" value={fields.currentPassportExpirationDate} onChange={handleChange} />
+                </label>
+              </>
+            )}
+
             <label className="bcapp-full-width">
-              <span>Reason for Request</span>
+              <span>{isRenewal ? "Reason for Renewal" : "Reason for Application"}</span>
               <textarea name="reasonForRequest" value={fields.reasonForRequest} onChange={handleChange} />
             </label>
             <label>
-              <span>Delivery Preference</span>
-              <select name="deliveryPreference" value={fields.deliveryPreference} onChange={handleChange}>
-                {DELIVERY_PREFERENCES.map((d) => (
-                  <option key={d.value} value={d.value}>{d.label}</option>
-                ))}
-              </select>
+              <span>Emergency Contact Name</span>
+              <input name="emergencyContactName" value={fields.emergencyContactName} onChange={handleChange} />
+            </label>
+            <label>
+              <span>Emergency Contact Phone</span>
+              <input name="emergencyContactPhone" value={fields.emergencyContactPhone} onChange={handleChange} />
             </label>
           </div>
         </div>
@@ -345,14 +395,16 @@ function BirthCertificateApplication() {
         <div className="bcapp-form-card">
           <h3>Supporting Documents</h3>
 
-          {BIRTH_CERT_DOCUMENT_TYPES.map((docType) => {
+          {PASSPORT_DOCUMENT_TYPES.map((docType) => {
+            if (docType.value === "existing_passport" && !isRenewal) return null;
+            const isRequired = docType.value === "national_id_or_birth_cert" || (docType.value === "existing_passport" && isRenewal);
             const uploaded = documents.find((d) => d.documentType === docType.value);
 
             return (
               <div className="bcapp-doc-row" key={docType.value}>
                 <div className="bcapp-doc-label">
                   <strong>{docType.label}</strong>
-                  {docType.required && <span className="bcapp-required">Required</span>}
+                  {isRequired && <span className="bcapp-required">Required</span>}
                 </div>
 
                 {uploaded ? (
@@ -391,18 +443,18 @@ function BirthCertificateApplication() {
             <div><dt>Full Name</dt><dd>{fields.applicantFullName || "—"}</dd></div>
             <div><dt>Date of Birth</dt><dd>{fields.dateOfBirth || "—"}</dd></div>
             <div><dt>Place of Birth</dt><dd>{fields.placeOfBirth || "—"}</dd></div>
-            <div><dt>Province of Birth</dt><dd>{fields.provinceOfBirth || "—"}</dd></div>
-            <div><dt>Territory of Birth</dt><dd>{fields.territoryOfBirth || "—"}</dd></div>
-            <div><dt>Father's Name</dt><dd>{fields.fatherFullName || "—"}</dd></div>
-            <div><dt>Mother's Name</dt><dd>{fields.motherFullName || "—"}</dd></div>
+            <div><dt>Passport Type</dt><dd>{PASSPORT_TYPES.find((t) => t.value === fields.passportType)?.label}</dd></div>
+            <div><dt>Application Type</dt><dd>{APPLICATION_MODES.find((m) => m.value === fields.applicationMode)?.label}</dd></div>
+            {isRenewal && <div><dt>Current Passport #</dt><dd>{fields.currentPassportNumber || "—"}</dd></div>}
             <div><dt>Reason</dt><dd>{fields.reasonForRequest || "—"}</dd></div>
-            <div><dt>Delivery</dt><dd>{DELIVERY_PREFERENCES.find((d) => d.value === fields.deliveryPreference)?.label}</dd></div>
+            <div><dt>Emergency Contact</dt><dd>{fields.emergencyContactName || "—"} {fields.emergencyContactPhone ? `(${fields.emergencyContactPhone})` : ""}</dd></div>
             <div><dt>Documents</dt><dd>{documents.length} uploaded</dd></div>
           </dl>
 
           <p className="bcapp-legal-note">
             By submitting, you confirm this information is accurate. This creates a Congo Unity
-            Platform request — it does not issue an official DRC government document.
+            Platform request — Congo Unity does not currently issue an official DRC passport.
+            Approval means approved within this platform's review process only.
           </p>
         </div>
       )}
@@ -425,4 +477,4 @@ function BirthCertificateApplication() {
   );
 }
 
-export default BirthCertificateApplication;
+export default PassportApplication;
