@@ -6,6 +6,7 @@ import { db } from "./firebase";
 
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import ForgotPassword from "./pages/ForgotPassword";
 import Dashboard from "./pages/Dashboard";
 import UploadID from "./pages/UploadID";
 import IdentityDocuments from "./pages/IdentityDocuments";
@@ -17,6 +18,7 @@ import GovernmentApplications from "./pages/GovernmentApplications";
 import GovernmentApplicationDetail from "./pages/GovernmentApplicationDetail";
 import AdminServiceApplications from "./pages/AdminServiceApplications";
 import AdminServiceApplicationDetail from "./pages/AdminServiceApplicationDetail";
+import AdminAccountDeletions from "./pages/AdminAccountDeletions";
 import VerifyCitizenId from "./pages/VerifyCitizenId";
 import Directory from "./pages/Directory";
 import Profile from "./pages/Profile";
@@ -361,6 +363,7 @@ function App() {
 
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/account-suspended" element={<AccountSuspended />} />
         <Route path="/dashboard" element={<Dashboard />} />
 
@@ -548,6 +551,14 @@ function App() {
           element={
             <ProtectedAdmin>
               <AdminServiceApplicationDetail />
+            </ProtectedAdmin>
+          }
+        />
+        <Route
+          path="/admin/account-deletions"
+          element={
+            <ProtectedAdmin>
+              <AdminAccountDeletions />
             </ProtectedAdmin>
           }
         />
