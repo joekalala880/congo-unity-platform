@@ -15,7 +15,12 @@ import {
 import { auth, db } from "../firebase";
 import Avatar from "../components/Avatar";
 import VerificationBadge from "../components/identity/VerificationBadge";
-import { BIRTH_CERT_DOCUMENT_TYPES, STATUS_LABELS, statusBadgeSuffix } from "../services/serviceApplicationTypes";
+import {
+  DOCUMENT_TYPES_BY_SERVICE,
+  SERVICE_TYPES,
+  STATUS_LABELS,
+  statusBadgeSuffix,
+} from "../services/serviceApplicationTypes";
 import { logApplicationAuditEvent } from "../services/serviceApplicationAuditService";
 import "./AdminServiceApplicationDetail.css";
 
@@ -177,7 +182,7 @@ function AdminServiceApplicationDetail() {
       extraFields: { rejectionReason: "", requestMoreInfoMessage: "" },
       auditType: "approval",
       auditMessage: "Approved.",
-      notifyMessage: "Your birth certificate request was approved.",
+      notifyMessage: `Your ${(SERVICE_TYPES[application?.serviceType]?.label || "application").toLowerCase()} was approved.`,
     });
 
   const reject = () => {
@@ -194,7 +199,7 @@ function AdminServiceApplicationDetail() {
       extraFields: { rejectionReason: reason.trim(), requestMoreInfoMessage: "" },
       auditType: "rejection",
       auditMessage: `Rejected: ${reason.trim()}`,
-      notifyMessage: `Your birth certificate request was rejected: ${reason.trim()}`,
+      notifyMessage: `Your ${(SERVICE_TYPES[application?.serviceType]?.label || "application").toLowerCase()} was rejected: ${reason.trim()}`,
     });
   };
 
@@ -211,7 +216,7 @@ function AdminServiceApplicationDetail() {
       extraFields: { requestMoreInfoMessage: message.trim(), rejectionReason: "" },
       auditType: "request_more_info",
       auditMessage: `Requested more information: ${message.trim()}`,
-      notifyMessage: `We need more information about your birth certificate request: ${message.trim()}`,
+      notifyMessage: `We need more information about your ${(SERVICE_TYPES[application?.serviceType]?.label || "application").toLowerCase()}: ${message.trim()}`,
     });
   };
 
@@ -295,7 +300,7 @@ function AdminServiceApplicationDetail() {
         <Avatar src={profile?.profileImageUrl} className="admdet-avatar" alt={application.applicantFullName} />
         <div>
           <h1>{application.applicantFullName}</h1>
-          <p>Birth Certificate Request · {application.citizenId || "—"}</p>
+          <p>{SERVICE_TYPES[application.serviceType]?.label || application.serviceType} · {application.citizenId || "—"}</p>
           {profile && <VerificationBadge status={profile.status} />}
         </div>
         <span className={`admdet-badge admdet-badge-${statusBadgeSuffix(application.status)}`}>
@@ -312,12 +317,30 @@ function AdminServiceApplicationDetail() {
           <dl className="admdet-fields">
             <div><dt>Date of Birth</dt><dd>{application.dateOfBirth || "—"}</dd></div>
             <div><dt>Place of Birth</dt><dd>{application.placeOfBirth || "—"}</dd></div>
-            <div><dt>Province of Birth</dt><dd>{application.provinceOfBirth || "—"}</dd></div>
-            <div><dt>Territory of Birth</dt><dd>{application.territoryOfBirth || "—"}</dd></div>
-            <div><dt>Father's Name</dt><dd>{application.fatherFullName || "—"}</dd></div>
-            <div><dt>Mother's Name</dt><dd>{application.motherFullName || "—"}</dd></div>
+            {application.serviceType === "birth_certificate" && (
+              <>
+                <div><dt>Province of Birth</dt><dd>{application.provinceOfBirth || "—"}</dd></div>
+                <div><dt>Territory of Birth</dt><dd>{application.territoryOfBirth || "—"}</dd></div>
+                <div><dt>Father's Name</dt><dd>{application.fatherFullName || "—"}</dd></div>
+                <div><dt>Mother's Name</dt><dd>{application.motherFullName || "—"}</dd></div>
+                <div><dt>Delivery</dt><dd>{application.deliveryPreference || "—"}</dd></div>
+              </>
+            )}
+            {application.serviceType === "passport" && (
+              <>
+                <div><dt>Passport Type</dt><dd>{application.passportType || "—"}</dd></div>
+                <div><dt>Application Mode</dt><dd>{application.applicationMode || "—"}</dd></div>
+                {application.applicationMode === "renewal" && (
+                  <>
+                    <div><dt>Current Passport #</dt><dd>{application.currentPassportNumber || "—"}</dd></div>
+                    <div><dt>Issue Date</dt><dd>{application.currentPassportIssueDate || "—"}</dd></div>
+                    <div><dt>Expiration Date</dt><dd>{application.currentPassportExpirationDate || "—"}</dd></div>
+                  </>
+                )}
+                <div><dt>Emergency Contact</dt><dd>{application.emergencyContactName || "—"} {application.emergencyContactPhone ? `(${application.emergencyContactPhone})` : ""}</dd></div>
+              </>
+            )}
             <div><dt>Reason</dt><dd>{application.reasonForRequest || "—"}</dd></div>
-            <div><dt>Delivery</dt><dd>{application.deliveryPreference || "—"}</dd></div>
             <div><dt>Member Number</dt><dd>{application.memberNumber || "—"}</dd></div>
             <div><dt>Submitted</dt><dd>{formatDateTime(application.submittedAt)}</dd></div>
           </dl>
@@ -337,7 +360,7 @@ function AdminServiceApplicationDetail() {
           ) : (
             application.supportingDocuments.map((d) => (
               <div className="admdet-doc-row" key={d.cloudinaryPublicId}>
-                <span>{BIRTH_CERT_DOCUMENT_TYPES.find((t) => t.value === d.documentType)?.label || d.documentType}</span>
+                <span>{(DOCUMENT_TYPES_BY_SERVICE[application.serviceType] || []).find((t) => t.value === d.documentType)?.label || d.documentType}</span>
                 <button type="button" onClick={() => viewDocument(d)} disabled={viewingDoc === d.cloudinaryPublicId}>
                   {viewingDoc === d.cloudinaryPublicId ? "Loading…" : "View"}
                 </button>
