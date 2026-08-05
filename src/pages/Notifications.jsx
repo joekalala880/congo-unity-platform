@@ -1,50 +1,16 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  collection,
-  query,
-  where,
-  orderBy,
-  onSnapshot,
-  doc,
-  updateDoc,
-} from "firebase/firestore";
-import { auth, db } from "../firebase";
+import useNotifications from "../hooks/useNotifications";
+import "./Notifications.css";
+
+function formatDateTime(value) {
+  if (!value) return "";
+  const date = typeof value.toDate === "function" ? value.toDate() : new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleString(undefined, { year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+}
 
 function Notifications() {
-  const [notifications, setNotifications] = useState([]);
-
-  useEffect(() => {
-    const user = auth.currentUser;
-
-    if (!user) return;
-
-    // Firestore rules only allow reading notifications addressed to the
-    // signed-in user, so the query must filter server-side rather than
-    // fetching everything and filtering in the client.
-    const q = query(
-      collection(db, "notifications"),
-      where("to", "==", user.email),
-      orderBy("createdAt", "desc")
-    );
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map((document) => ({
-        id: document.id,
-        ...document.data(),
-      }));
-
-      setNotifications(data);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  const markAsRead = async (notificationId) => {
-    await updateDoc(doc(db, "notifications", notificationId), {
-      read: true,
-    });
-  };
+  const { notifications, unreadCount, loading, markAsRead, markAllAsRead } = useNotifications();
 
   return (
     <section className="register-section">
@@ -53,33 +19,40 @@ function Notifications() {
         <p>See your latest Congo Unity activity.</p>
       </div>
 
+      {!loading && unreadCount > 0 && (
+        <div className="notif-actions">
+          <button type="button" onClick={markAllAsRead}>Mark All as Read ({unreadCount})</button>
+        </div>
+      )}
+
       <div className="cards">
-        {notifications.length === 0 ? (
+        {loading ? (
+          <p>Loading…</p>
+        ) : notifications.length === 0 ? (
           <div className="card">
             <h3>No notifications yet</h3>
             <p>
-              When someone follows you, messages you, or comments, it will show
-              here.
+              When someone messages you, follows you, or your government service / identity
+              verification status changes, it will show here.
             </p>
           </div>
         ) : (
           notifications.map((notification) => (
-            <div className="card" key={notification.id}>
+            <div className={`card ${!notification.read ? "notification-unread" : ""}`} key={notification.id}>
               <h3>{notification.type}</h3>
 
               <p>{notification.message}</p>
 
               <p>
-                <strong>From:</strong> {notification.from}
+                <strong>From:</strong> {notification.from || "Congo Unity"}
               </p>
 
-              <p>
-                <strong>Status:</strong>{" "}
-                {notification.read ? "Read" : "Unread"}
-              </p>
+              <p className="notif-time">{formatDateTime(notification.createdAt)}</p>
 
               {notification.relatedRoute && (
-                <Link to={notification.relatedRoute}>View details</Link>
+                <Link to={notification.relatedRoute} onClick={() => !notification.read && markAsRead(notification.id)}>
+                  View details
+                </Link>
               )}
 
               {!notification.read && (

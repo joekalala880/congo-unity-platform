@@ -1,0 +1,21 @@
+.notif-actions {
+  margin: 1rem 0;
+}
+
+.notif-actions button {
+  background: transparent;
+  border: 1px solid #d9a441;
+  color: #d9a441;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.notif-time {
+  font-size: 0.75rem;
+  color: #999;
+}
+
+.notification-unread {
+  border-left: 3px solid #d9a441;
+}

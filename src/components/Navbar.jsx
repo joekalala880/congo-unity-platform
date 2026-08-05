@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import useIsAdmin from "../hooks/useIsAdmin";
+import useNotifications from "../hooks/useNotifications";
 
 function NavGroup({ label, id, openGroup, setOpenGroup, children }) {
   const isOpen = openGroup === id;
@@ -32,6 +33,7 @@ function Navbar() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const { isAdmin } = useIsAdmin();
+  const { unreadCount } = useNotifications();
   const [menuOpen, setMenuOpen] = useState(false);
   const [openGroup, setOpenGroup] = useState(null);
   const navRef = useRef(null);
@@ -110,6 +112,10 @@ function Navbar() {
 
         {user ? (
           <>
+            <Link to="/notifications" onClick={closeMenu} className="navbar-notifications">
+              Notifications
+              {unreadCount > 0 && <span className="navbar-notif-badge">{unreadCount > 99 ? "99+" : unreadCount}</span>}
+            </Link>
             <Link to="/dashboard" onClick={closeMenu}>Dashboard</Link>
             <button className="navbar-logout" onClick={handleLogout}>
               Logout

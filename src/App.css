@@ -1456,6 +1456,23 @@ button {
   cursor: pointer;
 }
 
+.navbar-notifications {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.navbar-notif-badge {
+  background: #d9a441;
+  color: #0d0d0d;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1;
+  padding: 3px 6px;
+}
+
 .navbar-logout {
   margin: 0;
   padding: 8px 18px;
