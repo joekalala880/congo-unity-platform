@@ -52,6 +52,13 @@ function AdminDashboard() {
         <Link to="/notifications">Notifications</Link>
         <Link to="/admin-cms">Create New</Link>
         <Link to="/settings">Settings</Link>
+
+        <h2>Admin Tools</h2>
+        <Link to="/admin/users">User Management</Link>
+        <Link to="/admin/verifications">Verification Queue</Link>
+        <Link to="/admin/service-applications">Service Applications</Link>
+        <Link to="/admin/account-deletions">Account Deletions</Link>
+        <Link to="/admin/gallery">Gallery Manager</Link>
       </aside>
 
       <main className="admin-main">
