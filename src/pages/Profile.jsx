@@ -18,20 +18,28 @@ function formatDate(value) {
 }
 
 function Profile() {
+  const [user, setUser] = useState(null);
   const [profileId, setProfileId] = useState("");
   const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (!user) return;
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
 
-      const q = query(collection(db, "congoleseProfiles"), where("email", "==", user.email));
+      if (!currentUser) {
+        setLoading(false);
+        return;
+      }
+
+      const q = query(collection(db, "congoleseProfiles"), where("email", "==", currentUser.email));
       const snapshot = await getDocs(q);
 
       if (!snapshot.empty) {
         setProfileId(snapshot.docs[0].id);
         setProfile(snapshot.docs[0].data());
       }
+      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -47,6 +55,21 @@ function Profile() {
         <h1>My Digital Identity</h1>
         <p>Your Congo Unity national identity profile</p>
       </div>
+
+      {loading && <p className="id-generating">Loading…</p>}
+
+      {!loading && !user && (
+        <p>
+          Please <Link to="/login">log in</Link> to view your Digital Identity.
+        </p>
+      )}
+
+      {!loading && user && !profile && (
+        <p>
+          We couldn't find a profile for your account. If you haven't finished registering,{" "}
+          <Link to="/register">complete your profile</Link>.
+        </p>
+      )}
 
       {profile && (
         <div className="id-card">
