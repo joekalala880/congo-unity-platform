@@ -1311,6 +1311,22 @@ button {
   padding: 70px 8%;
   text-align: center;
 }
+
+.settings-checkbox-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+  margin: 16px 0;
+}
+
+.settings-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: normal;
+  cursor: pointer;
+}
 .help-page {
   background: #0d0d0d;
   color: white;
@@ -1383,6 +1399,52 @@ button {
   color: #d9a441;
 }
 
+.navbar-group {
+  position: relative;
+}
+
+.navbar-group-toggle {
+  background: transparent;
+  border: none;
+  color: white;
+  font-weight: bold;
+  font-size: 1em;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.navbar-group-toggle:hover,
+.navbar-group-toggle[aria-expanded="true"] {
+  color: #d9a441;
+}
+
+.navbar-group-caret {
+  font-size: 0.7em;
+}
+
+.navbar-group-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #171717;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 12px 16px;
+  position: absolute;
+  top: calc(100% + 14px);
+  left: 0;
+  min-width: 200px;
+  z-index: 1001;
+}
+
+.navbar-group-menu a {
+  white-space: nowrap;
+}
+
 .navbar-toggle {
   display: none;
   background: transparent;
@@ -1421,6 +1483,14 @@ button {
 
   .nav-links.open {
     display: flex;
+  }
+
+  .navbar-group-menu {
+    position: static;
+    border: none;
+    background: transparent;
+    padding: 8px 0 0 16px;
+    min-width: 0;
   }
 }
 .post-image {
