@@ -120,7 +120,7 @@ service cloud.firestore {
             'placeOfBirth', 'nationality', 'phone',
             'province', 'territory', 'village', 'currentCountry', 'currentCity',
             'profileImageUrl', 'followers', 'emergencyContact', 'visibility',
-            'citizenId', 'memberNumber', 'registrationDate'
+            'citizenId', 'memberNumber', 'registrationDate', 'notificationPreferences'
           ])
           && isValidIdentityFieldChange('citizenId')
           && isValidIdentityFieldChange('memberNumber')
@@ -611,6 +611,37 @@ service cloud.firestore {
       allow update: if isSignedIn()
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['value'])
         && request.resource.data.value == resource.data.value + 1;
+
+      allow delete: if false;
+    }
+
+    // ---------- accountDeletionRequests ----------
+    // A citizen-submitted request only — never triggers an automatic
+    // deletion. An admin reviews and actions it manually, then marks it
+    // resolved. See serviceApplications for the same "request, not
+    // automatic action" pattern.
+    match /accountDeletionRequests/{requestId} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.status == 'pending'
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.resolvedAt == null
+        && request.resource.data.resolvedBy == null
+        && request.resource.data.keys().hasOnly([
+             'userId', 'email', 'reason', 'status', 'createdAt', 'resolvedAt', 'resolvedBy'
+           ]);
+
+      // Only an admin can mark a request resolved/cancelled; the requester
+      // can never edit their own submitted request.
+      allow update: if isAdmin()
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.status in ['resolved', 'cancelled']
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'resolvedAt', 'resolvedBy']);
 
       allow delete: if false;
     }
