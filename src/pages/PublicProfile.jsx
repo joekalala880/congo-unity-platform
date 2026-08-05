@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { collection, getDocs } from "firebase/firestore";
-import { db } from "../firebase";
+import { auth, db } from "../firebase";
 import Avatar from "../components/Avatar";
 import VerificationBadge from "../components/identity/VerificationBadge";
 
@@ -54,9 +54,11 @@ function PublicProfile() {
         <p><strong>Status:</strong> <VerificationBadge status={profile.status} /></p>
         <p><strong>Followers:</strong> {profile.followers?.length || 0}</p>
 
-        <Link to="/direct-messages">
-          <button>Message</button>
-        </Link>
+        {auth.currentUser && auth.currentUser.uid !== profile.id && (
+          <Link to={`/direct-messages?with=${profile.id}`}>
+            <button>Message</button>
+          </Link>
+        )}
       </div>
     </section>
   );

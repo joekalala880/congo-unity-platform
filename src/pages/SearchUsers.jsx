@@ -11,6 +11,7 @@ import {
 import { auth, db } from "../firebase";
 import Avatar from "../components/Avatar";
 import VerificationBadge from "../components/identity/VerificationBadge";
+import { createNotification } from "../services/notificationService";
 
 function SearchUsers() {
   const [profiles, setProfiles] = useState([]);
@@ -40,6 +41,25 @@ function SearchUsers() {
     await updateDoc(doc(db, "congoleseProfiles", profileId), {
       followers: arrayUnion(user.email),
     });
+
+    const followedProfile = profiles.find((p) => p.id === profileId);
+    const myProfile = profiles.find((p) => p.email === user.email);
+    const myName = myProfile ? `${myProfile.firstName || ""} ${myProfile.lastName || ""}`.trim() : "";
+
+    if (followedProfile?.email) {
+      try {
+        await createNotification({
+          to: followedProfile.email,
+          from: myName || user.email,
+          fromUserId: user.uid,
+          type: "New Follower",
+          message: `${myName || user.email} started following you.`,
+          relatedRoute: `/profile/${encodeURIComponent(user.email)}`,
+        });
+      } catch (err) {
+        console.error("Failed to create follow notification:", err);
+      }
+    }
 
     fetchProfiles();
   };

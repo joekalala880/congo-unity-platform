@@ -71,6 +71,7 @@ function Dashboard() {
   const [followingLoading, setFollowingLoading] = useState(true);
 
   const [messagesCount, setMessagesCount] = useState(0);
+  const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
   const [messagesLoading, setMessagesLoading] = useState(true);
 
   const [unreadNotifications, setUnreadNotifications] = useState(0);
@@ -140,11 +141,14 @@ function Dashboard() {
     (async () => {
       setMessagesLoading(true);
       try {
-        const [sentSnap, receivedSnap] = await Promise.all([
-          getDocs(query(collection(db, "messages"), where("from", "==", user.email))),
-          getDocs(query(collection(db, "messages"), where("to", "==", user.email))),
-        ]);
-        setMessagesCount(sentSnap.size + receivedSnap.size);
+        const snapshot = await getDocs(
+          query(collection(db, "conversations"), where("participants", "array-contains", user.uid))
+        );
+        const conversations = snapshot.docs.map((d) => d.data());
+        setMessagesCount(conversations.length);
+        setUnreadMessagesCount(
+          conversations.reduce((sum, c) => sum + (c.unreadCount?.[user.uid] || 0), 0)
+        );
       } catch (error) {
         console.error("Failed to load messages count:", error);
       } finally {
@@ -319,7 +323,7 @@ function Dashboard() {
             <Link to="/direct-messages" className="db-stat-card">
               <p className="db-stat-label">Messages</p>
               <p className="db-stat-value">{messagesCount}</p>
-              <p className="db-stat-sub">View conversations</p>
+              <p className="db-stat-sub">{unreadMessagesCount > 0 ? `${unreadMessagesCount} unread` : "View conversations"}</p>
             </Link>
           )}
 
