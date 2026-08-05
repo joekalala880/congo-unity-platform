@@ -5,6 +5,10 @@ export const SERVICE_TYPES = {
     label: "Birth Certificate Request",
     route: "birth-certificate",
   },
+  passport: {
+    label: "Passport Application / Renewal",
+    route: "passport",
+  },
 };
 
 export const STATUS_LABELS = {
@@ -45,3 +49,33 @@ export const DELIVERY_PREFERENCES = [
   { value: "digital", label: "Digital copy only" },
   { value: "pickup", label: "In-person pickup" },
 ];
+
+// Passport-specific supporting document types. A verified Digital Identity
+// and a profile photo are preconditions checked against the citizen's
+// profile, not uploads collected here. EXISTING_PASSPORT is only required
+// when applicationMode is 'renewal' — enforced in the form, not statically
+// here, same pattern as APPLICANT_ID's conditional requirement elsewhere.
+export const PASSPORT_DOCUMENT_TYPES = [
+  { value: "national_id_or_birth_cert", label: "National ID or Birth Certificate", required: true },
+  { value: "existing_passport", label: "Existing Passport (for renewal)", required: false },
+  { value: "supporting_document", label: "Supporting Document", required: false },
+];
+
+export const PASSPORT_TYPES = [
+  { value: "ordinary", label: "Ordinary Passport" },
+  { value: "diplomatic", label: "Diplomatic Passport" },
+  { value: "service", label: "Service Passport" },
+];
+
+export const APPLICATION_MODES = [
+  { value: "new", label: "New Application" },
+  { value: "renewal", label: "Renewal" },
+];
+
+// Which document-type list applies to a given serviceType — lets the
+// generic list/detail pages (citizen and admin) render document labels
+// without hardcoding a single service's document set.
+export const DOCUMENT_TYPES_BY_SERVICE = {
+  birth_certificate: BIRTH_CERT_DOCUMENT_TYPES,
+  passport: PASSPORT_DOCUMENT_TYPES,
+};

@@ -14,8 +14,10 @@ import { logApplicationAuditEvent } from "./serviceApplicationAuditService";
 
 const COLLECTION = "serviceApplications";
 
-// Owner-settable application fields — see the create/update rules in
-// firestore.rules for the matching allowlists.
+// Owner-settable application fields — a union across all service types
+// (each service's form only ever populates its own subset; the rest stay
+// "" on that document). See the create/update rules in firestore.rules for
+// the matching allowlists.
 function buildFieldPayload(fields) {
   return {
     applicantFullName: fields.applicantFullName || "",
@@ -26,7 +28,14 @@ function buildFieldPayload(fields) {
     fatherFullName: fields.fatherFullName || "",
     motherFullName: fields.motherFullName || "",
     reasonForRequest: fields.reasonForRequest || "",
-    deliveryPreference: fields.deliveryPreference || "digital",
+    deliveryPreference: fields.deliveryPreference || "",
+    passportType: fields.passportType || "",
+    applicationMode: fields.applicationMode || "",
+    currentPassportNumber: fields.currentPassportNumber || "",
+    currentPassportIssueDate: fields.currentPassportIssueDate || "",
+    currentPassportExpirationDate: fields.currentPassportExpirationDate || "",
+    emergencyContactName: fields.emergencyContactName || "",
+    emergencyContactPhone: fields.emergencyContactPhone || "",
     // Cloudinary publicId only — never a raw file or a permanently public
     // URL. uploadedAt is a plain client Date rather than serverTimestamp()
     // because Firestore doesn't allow server-timestamp sentinels inside
@@ -57,11 +66,11 @@ export async function getApplication(applicationId) {
 
 // Starts a new application as a draft — nothing an admin needs to act on
 // yet (status stays 'draft' until the citizen explicitly submits).
-export async function createDraft(user, profile, fields) {
+export async function createDraft(user, profile, serviceType, fields) {
   const payload = {
     applicantUserId: user.uid,
     applicantEmail: user.email,
-    serviceType: "birth_certificate",
+    serviceType,
     citizenId: profile.citizenId,
     memberNumber: profile.memberNumber || "",
     ...buildFieldPayload(fields),
@@ -84,7 +93,7 @@ export async function createDraft(user, profile, fields) {
     userId: user.uid,
     actorId: user.uid,
     actorRole: "citizen",
-    message: "Started a birth certificate request draft.",
+    message: "Started a new application draft.",
   });
 
   return ref.id;
@@ -115,7 +124,7 @@ export async function submitApplication(user, applicationId, fields) {
     userId: user.uid,
     actorId: user.uid,
     actorRole: "citizen",
-    message: "Submitted the birth certificate request for review.",
+    message: "Submitted the application for review.",
   });
 }
 
