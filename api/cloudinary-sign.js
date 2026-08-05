@@ -96,6 +96,7 @@ export default async function handler(req, res) {
     const FOLDER_BY_SERVICE = {
       identity: `identityDocuments/${decodedToken.uid}`,
       birthCertificate: `serviceApplications/${decodedToken.uid}/birthCertificate`,
+      passport: `serviceApplications/${decodedToken.uid}/passport`,
     };
     const { service } = req.body || {};
     const folder = FOLDER_BY_SERVICE[service] || FOLDER_BY_SERVICE.identity;
