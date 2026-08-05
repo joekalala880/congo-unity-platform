@@ -525,35 +525,98 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
-    // ---------- messages (direct messages) ----------
-    // Only the sender or recipient may ever read a message.
-    match /messages/{messageId} {
+    // ---------- conversations ----------
+    // One doc per participant pair, ID = sorted([uidA, uidB]).join('_') —
+    // deterministic so getOrCreateConversation() can prevent duplicate
+    // conversation records with a get-inside-transaction instead of a
+    // separate uniqueness index. Holds only the metadata needed for a
+    // conversation list (last message preview, per-participant unread
+    // count); the messages themselves live in the messages collection.
+    match /conversations/{conversationId} {
+      // `resource == null` (doc doesn't exist yet) must be allowed through —
+      // getOrCreateConversation()'s transaction does a get() on a brand-new
+      // pair's doc before creating it, and a nonexistent doc has nothing to
+      // leak, so there's no access-control reason to deny that read.
       allow read: if isSignedIn()
-        && (request.auth.token.email == resource.data.from || request.auth.token.email == resource.data.to);
+        && (resource == null || request.auth.uid in resource.data.participants);
 
       allow create: if isSignedIn()
-        && request.resource.data.from == request.auth.token.email
-        && isNonEmptyString(request.resource.data.to)
-        && isNonEmptyString(request.resource.data.text)
-        && request.resource.data.createdAt is timestamp;
+        && request.auth.uid in request.resource.data.participants
+        && request.resource.data.participants.size() == 2
+        && request.resource.data.participants[0] != request.resource.data.participants[1]
+        && request.resource.data.lastMessage == null
+        && request.resource.data.unreadCount is map
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp
+        && request.resource.data.keys().hasOnly(['participants', 'lastMessage', 'unreadCount', 'createdAt', 'updatedAt']);
 
-      // No edit/delete UI exists; messages are immutable once sent.
-      allow update, delete: if false;
+      // Only sendMessage()/markConversationRead() touch an existing
+      // conversation — bumping the preview/unread counters. Participants
+      // and history are immutable once created.
+      allow update: if isSignedIn()
+        && request.auth.uid in resource.data.participants
+        && request.resource.data.participants == resource.data.participants
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lastMessage', 'unreadCount', 'updatedAt']);
+
+      allow delete: if false;
+    }
+
+    // ---------- messages ----------
+    // Individual messages within a conversation. senderId/recipientId are
+    // Auth uids (not emails) so read/write ownership checks are simple uid
+    // equality rather than a token-email lookup.
+    match /messages/{messageId} {
+      allow read: if isSignedIn()
+        && (request.auth.uid == resource.data.senderId || request.auth.uid == resource.data.recipientId);
+
+      allow create: if isSignedIn()
+        && request.resource.data.senderId == request.auth.uid
+        && isNonEmptyString(request.resource.data.recipientId)
+        && request.resource.data.recipientId != request.auth.uid
+        && isNonEmptyString(request.resource.data.conversationId)
+        && isNonEmptyString(request.resource.data.text)
+        && request.resource.data.read == false
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.keys().hasOnly(['conversationId', 'senderId', 'recipientId', 'text', 'read', 'createdAt']);
+
+      // Only the recipient may flip `read` to true — a read receipt, not an
+      // edit. Nothing else about a sent message can ever change.
+      allow update: if isSignedIn()
+        && request.auth.uid == resource.data.recipientId
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read'])
+        && request.resource.data.read == true;
+
+      allow delete: if false;
     }
 
     // ---------- notifications ----------
     match /notifications/{notificationId} {
       allow read: if isSignedIn() && resource.data.to == request.auth.token.email;
 
-      // Admin actions (verification approve/reject) create notifications to
-      // the affected user. Validated so an admin can't be tricked into
-      // writing an arbitrary payload — to/message are required, and it
-      // always starts unread regardless of what's sent.
-      allow create: if isAdmin()
-        && isNonEmptyString(request.resource.data.to)
+      // Two ways a notification gets created:
+      //  - Admin actions (verification approve/reject, service application
+      //    review) — any `type`, no self-attribution required.
+      //  - A regular signed-in user, but only for the specific self-service
+      //    types they can legitimately trigger themselves (a new message, a
+      //    new follower) and only attributed to their own uid — so a user
+      //    can't forge a notification claiming to be from someone else or
+      //    impersonate an admin-only notification type.
+      // Either way: to/message are required, and it always starts unread
+      // regardless of what's sent.
+      allow create: if isNonEmptyString(request.resource.data.to)
         && isNonEmptyString(request.resource.data.message)
         && request.resource.data.read == false
-        && request.resource.data.createdAt is timestamp;
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.keys().hasOnly(['to', 'from', 'fromUserId', 'type', 'message', 'relatedRoute', 'read', 'createdAt'])
+        && (
+          isAdmin()
+          || (
+            isSignedIn()
+            && request.resource.data.type in ['New Message', 'New Follower']
+            && request.resource.data.fromUserId == request.auth.uid
+          )
+        );
 
       // Recipient may only flip `read` to true; nothing else.
       allow update: if isSignedIn()
