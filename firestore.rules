@@ -406,15 +406,16 @@ service cloud.firestore {
     }
 
     // ---------- serviceApplications ----------
-    // Government service application workflow (Phase 4 pilot: birth
-    // certificate only). Deliberately one collection with a `serviceType`
-    // field rather than one collection per service, so future services can
-    // reuse the same review/audit infrastructure without a schema change —
-    // isValidServiceType() below is the whitelist to extend when that
-    // happens. Documents are never government-issued by this platform;
+    // Government service application workflow. Deliberately one collection
+    // with a `serviceType` field rather than one collection per service, so
+    // each new service reuses the same review/audit infrastructure without
+    // a schema change — isValidServiceType() below is the whitelist to
+    // extend when a new service is added. Field allowlists below are a
+    // union across all service types (each service only ever writes its
+    // own subset). Documents are never government-issued by this platform;
     // that's enforced in the UI copy, not here.
     function isValidServiceType() {
-      return request.resource.data.serviceType in ['birth_certificate'];
+      return request.resource.data.serviceType in ['birth_certificate', 'passport'];
     }
 
     match /serviceApplications/{applicationId} {
@@ -436,6 +437,9 @@ service cloud.firestore {
              'applicantUserId', 'applicantEmail', 'serviceType', 'citizenId', 'memberNumber',
              'applicantFullName', 'dateOfBirth', 'placeOfBirth', 'provinceOfBirth', 'territoryOfBirth',
              'fatherFullName', 'motherFullName', 'reasonForRequest', 'deliveryPreference',
+             'passportType', 'applicationMode', 'currentPassportNumber',
+             'currentPassportIssueDate', 'currentPassportExpirationDate',
+             'emergencyContactName', 'emergencyContactPhone',
              'supportingDocuments', 'status', 'submittedAt', 'reviewedAt', 'reviewedBy', 'reviewerId',
              'rejectionReason', 'requestMoreInfoMessage', 'createdAt', 'updatedAt'
            ]);
@@ -468,6 +472,9 @@ service cloud.firestore {
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
                'applicantFullName', 'dateOfBirth', 'placeOfBirth', 'provinceOfBirth', 'territoryOfBirth',
                'fatherFullName', 'motherFullName', 'reasonForRequest', 'deliveryPreference',
+               'passportType', 'applicationMode', 'currentPassportNumber',
+               'currentPassportIssueDate', 'currentPassportExpirationDate',
+               'emergencyContactName', 'emergencyContactPhone',
                'supportingDocuments', 'status', 'submittedAt', 'updatedAt'
              ])
         );
