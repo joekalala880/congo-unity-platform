@@ -96,6 +96,13 @@ import CreateBusiness from "./pages/CreateBusiness";
 import EditBusiness from "./pages/EditBusiness";
 import MyBusinesses from "./pages/MyBusinesses";
 import AdminBusinesses from "./pages/AdminBusinesses";
+import Crisis from "./pages/Crisis";
+import ReportCrisis from "./pages/ReportCrisis";
+import MissingPersons from "./pages/MissingPersons";
+import ReportMissingPerson from "./pages/ReportMissingPerson";
+import MissingPersonDetails from "./pages/MissingPersonDetails";
+import EmergencyResources from "./pages/EmergencyResources";
+import AdminCrisis from "./pages/AdminCrisis";
 import GlobalSearch from "./pages/GlobalSearch";
 import JobDetails from "./pages/JobDetails";
 import BusinessDetails from "./pages/BusinessDetails";
@@ -544,6 +551,34 @@ function App() {
           element={
             <ProtectedAdmin>
               <AdminBusinesses />
+            </ProtectedAdmin>
+          }
+        />
+        <Route path="/crisis" element={<Crisis />} />
+        <Route
+          path="/crisis/report"
+          element={
+            <ProtectedRoute>
+              <ReportCrisis />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/crisis/missing-persons" element={<MissingPersons />} />
+        <Route
+          path="/crisis/missing-persons/report"
+          element={
+            <ProtectedRoute>
+              <ReportMissingPerson />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/crisis/missing-persons/:id" element={<MissingPersonDetails />} />
+        <Route path="/crisis/resources" element={<EmergencyResources />} />
+        <Route
+          path="/admin/crisis"
+          element={
+            <ProtectedAdmin>
+              <AdminCrisis />
             </ProtectedAdmin>
           }
         />

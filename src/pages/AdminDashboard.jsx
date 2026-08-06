@@ -62,6 +62,7 @@ function AdminDashboard() {
         <Link to="/admin/jobs">Jobs Administration</Link>
         <Link to="/admin/events">Events Administration</Link>
         <Link to="/admin/businesses">Business Directory Administration</Link>
+        <Link to="/admin/crisis">Crisis Center Administration</Link>
       </aside>
 
       <main className="admin-main">

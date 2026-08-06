@@ -96,6 +96,10 @@ function Navbar() {
           <Link to="/diaspora" onClick={closeMenu}>Diaspora</Link>
           <Link to="/congo-gallery" onClick={closeMenu}>Gallery</Link>
           <Link to="/east-crisis" onClick={closeMenu}>Crisis</Link>
+          <Link to="/crisis" onClick={closeMenu}>Crisis & Emergency Center</Link>
+          {user && <Link to="/crisis/report" onClick={closeMenu}>Report a Crisis</Link>}
+          <Link to="/crisis/missing-persons" onClick={closeMenu}>Missing Persons</Link>
+          <Link to="/crisis/resources" onClick={closeMenu}>Emergency Resources</Link>
         </NavGroup>
 
         <NavGroup label="Government Services" id="government" openGroup={openGroup} setOpenGroup={setOpenGroup}>
