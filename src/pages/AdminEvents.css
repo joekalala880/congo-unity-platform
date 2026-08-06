@@ -1,0 +1,137 @@
+.admevents-page {
+  padding: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+  color: #fff;
+}
+
+.admevents-header {
+  margin-bottom: 20px;
+}
+
+.admevents-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.admevents-stat {
+  flex: 1 1 140px;
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+
+.admevents-stat span {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #d9a441;
+}
+
+.admevents-section {
+  margin-bottom: 32px;
+}
+
+.admevents-section h2 {
+  margin-bottom: 12px;
+}
+
+.admevents-empty {
+  color: #999;
+}
+
+.admevents-search {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #0d0d0d;
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.admevents-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admevents-row {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.admevents-row-inline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admevents-row-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 6px;
+}
+
+.admevents-row-title span {
+  font-size: 0.85rem;
+  color: #999;
+}
+
+.admevents-meta {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.admevents-row-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.admevents-reject {
+  background: transparent;
+  border: 1px solid #f28b8b;
+  color: #f28b8b;
+}
+
+.admevents-featured {
+  color: #d9a441;
+}
+
+.admevents-report-status {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  width: fit-content;
+}
+
+.admevents-report-pending { background: #4a3b0f; color: #f0c56a; }
+.admevents-report-reviewed { background: #123a1f; color: #7bd88f; }
+.admevents-report-dismissed { background: #2a2a2a; color: #999; }
+
+.admevents-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.admevents-badge-pending { background: #4a3b0f; color: #f0c56a; }
+.admevents-badge-published { background: #123a1f; color: #7bd88f; }
+.admevents-badge-cancelled { background: #2a2a2a; color: #999; }
+.admevents-badge-completed { background: #123a5e; color: #7ec2ff; }
+.admevents-badge-rejected { background: #4a1414; color: #f28b8b; }

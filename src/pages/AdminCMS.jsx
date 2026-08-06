@@ -44,7 +44,7 @@ function AdminCMS() {
           <h3>📅 Events</h3>
           <p>Publish conferences, meetings, fundraisers, and community events.</p>
 
-          <Link to="/create-event">
+          <Link to="/events/create">
             <button>Create Event</button>
           </Link>
         </div>

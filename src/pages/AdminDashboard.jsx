@@ -60,6 +60,7 @@ function AdminDashboard() {
         <Link to="/admin/account-deletions">Account Deletions</Link>
         <Link to="/admin/gallery">Gallery Manager</Link>
         <Link to="/admin/jobs">Jobs Administration</Link>
+        <Link to="/admin/events">Events Administration</Link>
       </aside>
 
       <main className="admin-main">
@@ -102,7 +103,7 @@ function AdminDashboard() {
             <h3>Quick Actions</h3>
             <Link to="/create-job">Create New Job →</Link>
             <Link to="/create-scholarship">Create New Scholarship →</Link>
-            <Link to="/create-event">Create New Event →</Link>
+            <Link to="/events/create">Create New Event →</Link>
             <Link to="/create-news">Create News →</Link>
             <Link to="/create-business">Create Business →</Link>
           </div>
