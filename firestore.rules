@@ -185,15 +185,173 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // ---------- jobs / events / scholarships ----------
-    // Public listings, open authenticated create, admin-only edit/remove
-    // (no owner-edit UI exists for these today).
+    // ---------- jobs ----------
+    // Employer-owned postings with an admin-approval gate: a regular
+    // employer's new post starts 'pending_approval' and only becomes
+    // publicly readable once an admin flips it to 'published' — mirrors the
+    // government-service application status-machine pattern. Employers can
+    // edit their own post's content while pending, and close (but not
+    // reopen) a published post; only admins can approve/reject/remove.
+    // applicantCount is deliberately NOT stored here — an applicant
+    // successfully creating a jobApplications doc has no write access to
+    // the parent job doc, so counting is done by querying jobApplications
+    // instead of trying to make this doc writable by non-owners.
     match /jobs/{jobId} {
-      allow read: if true;
-      allow create: if validPublishedCreate('title');
-      allow update, delete: if isAdmin();
+      allow read: if resource.data.status == 'published'
+        || isAdmin()
+        || (isSignedIn() && resource.data.employerId == request.auth.uid);
+
+      allow create: if isSignedIn()
+        && request.resource.data.employerId == request.auth.uid
+        && request.resource.data.employerEmail == request.auth.token.email
+        && isNonEmptyString(request.resource.data.title)
+        && isNonEmptyString(request.resource.data.description)
+        && isNonEmptyString(request.resource.data.companyName)
+        && request.resource.data.status == 'pending_approval'
+        && request.resource.data.rejectionReason == ''
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp
+        && request.resource.data.keys().hasOnly([
+             'employerId', 'employerEmail', 'companyName', 'title', 'description',
+             'category', 'type', 'locationType', 'location', 'experienceLevel',
+             'salaryRange', 'status', 'rejectionReason', 'createdAt', 'updatedAt', 'closedAt'
+           ]);
+
+      allow update: if isAdmin()
+        || (
+          isSignedIn() && resource.data.employerId == request.auth.uid
+          && request.resource.data.employerId == resource.data.employerId
+          && request.resource.data.employerEmail == resource.data.employerEmail
+          && request.resource.data.createdAt == resource.data.createdAt
+          && (
+            (resource.data.status == 'pending_approval' && request.resource.data.status == 'pending_approval')
+            || (resource.data.status == 'published' && request.resource.data.status in ['published', 'closed'])
+            || (resource.data.status == 'closed' && request.resource.data.status == 'closed')
+          )
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+               'title', 'description', 'category', 'type', 'locationType', 'location',
+               'experienceLevel', 'salaryRange', 'status', 'updatedAt', 'closedAt'
+             ])
+        );
+
+      allow delete: if isAdmin();
     }
 
+    // ---------- companies ----------
+    // One lightweight employer/company profile per employer, doc ID == the
+    // employer's Auth uid (same canonical pattern as congoleseProfiles'
+    // isAdmin() lookup). `verified` is admin-only — an employer can never
+    // self-verify.
+    match /companies/{companyId} {
+      allow read: if true;
+
+      allow create: if isSignedIn()
+        && companyId == request.auth.uid
+        && request.resource.data.employerId == request.auth.uid
+        && isNonEmptyString(request.resource.data.name)
+        && request.resource.data.verified == false
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp
+        && request.resource.data.keys().hasOnly([
+             'employerId', 'name', 'description', 'website', 'logoUrl',
+             'industry', 'verified', 'createdAt', 'updatedAt'
+           ]);
+
+      allow update: if isAdmin()
+        || (
+          isSignedIn() && companyId == request.auth.uid
+          && request.resource.data.employerId == resource.data.employerId
+          && request.resource.data.verified == resource.data.verified
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+               'name', 'description', 'website', 'logoUrl', 'industry', 'updatedAt'
+             ])
+        );
+
+      allow delete: if isAdmin();
+    }
+
+    // ---------- jobApplications ----------
+    // Doc ID = `${jobId}_${applicantUserId}` — deterministic, so a second
+    // apply attempt on the same job by the same applicant lands on an
+    // *update* (rejected by the rules below, since the applicant branch
+    // only allows applied -> withdrawn) rather than silently creating a
+    // duplicate — the same dedupe trick used for messaging conversations.
+    // employerId is denormalized from the job at creation time so employer
+    // read/update access never needs a second get() beyond the one already
+    // required to validate the create itself.
+    match /jobApplications/{applicationId} {
+      allow read: if isAdmin()
+        || (isSignedIn() && resource.data.applicantUserId == request.auth.uid)
+        || (isSignedIn() && resource.data.employerId == request.auth.uid);
+
+      allow create: if isSignedIn()
+        && applicationId == request.resource.data.jobId + '_' + request.auth.uid
+        && request.resource.data.applicantUserId == request.auth.uid
+        && request.resource.data.applicantEmail == request.auth.token.email
+        && request.resource.data.employerId
+             == get(/databases/$(database)/documents/jobs/$(request.resource.data.jobId)).data.employerId
+        && get(/databases/$(database)/documents/jobs/$(request.resource.data.jobId)).data.status == 'published'
+        && isNonEmptyString(request.resource.data.applicantFullName)
+        && request.resource.data.status == 'applied'
+        && request.resource.data.interviewInstructions == ''
+        && request.resource.data.reviewedAt == null
+        && request.resource.data.reviewedBy == null
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp
+        && request.resource.data.keys().hasOnly([
+             'jobId', 'jobTitle', 'companyName', 'employerId', 'applicantUserId', 'applicantEmail', 'applicantFullName',
+             'resumeCloudinaryPublicId', 'resumeResourceType', 'resumeFileName', 'coverLetter', 'status',
+             'interviewInstructions', 'reviewedAt', 'reviewedBy', 'createdAt', 'updatedAt'
+           ]);
+
+      allow update: if isAdmin()
+        || (
+          // Employer reviews: status transitions + interview instructions.
+          isSignedIn() && resource.data.employerId == request.auth.uid
+          && request.resource.data.applicantUserId == resource.data.applicantUserId
+          && request.resource.data.employerId == resource.data.employerId
+          && request.resource.data.jobId == resource.data.jobId
+          && request.resource.data.createdAt == resource.data.createdAt
+          && request.resource.data.status in ['under_review', 'interview', 'offered', 'rejected']
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+               'status', 'interviewInstructions', 'reviewedAt', 'reviewedBy', 'updatedAt'
+             ])
+        )
+        || (
+          // Applicant withdraws — only while still in the initial 'applied'
+          // state, matching "withdraw before review" in the spec.
+          isSignedIn() && resource.data.applicantUserId == request.auth.uid
+          && resource.data.status == 'applied'
+          && request.resource.data.status == 'withdrawn'
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt'])
+        );
+
+      allow delete: if isAdmin();
+    }
+
+    // ---------- jobReports ----------
+    match /jobReports/{reportId} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.reporterId == request.auth.uid);
+
+      allow create: if isSignedIn()
+        && request.resource.data.reporterId == request.auth.uid
+        && request.resource.data.reporterEmail == request.auth.token.email
+        && isNonEmptyString(request.resource.data.jobId)
+        && request.resource.data.reason in ['fraud', 'expired', 'misleading', 'spam', 'other']
+        && request.resource.data.status == 'pending'
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.keys().hasOnly([
+             'jobId', 'reporterId', 'reporterEmail', 'reason', 'message',
+             'status', 'createdAt', 'reviewedBy', 'reviewedAt', 'adminNotes'
+           ]);
+
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ---------- events / scholarships ----------
+    // Public listings, open authenticated create, admin-only edit/remove
+    // (no owner-edit UI exists for these today).
     match /events/{eventId} {
       allow read: if true;
       allow create: if validPublishedCreate('title');
@@ -613,7 +771,7 @@ service cloud.firestore {
           isAdmin()
           || (
             isSignedIn()
-            && request.resource.data.type in ['New Message', 'New Follower']
+            && request.resource.data.type in ['New Message', 'New Follower', 'Job Application Update']
             && request.resource.data.fromUserId == request.auth.uid
           )
         );
