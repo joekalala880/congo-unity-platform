@@ -1,0 +1,103 @@
+.admcrisis-page {
+  max-width: 1000px;
+}
+
+.admcrisis-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 20px 0 28px;
+}
+
+.admcrisis-stat {
+  flex: 1 1 160px;
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  color: #fff;
+}
+
+.admcrisis-stat span {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #d9a441;
+}
+
+.admcrisis-section {
+  margin-bottom: 32px;
+}
+
+.admcrisis-section h2 {
+  margin-bottom: 12px;
+}
+
+.admcrisis-empty {
+  color: #999;
+}
+
+.admcrisis-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.admcrisis-row {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  padding: 14px 16px;
+  color: #fff;
+}
+
+.admcrisis-row-inline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admcrisis-row-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 6px;
+}
+
+.admcrisis-row-title span {
+  font-size: 0.85rem;
+  color: #999;
+}
+
+.admcrisis-meta {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.admcrisis-row-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.admcrisis-reject {
+  background: transparent;
+  border: 1px solid #f28b8b;
+  color: #f28b8b;
+}
+
+.admcrisis-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.admcrisis-badge-approved { background: #123a1f; color: #7bd88f; }
+.admcrisis-badge-closed { background: #2a2a2a; color: #999; }
