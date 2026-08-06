@@ -1,0 +1,80 @@
+.crisiscenter-disclaimer {
+  background: #2a1a0d;
+  border: 1px solid #d9a441;
+  color: #f0d9a8;
+  padding: 14px 18px;
+  border-radius: 10px;
+  margin: 20px 0;
+  line-height: 1.5;
+}
+
+.crisiscenter-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.crisiscenter-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.crisiscenter-filters input[type="text"],
+.crisiscenter-filters select {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #0d0d0d;
+  color: #fff;
+  flex: 1 1 180px;
+  min-width: 160px;
+}
+
+.crisiscenter-urgency {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.crisiscenter-urgency-low { background: #123a1f; color: #7bd88f; }
+.crisiscenter-urgency-medium { background: #4a3b0f; color: #f0c56a; }
+.crisiscenter-urgency-high { background: #4a2414; color: #f2a88b; }
+.crisiscenter-urgency-critical { background: #4a1414; color: #f28b8b; }
+
+.crisiscenter-reporter {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.crisiscenter-empty {
+  color: #999;
+  margin-bottom: 16px;
+}
+
+.crisiscenter-thumb {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 700px) {
+  .crisiscenter-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .crisiscenter-filters input[type="text"],
+  .crisiscenter-filters select {
+    width: 100%;
+    flex-basis: auto;
+  }
+}
