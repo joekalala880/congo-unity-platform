@@ -87,6 +87,8 @@ function Navbar() {
           <Link to="/feed" onClick={closeMenu}>Community Feed</Link>
           <Link to="/directory" onClick={closeMenu}>Directory</Link>
           <Link to="/jobs" onClick={closeMenu}>Jobs</Link>
+          {user && <Link to="/my-applications" onClick={closeMenu}>My Job Applications</Link>}
+          {user && <Link to="/employer/jobs" onClick={closeMenu}>My Job Postings</Link>}
           <Link to="/diaspora" onClick={closeMenu}>Diaspora</Link>
           <Link to="/congo-gallery" onClick={closeMenu}>Gallery</Link>
           <Link to="/east-crisis" onClick={closeMenu}>Crisis</Link>

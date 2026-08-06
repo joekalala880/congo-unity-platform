@@ -16,6 +16,8 @@ import { fetchGalleryPage } from "../services/galleryService";
 import { computeProfileCompletion } from "../services/profileCompletion";
 import { listMyApplications } from "../services/serviceApplicationsService";
 import { STATUS_LABELS as APPLICATION_STATUS_LABELS } from "../services/serviceApplicationTypes";
+import { listMyApplications as listMyJobApplications } from "../services/jobApplicationsService";
+import { APPLICATION_STATUS_LABELS as JOB_APPLICATION_STATUS_LABELS } from "../services/jobTypes";
 import { resolveGalleryImage } from "./galleryLocalImages";
 import "./Dashboard.css";
 
@@ -94,6 +96,9 @@ function Dashboard() {
 
   const [savedJobsCount, setSavedJobsCount] = useState(0);
   const [savedJobsLoading, setSavedJobsLoading] = useState(true);
+
+  const [jobApplications, setJobApplications] = useState([]);
+  const [jobApplicationsLoading, setJobApplicationsLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -234,6 +239,18 @@ function Dashboard() {
         console.error("Failed to load government applications:", error);
       } finally {
         setApplicationsLoading(false);
+      }
+    })();
+
+    (async () => {
+      setJobApplicationsLoading(true);
+      try {
+        const apps = await listMyJobApplications(user.uid);
+        setJobApplications(apps);
+      } catch (error) {
+        console.error("Failed to load job applications:", error);
+      } finally {
+        setJobApplicationsLoading(false);
       }
     })();
 
@@ -380,6 +397,22 @@ function Dashboard() {
               <p className="db-stat-sub">View saved items</p>
             </Link>
           )}
+
+          {jobApplicationsLoading ? (
+            <StatSkeleton />
+          ) : (
+            <Link to="/my-applications" className="db-stat-card">
+              <p className="db-stat-label">Job Applications</p>
+              <p className="db-stat-value">
+                {jobApplications.filter((a) => ["applied", "under_review", "interview", "offered"].includes(a.status)).length}
+              </p>
+              <p className="db-stat-sub">
+                {jobApplications[0]
+                  ? `Most recent: ${JOB_APPLICATION_STATUS_LABELS[jobApplications[0].status] || jobApplications[0].status}`
+                  : "No applications yet"}
+              </p>
+            </Link>
+          )}
         </div>
       </section>
 
@@ -395,6 +428,8 @@ function Dashboard() {
           <Link to="/edit-profile" className="db-action-button">Edit Profile</Link>
           <Link to="/uploadid" className="db-action-button">Upload ID</Link>
           <Link to="/search-users" className="db-action-button">Find People</Link>
+          <Link to="/jobs" className="db-action-button">Browse Jobs</Link>
+          <Link to="/create-job" className="db-action-button">Post a Job</Link>
           <Link to="/feed" className="db-action-button">Community Feed</Link>
           <Link to="/direct-messages" className="db-action-button">Messages</Link>
           <Link to="/congo-gallery" className="db-action-button">Explore Gallery</Link>
