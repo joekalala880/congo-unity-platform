@@ -93,6 +93,9 @@ import MyEvents from "./pages/MyEvents";
 import AdminEvents from "./pages/AdminEvents";
 import CreateNews from "./pages/CreateNews";
 import CreateBusiness from "./pages/CreateBusiness";
+import EditBusiness from "./pages/EditBusiness";
+import MyBusinesses from "./pages/MyBusinesses";
+import AdminBusinesses from "./pages/AdminBusinesses";
 import GlobalSearch from "./pages/GlobalSearch";
 import JobDetails from "./pages/JobDetails";
 import BusinessDetails from "./pages/BusinessDetails";
@@ -512,6 +515,38 @@ function App() {
           }
         />
         <Route path="/businesses" element={<Businesses />} />
+        <Route
+          path="/businesses/create"
+          element={
+            <ProtectedRoute>
+              <CreateBusiness />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/businesses/:businessId/edit"
+          element={
+            <ProtectedRoute>
+              <EditBusiness />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-businesses"
+          element={
+            <ProtectedRoute>
+              <MyBusinesses />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/businesses"
+          element={
+            <ProtectedAdmin>
+              <AdminBusinesses />
+            </ProtectedAdmin>
+          }
+        />
         <Route path="/success-stories" element={<SuccessStories />} />
         <Route path="/volunteer" element={<Volunteer />} />
 
@@ -660,7 +695,6 @@ function App() {
           }
         />
         <Route path="/create-news" element={<CreateNews />} />
-        <Route path="/create-business" element={<CreateBusiness />} />
         <Route path="/global-search" element={<GlobalSearch />} />
         <Route path="/jobs/:id" element={<JobDetails />} />
         <Route

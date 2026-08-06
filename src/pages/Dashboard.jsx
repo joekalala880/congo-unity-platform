@@ -20,6 +20,7 @@ import { listMyApplications as listMyJobApplications } from "../services/jobAppl
 import { APPLICATION_STATUS_LABELS as JOB_APPLICATION_STATUS_LABELS } from "../services/jobTypes";
 import { listMyHostedEvents } from "../services/eventsService";
 import { listMyRsvps } from "../services/eventAttendeesService";
+import { listMyBusinesses, listApprovedBusinesses } from "../services/businessesService";
 import { resolveGalleryImage } from "./galleryLocalImages";
 import "./Dashboard.css";
 
@@ -105,6 +106,12 @@ function Dashboard() {
   const [hostedEventsCount, setHostedEventsCount] = useState(0);
   const [attendingEventsCount, setAttendingEventsCount] = useState(0);
   const [myEventsLoading, setMyEventsLoading] = useState(true);
+
+  const [myBusinessesCount, setMyBusinessesCount] = useState(0);
+  const [savedBusinessesCount, setSavedBusinessesCount] = useState(0);
+  const [featuredBusinesses, setFeaturedBusinesses] = useState([]);
+  const [myBusinessesLoading, setMyBusinessesLoading] = useState(true);
+  const [featuredBusinessesLoading, setFeaturedBusinessesLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -279,15 +286,42 @@ function Dashboard() {
         const snapshot = await getDocs(
           query(collection(db, "savedItems"), where("userEmail", "==", user.email))
         );
-        const count = snapshot.docs.filter((d) => d.data().type === "job" && d.data().removed !== true).length;
-        setSavedJobsCount(count);
+        const activeItems = snapshot.docs.filter((d) => d.data().removed !== true);
+        setSavedJobsCount(activeItems.filter((d) => d.data().type === "job").length);
+        setSavedBusinessesCount(activeItems.filter((d) => d.data().type === "business").length);
       } catch (error) {
-        console.error("Failed to load saved jobs:", error);
+        console.error("Failed to load saved items:", error);
       } finally {
         setSavedJobsLoading(false);
       }
     })();
+
+    (async () => {
+      setMyBusinessesLoading(true);
+      try {
+        const myBusinesses = await listMyBusinesses(user.uid);
+        setMyBusinessesCount(myBusinesses.length);
+      } catch (error) {
+        console.error("Failed to load your businesses:", error);
+      } finally {
+        setMyBusinessesLoading(false);
+      }
+    })();
   }, [user]);
+
+  useEffect(() => {
+    (async () => {
+      setFeaturedBusinessesLoading(true);
+      try {
+        const approved = await listApprovedBusinesses();
+        setFeaturedBusinesses(approved.filter((b) => b.featured).slice(0, 4));
+      } catch (error) {
+        console.error("Failed to load featured businesses:", error);
+      } finally {
+        setFeaturedBusinessesLoading(false);
+      }
+    })();
+  }, []);
 
   if (authChecked && !user) {
     return (
@@ -452,8 +486,49 @@ function Dashboard() {
               <p className="db-stat-sub">Events you've RSVP'd Going to</p>
             </Link>
           )}
+
+          {myBusinessesLoading ? (
+            <StatSkeleton />
+          ) : (
+            <Link to="/my-businesses" className="db-stat-card">
+              <p className="db-stat-label">My Businesses</p>
+              <p className="db-stat-value">{myBusinessesCount}</p>
+              <p className="db-stat-sub">Listings you've created</p>
+            </Link>
+          )}
+
+          {savedJobsLoading ? (
+            <StatSkeleton />
+          ) : (
+            <Link to="/saved" className="db-stat-card">
+              <p className="db-stat-label">Saved Businesses</p>
+              <p className="db-stat-value">{savedBusinessesCount}</p>
+              <p className="db-stat-sub">View saved items</p>
+            </Link>
+          )}
         </div>
       </section>
+
+      {!featuredBusinessesLoading && featuredBusinesses.length > 0 && (
+        <section className="db-section">
+          <div className="db-list-card">
+            <div className="db-section-head">
+              <h3>Featured Businesses</h3>
+              <Link to="/businesses" className="db-section-link">View all</Link>
+            </div>
+
+            {featuredBusinesses.map((business) => (
+              <Link to={`/businesses/${business.id}`} className="db-list-item" key={business.id}>
+                {business.coverImageUrl && <img src={business.coverImageUrl} alt="" className="db-list-thumb" />}
+                <div className="db-list-item-body">
+                  <h4>{business.businessName}</h4>
+                  <p>{business.category} · {business.city}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="db-section">
         <div className="db-section-head">
@@ -471,6 +546,8 @@ function Dashboard() {
           <Link to="/create-job" className="db-action-button">Post a Job</Link>
           <Link to="/events" className="db-action-button">Browse Events</Link>
           <Link to="/events/create" className="db-action-button">Create Event</Link>
+          <Link to="/businesses" className="db-action-button">Browse Businesses</Link>
+          <Link to="/businesses/create" className="db-action-button">Create Business</Link>
           <Link to="/feed" className="db-action-button">Community Feed</Link>
           <Link to="/direct-messages" className="db-action-button">Messages</Link>
           <Link to="/congo-gallery" className="db-action-button">Explore Gallery</Link>

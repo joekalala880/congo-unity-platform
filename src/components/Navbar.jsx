@@ -91,6 +91,8 @@ function Navbar() {
           {user && <Link to="/employer/jobs" onClick={closeMenu}>My Job Postings</Link>}
           <Link to="/events" onClick={closeMenu}>Events & Meetups</Link>
           {user && <Link to="/my-events" onClick={closeMenu}>My Events</Link>}
+          <Link to="/businesses" onClick={closeMenu}>Business Directory</Link>
+          {user && <Link to="/my-businesses" onClick={closeMenu}>My Businesses</Link>}
           <Link to="/diaspora" onClick={closeMenu}>Diaspora</Link>
           <Link to="/congo-gallery" onClick={closeMenu}>Gallery</Link>
           <Link to="/east-crisis" onClick={closeMenu}>Crisis</Link>
