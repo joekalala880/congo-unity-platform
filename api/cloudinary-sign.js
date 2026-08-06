@@ -97,6 +97,7 @@ export default async function handler(req, res) {
       identity: `identityDocuments/${decodedToken.uid}`,
       birthCertificate: `serviceApplications/${decodedToken.uid}/birthCertificate`,
       passport: `serviceApplications/${decodedToken.uid}/passport`,
+      resume: `jobApplications/${decodedToken.uid}/resumes`,
     };
     const { service } = req.body || {};
     const folder = FOLDER_BY_SERVICE[service] || FOLDER_BY_SERVICE.identity;
@@ -119,7 +120,7 @@ export default async function handler(req, res) {
   }
 
   if (action === "view") {
-    const { publicId, resourceType } = req.body || {};
+    const { publicId, resourceType, applicationId } = req.body || {};
 
     if (!publicId || !resourceType) {
       res.status(400).json({ error: "publicId and resourceType are required." });
@@ -135,8 +136,23 @@ export default async function handler(req, res) {
 
     const isAdmin = profileSnap.exists && profileSnap.data().role === "admin";
 
-    if (!isAdmin) {
-      res.status(403).json({ error: "Admin access required." });
+    // Resume views pass an applicationId — the applicant themselves and the
+    // employer who owns that job (the two non-admin parties Firestore rules
+    // already grant read access to the application doc) may also view it,
+    // matching jobApplications' own read rule instead of duplicating an
+    // admin-only gate onto a document neither of them "owns" outright.
+    let isAuthorizedViaApplication = false;
+    if (applicationId) {
+      const applicationSnap = await db.collection("jobApplications").doc(applicationId).get();
+      const applicationData = applicationSnap.exists ? applicationSnap.data() : null;
+      isAuthorizedViaApplication = Boolean(
+        applicationData
+          && (applicationData.applicantUserId === decodedToken.uid || applicationData.employerId === decodedToken.uid)
+      );
+    }
+
+    if (!isAdmin && !isAuthorizedViaApplication) {
+      res.status(403).json({ error: "You don't have access to this document." });
       return;
     }
 
