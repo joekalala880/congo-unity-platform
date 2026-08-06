@@ -1,0 +1,137 @@
+.admjobs-page {
+  padding: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+  color: #fff;
+}
+
+.admjobs-header {
+  margin-bottom: 20px;
+}
+
+.admjobs-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.admjobs-stat {
+  flex: 1 1 140px;
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+
+.admjobs-stat span {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #d9a441;
+}
+
+.admjobs-section {
+  margin-bottom: 32px;
+}
+
+.admjobs-section h2 {
+  margin-bottom: 12px;
+}
+
+.admjobs-empty {
+  color: #999;
+}
+
+.admjobs-search {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #0d0d0d;
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.admjobs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admjobs-row {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.admjobs-row-inline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admjobs-row-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 6px;
+}
+
+.admjobs-row-title span {
+  font-size: 0.85rem;
+  color: #999;
+}
+
+.admjobs-meta {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.admjobs-row-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.admjobs-reject {
+  background: transparent;
+  border: 1px solid #f28b8b;
+  color: #f28b8b;
+}
+
+.admjobs-verified-badge {
+  color: #7bd88f;
+}
+
+.admjobs-report-status {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  width: fit-content;
+}
+
+.admjobs-report-pending { background: #4a3b0f; color: #f0c56a; }
+.admjobs-report-reviewed { background: #123a1f; color: #7bd88f; }
+.admjobs-report-dismissed { background: #2a2a2a; color: #999; }
+
+.admjobs-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.admjobs-badge-pending { background: #4a3b0f; color: #f0c56a; }
+.admjobs-badge-published { background: #123a1f; color: #7bd88f; }
+.admjobs-badge-closed { background: #2a2a2a; color: #999; }
+.admjobs-badge-rejected { background: #4a1414; color: #f28b8b; }
+.admjobs-badge-removed { background: #4a1414; color: #f28b8b; }

@@ -59,6 +59,7 @@ function AdminDashboard() {
         <Link to="/admin/service-applications">Service Applications</Link>
         <Link to="/admin/account-deletions">Account Deletions</Link>
         <Link to="/admin/gallery">Gallery Manager</Link>
+        <Link to="/admin/jobs">Jobs Administration</Link>
       </aside>
 
       <main className="admin-main">
