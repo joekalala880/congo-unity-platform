@@ -556,12 +556,148 @@ service cloud.firestore {
       allow update, delete: if isAdmin();
     }
 
+    // ---------- businesses ----------
+    // Owner-scoped, admin-approval-gated — same status-machine pattern as
+    // jobs/events. ratingSum/reviewCount are denormalized aggregates
+    // bumped by whichever signed-in user just wrote a review (not the
+    // owner), via their own narrow affectedKeys()-scoped branch, same as
+    // goingCount on events.
+    function isValidBusinessCategory() {
+      return request.resource.data.category in [
+        'Restaurant', 'Grocery Store', 'Lawyer', 'Doctor or Clinic', 'Mechanic',
+        'Transportation', 'Real Estate', 'Construction', 'Technology',
+        'Beauty and Barber', 'Clothing and Fashion', 'Church', 'Nonprofit',
+        'Community Organization', 'Education', 'Financial Services', 'Other'
+      ];
+    }
+
     match /businesses/{businessId} {
+      allow read: if resource.data.status == 'approved'
+        || isAdmin()
+        || (isSignedIn() && resource.data.ownerUserId == request.auth.uid);
+
+      allow create: if isSignedIn()
+        && request.resource.data.ownerUserId == request.auth.uid
+        && request.resource.data.ownerEmail == request.auth.token.email
+        && isNonEmptyString(request.resource.data.businessName)
+        && isValidBusinessCategory()
+        && request.resource.data.status in ['draft', 'pending_approval']
+        && request.resource.data.featured == false
+        && request.resource.data.ratingSum == 0
+        && request.resource.data.reviewCount == 0
+        && request.resource.data.adminMessage == ''
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp
+        && request.resource.data.keys().hasOnly([
+             'ownerUserId', 'ownerEmail', 'ownerName', 'businessName', 'category',
+             'shortDescription', 'fullDescription', 'logoUrl', 'coverImageUrl',
+             'phone', 'email', 'website', 'address', 'city', 'provinceOrState',
+             'country', 'postalCode', 'mapLink', 'openingHours', 'languages',
+             'services', 'priceRange', 'socialLinks', 'accessibilityInfo',
+             'status', 'adminMessage', 'featured', 'ratingSum', 'reviewCount',
+             'createdAt', 'updatedAt'
+           ]);
+
+      allow update: if isAdmin()
+        || (
+          isSignedIn() && resource.data.ownerUserId == request.auth.uid
+          && request.resource.data.ownerUserId == resource.data.ownerUserId
+          && request.resource.data.ownerEmail == resource.data.ownerEmail
+          && request.resource.data.createdAt == resource.data.createdAt
+          && request.resource.data.featured == resource.data.featured
+          && request.resource.data.ratingSum == resource.data.ratingSum
+          && request.resource.data.reviewCount == resource.data.reviewCount
+          && (
+            (resource.data.status == 'draft' && request.resource.data.status in ['draft', 'pending_approval'])
+            || (resource.data.status == 'pending_approval' && request.resource.data.status == 'pending_approval')
+            || (resource.data.status == 'approved' && request.resource.data.status in ['approved', 'closed'])
+            || (resource.data.status == 'closed' && request.resource.data.status == 'closed')
+          )
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+               'ownerName', 'businessName', 'category', 'shortDescription', 'fullDescription',
+               'logoUrl', 'coverImageUrl', 'phone', 'email', 'website', 'address', 'city',
+               'provinceOrState', 'country', 'postalCode', 'mapLink', 'openingHours',
+               'languages', 'services', 'priceRange', 'socialLinks', 'accessibilityInfo',
+               'status', 'updatedAt'
+             ])
+        )
+        || (
+          isSignedIn()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ratingSum', 'reviewCount', 'updatedAt'])
+        );
+
+      // Owners may only delete their own not-yet-submitted drafts — once
+      // submitted, an admin has to be the one to remove it (matches
+      // "Delete only drafts or unsubmitted businesses").
+      allow delete: if isAdmin()
+        || (isSignedIn() && resource.data.ownerUserId == request.auth.uid && resource.data.status == 'draft');
+    }
+
+    // ---------- businessReviews ----------
+    // Doc ID = `${businessId}_${uid}` — one review per user per business,
+    // dedupe via the same deterministic-ID trick used elsewhere. Reviews
+    // are public (read: true) so they display alongside the business.
+    match /businessReviews/{reviewId} {
       allow read: if true;
-      allow create: if validPublishedCreate('name')
-        && isNonEmptyString(request.resource.data.category)
-        && isNonEmptyString(request.resource.data.country);
-      allow update, delete: if isAdmin();
+
+      allow create: if isSignedIn()
+        && reviewId == request.resource.data.businessId + '_' + request.auth.uid
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.userEmail == request.auth.token.email
+        && request.resource.data.rating is int
+        && request.resource.data.rating >= 1 && request.resource.data.rating <= 5
+        && get(/databases/$(database)/documents/businesses/$(request.resource.data.businessId)).data.status == 'approved'
+        && get(/databases/$(database)/documents/businesses/$(request.resource.data.businessId)).data.ownerUserId != request.auth.uid
+        && request.resource.data.ownerResponse == ''
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp
+        && request.resource.data.keys().hasOnly([
+             'businessId', 'userId', 'userEmail', 'userName', 'rating',
+             'comment', 'ownerResponse', 'createdAt', 'updatedAt'
+           ]);
+
+      allow update: if isAdmin()
+        || (
+          // Reviewer edits their own review content.
+          isSignedIn() && resource.data.userId == request.auth.uid
+          && request.resource.data.userId == resource.data.userId
+          && request.resource.data.businessId == resource.data.businessId
+          && request.resource.data.ownerResponse == resource.data.ownerResponse
+          && request.resource.data.rating is int
+          && request.resource.data.rating >= 1 && request.resource.data.rating <= 5
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['rating', 'comment', 'updatedAt'])
+        )
+        || (
+          // The business owner may respond to a review on their own business.
+          isSignedIn()
+          && get(/databases/$(database)/documents/businesses/$(resource.data.businessId)).data.ownerUserId == request.auth.uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ownerResponse', 'updatedAt'])
+        );
+
+      allow delete: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+    }
+
+    // ---------- businessReports ----------
+    // Covers both "report a business" and "report an abusive review"
+    // (targetType distinguishes them; reviewId is only set for the latter).
+    match /businessReports/{reportId} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.reporterId == request.auth.uid);
+
+      allow create: if isSignedIn()
+        && request.resource.data.reporterId == request.auth.uid
+        && request.resource.data.reporterEmail == request.auth.token.email
+        && isNonEmptyString(request.resource.data.businessId)
+        && request.resource.data.targetType in ['business', 'review']
+        && request.resource.data.reason in ['fraud', 'incorrect_info', 'unsafe_service', 'harassment', 'spam', 'closed_permanently', 'other']
+        && request.resource.data.status == 'pending'
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.keys().hasOnly([
+             'targetType', 'businessId', 'reviewId', 'reporterId', 'reporterEmail',
+             'reason', 'message', 'status', 'createdAt', 'reviewedBy', 'reviewedAt'
+           ]);
+
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
     }
 
     // NOTE: matches current app behavior — CreateAnnouncement.jsx lets any
