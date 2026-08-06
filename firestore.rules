@@ -1189,5 +1189,240 @@ service cloud.firestore {
 
       allow delete: if false;
     }
+
+    // ---------- Crisis & Emergency Center ----------
+    function isValidCrisisCategory() {
+      return request.resource.data.category in [
+        'Violence or Security Threat', 'Displacement', 'Health Emergency',
+        'Natural Disaster', 'Humanitarian Need', 'Infrastructure or Utilities',
+        'Child Protection Concern', 'Gender-Based Violence', 'Other'
+      ];
+    }
+
+    function isValidCrisisUrgency() {
+      return request.resource.data.urgency in ['low', 'medium', 'high', 'critical'];
+    }
+
+    function isValidMissingPersonStatus() {
+      return request.resource.data.status in [
+        'submitted', 'under_review', 'verified_missing', 'located', 'closed', 'rejected'
+      ];
+    }
+
+    function isValidResourceType() {
+      return request.resource.data.resourceType in [
+        'hospital', 'shelter', 'food_assistance', 'water_assistance', 'legal_aid',
+        'child_protection', 'domestic_violence_support', 'mental_health_support',
+        'refugee_displacement_support', 'humanitarian_organization',
+        'embassy_consulate', 'emergency_hotline'
+      ];
+    }
+
+    // crisisReports is never publicly readable — only the reporter and
+    // admins. Reporter identity, contact details, and exact location live
+    // ONLY here; publicCrisisAlerts is a separate admin-authored document
+    // containing just the fields cleared for public display, so a private
+    // field can never leak through a public read no matter what a client
+    // requests.
+    match /crisisReports/{reportId} {
+      allow read: if isAdmin()
+        || (isSignedIn() && resource.data.reporterId == request.auth.uid);
+
+      allow create: if isSignedIn()
+        && request.resource.data.reporterId == request.auth.uid
+        && isNonEmptyString(request.resource.data.title)
+        && isNonEmptyString(request.resource.data.description)
+        && isValidCrisisCategory()
+        && isValidCrisisUrgency()
+        && request.resource.data.status in ['draft', 'submitted']
+        && request.resource.data.adminMessage == ''
+        && request.resource.data.showIdentityPublicly is bool
+        && request.resource.data.showLocationPublicly is bool
+        && request.resource.data.peopleAffectedCount is int
+        && request.resource.data.peopleAffectedCount >= 0
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp
+        && request.resource.data.keys().hasOnly([
+             'reporterId', 'category', 'title', 'description', 'province', 'territory',
+             'cityVillage', 'approximateLocation', 'urgency', 'peopleAffectedCount',
+             'preferredContactMethod', 'contactDetails', 'photoUrl',
+             'showIdentityPublicly', 'showLocationPublicly', 'status', 'adminMessage',
+             'createdAt', 'updatedAt'
+           ]);
+
+      // Shared invariants for every update, regardless of who makes it:
+      // ownership and creation time never change, and the shape/category/
+      // urgency stay valid. Then exactly one of two actors may act:
+      //  - an admin who did NOT file this report themselves (no
+      //    self-verification of your own crisis report), with full latitude
+      //    over status/adminMessage;
+      //  - the reporter themselves, but only while the report still needs
+      //    their input (draft, or resubmitted after admin asked for more
+      //    info), and only over content fields — never adminMessage, which
+      //    is the admin's one-way channel to them.
+      allow update: if request.resource.data.reporterId == resource.data.reporterId
+        && request.resource.data.createdAt == resource.data.createdAt
+        && isValidCrisisCategory()
+        && isValidCrisisUrgency()
+        && request.resource.data.status in [
+             'draft', 'submitted', 'under_review', 'verified', 'rejected', 'resolved', 'archived'
+           ]
+        && request.resource.data.keys().hasOnly([
+             'reporterId', 'category', 'title', 'description', 'province', 'territory',
+             'cityVillage', 'approximateLocation', 'urgency', 'peopleAffectedCount',
+             'preferredContactMethod', 'contactDetails', 'photoUrl',
+             'showIdentityPublicly', 'showLocationPublicly', 'status', 'adminMessage',
+             'createdAt', 'updatedAt'
+           ])
+        && (
+          (isAdmin() && resource.data.reporterId != request.auth.uid)
+          || (
+            isSignedIn() && resource.data.reporterId == request.auth.uid
+            && resource.data.status in ['draft', 'submitted']
+            && request.resource.data.status in ['draft', 'submitted']
+            && request.resource.data.adminMessage == resource.data.adminMessage
+          )
+        );
+
+      allow delete: if isAdmin()
+        || (isSignedIn() && resource.data.reporterId == request.auth.uid && resource.data.status == 'draft');
+    }
+
+    // publicCrisisAlerts holds only what an admin explicitly copied over
+    // from a verified crisisReports doc — never the reporter's identity,
+    // contact info, or exact location unless the reporter opted in (and even
+    // then, only a display name / province-level location, never contact
+    // details or the free-text approximate-location note).
+    match /publicCrisisAlerts/{alertId} {
+      allow read: if true;
+
+      allow create: if isAdmin()
+        && isNonEmptyString(request.resource.data.title)
+        && isNonEmptyString(request.resource.data.description)
+        && isValidCrisisCategory()
+        && isValidCrisisUrgency()
+        && request.resource.data.status == 'verified'
+        && request.resource.data.publishedAt is timestamp
+        && request.resource.data.updatedAt is timestamp
+        && request.resource.data.keys().hasOnly([
+             'category', 'title', 'description', 'province', 'territory', 'cityVillage',
+             'urgency', 'peopleAffectedCount', 'reporterDisplayName', 'status',
+             'publishedAt', 'updatedAt'
+           ]);
+
+      allow update: if isAdmin()
+        && request.resource.data.publishedAt == resource.data.publishedAt
+        && request.resource.data.status in ['verified', 'resolved', 'archived']
+        && request.resource.data.keys().hasOnly([
+             'category', 'title', 'description', 'province', 'territory', 'cityVillage',
+             'urgency', 'peopleAffectedCount', 'reporterDisplayName', 'status',
+             'publishedAt', 'updatedAt'
+           ]);
+
+      allow delete: if isAdmin();
+    }
+
+    // missingPersonReports is a single collection spanning private submission
+    // through public display — read access is gated by status instead of a
+    // document split. Because of that, no private contact info is stored
+    // here at all: only reporterId (a bare uid, used solely for ownership
+    // checks) and safeContactMethod, which the reporter explicitly designates
+    // as the public-facing contact channel for sightings. Admins resolve a
+    // reporter's real email for notifications via congoleseProfiles instead
+    // of storing it on this doc.
+    match /missingPersonReports/{caseId} {
+      allow read: if resource.data.status in ['verified_missing', 'located']
+        || isAdmin()
+        || (isSignedIn() && resource.data.reporterId == request.auth.uid);
+
+      allow create: if isSignedIn()
+        && request.resource.data.reporterId == request.auth.uid
+        && isNonEmptyString(request.resource.data.name)
+        && isNonEmptyString(request.resource.data.lastSeenLocation)
+        && isNonEmptyString(request.resource.data.safeContactMethod)
+        && request.resource.data.status == 'submitted'
+        && request.resource.data.adminMessage == ''
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp
+        && request.resource.data.keys().hasOnly([
+             'reporterId', 'name', 'photoUrl', 'approximateAge', 'gender', 'lastSeenDate',
+             'lastSeenLocation', 'clothingDescription', 'distinguishingFeatures',
+             'safeContactMethod', 'status', 'adminMessage', 'createdAt', 'updatedAt'
+           ]);
+
+      // Same shape as crisisReports: shared invariants first, then exactly
+      // one of an admin (never on their own case) or the reporter (only
+      // while still submitted/under_review, content fields only) may act.
+      allow update: if request.resource.data.reporterId == resource.data.reporterId
+        && request.resource.data.createdAt == resource.data.createdAt
+        && isValidMissingPersonStatus()
+        && request.resource.data.keys().hasOnly([
+             'reporterId', 'name', 'photoUrl', 'approximateAge', 'gender', 'lastSeenDate',
+             'lastSeenLocation', 'clothingDescription', 'distinguishingFeatures',
+             'safeContactMethod', 'status', 'adminMessage', 'createdAt', 'updatedAt'
+           ])
+        && (
+          (isAdmin() && resource.data.reporterId != request.auth.uid)
+          || (
+            isSignedIn() && resource.data.reporterId == request.auth.uid
+            && resource.data.status in ['submitted', 'under_review']
+            && request.resource.data.status in ['submitted', 'under_review']
+            && request.resource.data.adminMessage == resource.data.adminMessage
+          )
+        );
+
+      allow delete: if isAdmin()
+        || (isSignedIn() && resource.data.reporterId == request.auth.uid && resource.data.status == 'submitted');
+    }
+
+    // emergencyResources is purely admin-managed reference data — no
+    // user-generated content, no approval workflow.
+    match /emergencyResources/{resourceId} {
+      allow read: if resource.data.isActive == true || isAdmin();
+
+      allow create: if isAdmin()
+        && isNonEmptyString(request.resource.data.name)
+        && isValidResourceType()
+        && request.resource.data.isActive is bool
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp
+        && request.resource.data.keys().hasOnly([
+             'resourceType', 'name', 'description', 'province', 'territory', 'cityVillage',
+             'address', 'phone', 'email', 'website', 'hours', 'isActive',
+             'createdBy', 'createdAt', 'updatedAt'
+           ]);
+
+      allow update: if isAdmin()
+        && request.resource.data.createdAt == resource.data.createdAt
+        && isValidResourceType()
+        && request.resource.data.isActive is bool
+        && request.resource.data.keys().hasOnly([
+             'resourceType', 'name', 'description', 'province', 'territory', 'cityVillage',
+             'address', 'phone', 'email', 'website', 'hours', 'isActive',
+             'createdBy', 'createdAt', 'updatedAt'
+           ]);
+
+      allow delete: if isAdmin();
+    }
+
+    // crisisAuditLogs is append-only: admins can create and read entries,
+    // but nothing can ever be updated or deleted, by anyone (no admin
+    // override on delete/update, unlike most other collections here).
+    match /crisisAuditLogs/{logId} {
+      allow read: if isAdmin();
+
+      allow create: if isAdmin()
+        && request.resource.data.adminId == request.auth.uid
+        && isNonEmptyString(request.resource.data.action)
+        && isNonEmptyString(request.resource.data.targetType)
+        && isNonEmptyString(request.resource.data.targetId)
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.keys().hasOnly([
+             'action', 'targetType', 'targetId', 'adminId', 'adminEmail', 'details', 'createdAt'
+           ]);
+
+      allow update: if false;
+      allow delete: if false;
+    }
   }
 }
