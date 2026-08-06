@@ -118,51 +118,47 @@ function CreateBusiness() {
         </label>
 
         <label><span>Short Description</span><input name="shortDescription" value={fields.shortDescription} onChange={handleChange} placeholder="One sentence about your business" /></label>
-        <label><span>Full Description</span><textarea name="fullDescription" value={fields.fullDescription} onChange={handleChange} /></label>
 
-        <div className="createbiz-grid">
-          <label><span>Phone</span><input name="phone" value={fields.phone} onChange={handleChange} /></label>
-          <label><span>Email</span><input name="email" value={fields.email} onChange={handleChange} /></label>
-          <label><span>Website</span><input name="website" value={fields.website} onChange={handleChange} /></label>
-          <label><span>Price Range</span>
-            <select name="priceRange" value={fields.priceRange} onChange={handleChange}>
-              {PRICE_RANGES.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
-            </select>
-          </label>
-        </div>
+        <label className="createbiz-full"><span>Full Description</span><textarea name="fullDescription" value={fields.fullDescription} onChange={handleChange} /></label>
 
-        <div className="createbiz-grid">
-          <label><span>Address</span><input name="address" value={fields.address} onChange={handleChange} /></label>
-          <label><span>City</span><input name="city" value={fields.city} onChange={handleChange} /></label>
-          <label><span>Province/State</span><input name="provinceOrState" value={fields.provinceOrState} onChange={handleChange} /></label>
-          <label><span>Country</span><input name="country" value={fields.country} onChange={handleChange} /></label>
-          <label><span>Postal Code</span><input name="postalCode" value={fields.postalCode} onChange={handleChange} /></label>
-          <label><span>Map Link</span><input name="mapLink" value={fields.mapLink} onChange={handleChange} placeholder="Google Maps URL" /></label>
-        </div>
+        <label><span>Phone</span><input name="phone" value={fields.phone} onChange={handleChange} /></label>
+        <label><span>Email</span><input name="email" value={fields.email} onChange={handleChange} /></label>
 
-        <div className="createbiz-grid">
-          <label><span>Opening Hours</span><input name="openingHours" value={fields.openingHours} onChange={handleChange} placeholder="e.g. Mon-Fri 9am-6pm" /></label>
-          <label><span>Languages Spoken</span><input name="languages" value={fields.languages} onChange={handleChange} placeholder="e.g. French, Lingala, English" /></label>
-          <label><span>Services Offered</span><input name="services" value={fields.services} onChange={handleChange} /></label>
-          <label><span>Social Links</span><input name="socialLinks" value={fields.socialLinks} onChange={handleChange} placeholder="Instagram, Facebook, etc." /></label>
-        </div>
+        <label><span>Website</span><input name="website" value={fields.website} onChange={handleChange} /></label>
+        <label><span>Price Range</span>
+          <select name="priceRange" value={fields.priceRange} onChange={handleChange}>
+            {PRICE_RANGES.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
+          </select>
+        </label>
 
-        <label><span>Accessibility Information (optional)</span><input name="accessibilityInfo" value={fields.accessibilityInfo} onChange={handleChange} /></label>
+        <label><span>Address</span><input name="address" value={fields.address} onChange={handleChange} /></label>
+        <label><span>City</span><input name="city" value={fields.city} onChange={handleChange} /></label>
 
-        <div className="createbiz-grid">
-          <label>
-            <span>Logo (optional)</span>
-            <input type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => logo.selectFile(e.target.files[0])} />
-            {logo.previewUrl && <img src={logo.previewUrl} alt="Logo preview" className="createbiz-image-preview" />}
-            {logo.error && <p className="register-form__error" role="alert">{logo.error}</p>}
-          </label>
-          <label>
-            <span>Cover Photo (optional)</span>
-            <input type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => cover.selectFile(e.target.files[0])} />
-            {cover.previewUrl && <img src={cover.previewUrl} alt="Cover preview" className="createbiz-image-preview" />}
-            {cover.error && <p className="register-form__error" role="alert">{cover.error}</p>}
-          </label>
-        </div>
+        <label><span>Province/State</span><input name="provinceOrState" value={fields.provinceOrState} onChange={handleChange} /></label>
+        <label><span>Country</span><input name="country" value={fields.country} onChange={handleChange} /></label>
+
+        <label><span>Postal Code</span><input name="postalCode" value={fields.postalCode} onChange={handleChange} /></label>
+        <label><span>Map Link</span><input name="mapLink" value={fields.mapLink} onChange={handleChange} placeholder="Google Maps URL" /></label>
+
+        <label><span>Opening Hours</span><input name="openingHours" value={fields.openingHours} onChange={handleChange} placeholder="e.g. Mon-Fri 9am-6pm" /></label>
+        <label><span>Languages Spoken</span><input name="languages" value={fields.languages} onChange={handleChange} placeholder="e.g. French, Lingala, English" /></label>
+
+        <label className="createbiz-full"><span>Services Offered</span><input name="services" value={fields.services} onChange={handleChange} /></label>
+        <label className="createbiz-full"><span>Social Media Links</span><input name="socialLinks" value={fields.socialLinks} onChange={handleChange} placeholder="Instagram, Facebook, etc." /></label>
+        <label className="createbiz-full"><span>Accessibility Information (optional)</span><input name="accessibilityInfo" value={fields.accessibilityInfo} onChange={handleChange} /></label>
+
+        <label className="createbiz-full">
+          <span>Logo (optional)</span>
+          <input type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => logo.selectFile(e.target.files[0])} />
+          {logo.previewUrl && <img src={logo.previewUrl} alt="Logo preview" className="createbiz-image-preview" />}
+          {logo.error && <p className="register-form__error" role="alert">{logo.error}</p>}
+        </label>
+        <label className="createbiz-full">
+          <span>Cover Photo (optional)</span>
+          <input type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => cover.selectFile(e.target.files[0])} />
+          {cover.previewUrl && <img src={cover.previewUrl} alt="Cover preview" className="createbiz-image-preview" />}
+          {cover.error && <p className="register-form__error" role="alert">{cover.error}</p>}
+        </label>
 
         <div className="createbiz-actions">
           <button type="button" onClick={() => submit(false)} disabled={isSubmitting}>

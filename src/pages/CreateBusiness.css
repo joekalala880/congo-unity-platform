@@ -1,29 +1,42 @@
+.createbiz-form {
+  align-items: start;
+  row-gap: 18px;
+  column-gap: 20px;
+}
+
 .createbiz-form label {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-bottom: 14px;
+  margin-bottom: 0;
 }
 
 .createbiz-form input,
 .createbiz-form select,
 .createbiz-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  height: 44px;
   padding: 10px 12px;
   border-radius: 8px;
   border: 1px solid #333;
   background: #0d0d0d;
   color: #fff;
+  font-size: 15px;
 }
 
 .createbiz-form textarea {
-  min-height: 100px;
+  height: auto;
+  min-height: 110px;
   resize: vertical;
 }
 
-.createbiz-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0 16px;
+.createbiz-form .register-form__success {
+  grid-column: span 2;
+}
+
+.createbiz-full {
+  grid-column: span 2;
 }
 
 .createbiz-image-preview {
@@ -35,10 +48,11 @@
 }
 
 .createbiz-actions {
+  grid-column: span 2;
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
-  margin-top: 10px;
+  margin-top: 6px;
 }
 
 .bizowner-badge {
@@ -56,8 +70,10 @@
 .bizowner-badge-suspended { background: #4a1414; color: #f28b8b; }
 .bizowner-badge-closed { background: #2a2a2a; color: #999; }
 
-@media (max-width: 600px) {
-  .createbiz-grid {
-    grid-template-columns: 1fr;
+@media (max-width: 700px) {
+  .createbiz-full,
+  .createbiz-actions,
+  .createbiz-form .register-form__success {
+    grid-column: span 1;
   }
 }
