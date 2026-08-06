@@ -48,7 +48,7 @@ export async function createBusiness(user, fields, { submitForApproval } = {}) {
     status: submitForApproval ? "pending_approval" : "draft",
     adminMessage: "",
     featured: false,
-    averageRating: 0,
+    ratingSum: 0,
     reviewCount: 0,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
