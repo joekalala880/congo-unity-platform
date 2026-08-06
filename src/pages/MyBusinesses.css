@@ -1,0 +1,32 @@
+.mybiz-actions {
+  margin: 16px 0;
+}
+
+.mybiz-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mybiz-row-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.mybiz-meta {
+  font-size: 0.85rem;
+  color: #999;
+}
+
+.mybiz-rejection {
+  color: #f28b8b;
+}
+
+.mybiz-row-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
