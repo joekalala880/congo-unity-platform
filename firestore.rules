@@ -349,15 +349,199 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // ---------- events / scholarships ----------
-    // Public listings, open authenticated create, admin-only edit/remove
-    // (no owner-edit UI exists for these today).
-    match /events/{eventId} {
-      allow read: if true;
-      allow create: if validPublishedCreate('title');
-      allow update, delete: if isAdmin();
+    // ---------- events ----------
+    // Owner-created, admin-approval-gated, mirroring the jobs status
+    // machine: a regular organizer's event starts draft/pending_approval and
+    // is only publicly readable once an admin publishes it; an admin may
+    // create an already-published event directly. goingCount is a
+    // denormalized RSVP counter — narrowly writable by ANY signed-in user
+    // (not just the owner) via its own affectedKeys()-scoped branch, the
+    // same pattern already used for congoleseProfiles.followers and
+    // communityPosts.likes, since the RSVPing user isn't the event owner.
+    function isValidEventCategory() {
+      return request.resource.data.category in [
+        'Community Meetup', 'Cultural Event', 'Business Networking', 'Career Event',
+        'Education', 'Fundraiser', 'Religious Event', 'Sports',
+        'Government or Civic Event', 'Online Event'
+      ];
     }
 
+    match /events/{eventId} {
+      allow read: if resource.data.status in ['published', 'completed']
+        || isAdmin()
+        || (isSignedIn() && resource.data.createdBy == request.auth.uid);
+
+      allow create: if isSignedIn()
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.createdByEmail == request.auth.token.email
+        && isNonEmptyString(request.resource.data.title)
+        && isNonEmptyString(request.resource.data.organizerName)
+        && isValidEventCategory()
+        && (
+          request.resource.data.status in ['draft', 'pending_approval']
+          || (request.resource.data.status == 'published' && isAdmin())
+        )
+        && request.resource.data.featured == false
+        && request.resource.data.goingCount == 0
+        && request.resource.data.registrationClosed == false
+        && request.resource.data.rejectionReason == ''
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp
+        && request.resource.data.keys().hasOnly([
+             'title', 'description', 'category', 'organizerName', 'date', 'startTime', 'endTime',
+             'timeZone', 'onlineOrInPerson', 'venueName', 'address', 'city', 'country',
+             'capacity', 'freeOrPaid', 'registrationLink', 'imageUrl', 'contactInformation',
+             'accessibilityInformation', 'status', 'rejectionReason', 'featured', 'goingCount',
+             'registrationClosed', 'createdBy', 'createdByEmail', 'createdAt', 'updatedAt'
+           ]);
+
+      // Admins may change anything EXCEPT approving/rejecting their own
+      // event — "users cannot approve their own events" applies to admins
+      // too, so that specific pending_approval -> published/rejected
+      // transition is carved out even for isAdmin().
+      allow update: if (
+          isAdmin()
+          && !(
+            resource.data.status == 'pending_approval'
+            && request.resource.data.status in ['published', 'rejected']
+            && resource.data.createdBy == request.auth.uid
+          )
+        )
+        || (
+          isSignedIn() && resource.data.createdBy == request.auth.uid
+          && request.resource.data.createdBy == resource.data.createdBy
+          && request.resource.data.createdByEmail == resource.data.createdByEmail
+          && request.resource.data.createdAt == resource.data.createdAt
+          && request.resource.data.featured == resource.data.featured
+          && request.resource.data.goingCount == resource.data.goingCount
+          && (
+            (resource.data.status == 'draft' && request.resource.data.status in ['draft', 'pending_approval'])
+            || (resource.data.status == 'pending_approval' && request.resource.data.status == 'pending_approval')
+            || (resource.data.status == 'published' && request.resource.data.status in ['published', 'cancelled'])
+          )
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+               'title', 'description', 'category', 'organizerName', 'date', 'startTime', 'endTime',
+               'timeZone', 'onlineOrInPerson', 'venueName', 'address', 'city', 'country',
+               'capacity', 'freeOrPaid', 'registrationLink', 'imageUrl', 'contactInformation',
+               'accessibilityInformation', 'status', 'registrationClosed', 'updatedAt'
+             ])
+        )
+        || (
+          isSignedIn()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['goingCount', 'updatedAt'])
+        );
+
+      allow delete: if isAdmin();
+
+      // Meeting link for online events — not on the main doc (which is
+      // publicly readable once published), so it isn't handed to every
+      // visitor. Readable by the organizer, admins, and anyone who has
+      // RSVP'd 'going'. "Do not reveal a private online meeting link unless
+      // the user has RSVP'd Going."
+      match /organizerInfo/{infoId} {
+        allow read: if isAdmin()
+          || (isSignedIn() && get(/databases/$(database)/documents/events/$(eventId)).data.createdBy == request.auth.uid)
+          || (
+            isSignedIn()
+            && exists(/databases/$(database)/documents/eventAttendees/$(eventId + '_' + request.auth.uid))
+            && get(/databases/$(database)/documents/eventAttendees/$(eventId + '_' + request.auth.uid)).data.status == 'going'
+          );
+
+        allow write: if isSignedIn()
+          && get(/databases/$(database)/documents/events/$(eventId)).data.createdBy == request.auth.uid
+          && request.resource.data.keys().hasOnly(['meetingLink']);
+      }
+    }
+
+    // ---------- eventAttendees ----------
+    // RSVPs. Doc ID = `${eventId}_${uid}` — deterministic, same
+    // duplicate-prevention trick as jobApplications and messaging
+    // conversations: a second RSVP attempt lands on an update (status
+    // change), not a fresh create.
+    match /eventAttendees/{attendeeId} {
+      // `resource == null` (doc doesn't exist yet) must be allowed through —
+      // getMyRsvp() does a plain get() to check "have I RSVP'd to this
+      // event?", which is a completely normal question to ask before ever
+      // RSVPing, and a nonexistent doc has nothing to leak.
+      allow read: if isAdmin()
+        || (
+          isSignedIn()
+          && (
+            resource == null
+            || resource.data.userId == request.auth.uid
+            || get(/databases/$(database)/documents/events/$(resource.data.eventId)).data.createdBy == request.auth.uid
+          )
+        );
+
+      allow create: if isSignedIn()
+        && attendeeId == request.resource.data.eventId + '_' + request.auth.uid
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.userEmail == request.auth.token.email
+        && request.resource.data.status in ['going', 'interested']
+        && get(/databases/$(database)/documents/events/$(request.resource.data.eventId)).data.status == 'published'
+        && get(/databases/$(database)/documents/events/$(request.resource.data.eventId)).data.registrationClosed == false
+        && (
+          request.resource.data.status != 'going'
+          || get(/databases/$(database)/documents/events/$(request.resource.data.eventId)).data.capacity == 0
+          || get(/databases/$(database)/documents/events/$(request.resource.data.eventId)).data.goingCount
+               < get(/databases/$(database)/documents/events/$(request.resource.data.eventId)).data.capacity
+        )
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp
+        && request.resource.data.keys().hasOnly(['eventId', 'userId', 'userEmail', 'userName', 'status', 'createdAt', 'updatedAt']);
+
+      allow update: if isSignedIn() && resource.data.userId == request.auth.uid
+        && request.resource.data.eventId == resource.data.eventId
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.status in ['going', 'interested', 'cancelled']
+        && (
+          // Moving to/staying 'going' requires the event to still be
+          // published and open — same guard as create(), so an event that
+          // got cancelled or closed after the initial RSVP can't be
+          // switched to 'going' afterward.
+          request.resource.data.status != 'going'
+          || (
+            resource.data.status == 'going'
+            || (
+              get(/databases/$(database)/documents/events/$(resource.data.eventId)).data.status == 'published'
+              && get(/databases/$(database)/documents/events/$(resource.data.eventId)).data.registrationClosed == false
+            )
+          )
+        )
+        && (
+          request.resource.data.status != 'going' || resource.data.status == 'going'
+          || get(/databases/$(database)/documents/events/$(resource.data.eventId)).data.capacity == 0
+          || get(/databases/$(database)/documents/events/$(resource.data.eventId)).data.goingCount
+               < get(/databases/$(database)/documents/events/$(resource.data.eventId)).data.capacity
+        )
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt']);
+
+      allow delete: if isAdmin();
+    }
+
+    // ---------- eventReports ----------
+    match /eventReports/{reportId} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.reporterId == request.auth.uid);
+
+      allow create: if isSignedIn()
+        && request.resource.data.reporterId == request.auth.uid
+        && request.resource.data.reporterEmail == request.auth.token.email
+        && isNonEmptyString(request.resource.data.eventId)
+        && request.resource.data.reason in ['fraud', 'unsafe_location', 'misleading', 'harassment', 'spam', 'other']
+        && request.resource.data.status == 'pending'
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.keys().hasOnly([
+             'eventId', 'reporterId', 'reporterEmail', 'reason', 'message',
+             'status', 'createdAt', 'reviewedBy', 'reviewedAt'
+           ]);
+
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ---------- scholarships ----------
+    // Public listing, open authenticated create, admin-only edit/remove
+    // (no owner-edit UI exists for this today).
     match /scholarships/{scholarshipId} {
       allow read: if true;
       allow create: if validPublishedCreate('title');
@@ -771,7 +955,10 @@ service cloud.firestore {
           isAdmin()
           || (
             isSignedIn()
-            && request.resource.data.type in ['New Message', 'New Follower', 'Job Application Update']
+            && request.resource.data.type in [
+                 'New Message', 'New Follower', 'Job Application Update',
+                 'RSVP Confirmed', 'Event Updated', 'Event Cancelled'
+               ]
             && request.resource.data.fromUserId == request.auth.uid
           )
         );
