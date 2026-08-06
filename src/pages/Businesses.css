@@ -1,0 +1,88 @@
+.businesses-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.businesses-filters input[type="text"],
+.businesses-filters select {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #0d0d0d;
+  color: #fff;
+  flex: 1 1 180px;
+  min-width: 160px;
+}
+
+.businesses-verified-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  /* .businesses-filters sits directly on the page's light background (not
+     inside a dark card), so this must use the page's default dark text
+     color, not white — white here was invisible against the light background. */
+  color: #1a1a1a;
+  white-space: nowrap;
+}
+
+.businesses-card-image {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.businesses-featured-badge {
+  display: inline-block;
+  background: #d9a441;
+  color: #0d0d0d;
+  font-weight: 700;
+  font-size: 0.7rem;
+  padding: 3px 8px;
+  border-radius: 999px;
+  margin-right: 6px;
+  margin-bottom: 8px;
+}
+
+.businesses-verified-badge {
+  display: inline-block;
+  background: #123a1f;
+  color: #7bd88f;
+  font-weight: 700;
+  font-size: 0.7rem;
+  padding: 3px 8px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+}
+
+.businesses-skeleton-card {
+  pointer-events: none;
+}
+
+.businesses-skeleton {
+  background: #232323;
+  border-radius: 6px;
+  animation: businesses-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes businesses-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@media (max-width: 700px) {
+  .businesses-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .businesses-filters input[type="text"],
+  .businesses-filters select {
+    width: 100%;
+    flex-basis: auto;
+  }
+}
