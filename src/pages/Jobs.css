@@ -1,0 +1,61 @@
+.jobs-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.jobs-filters input,
+.jobs-filters select {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #0d0d0d;
+  color: #fff;
+  flex: 1 1 180px;
+  min-width: 160px;
+}
+
+.jobs-card-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.jobs-save-button {
+  background: transparent;
+  border: 1px solid #d9a441;
+  color: #d9a441;
+}
+
+.jobs-skeleton-card {
+  pointer-events: none;
+}
+
+.jobs-skeleton {
+  background: #232323;
+  border-radius: 6px;
+  animation: jobs-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes jobs-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@media (max-width: 700px) {
+  .jobs-filters {
+    flex-direction: column;
+  }
+
+  .jobs-filters input,
+  .jobs-filters select {
+    width: 100%;
+    /* .jobs-filters switches to flex-direction: column above, and the base
+       rule's `flex: 1 1 180px` sets flex-basis on the CURRENT main axis —
+       in a column layout that's height, not width, which blew every field
+       up to 180px tall. Reset it back to auto here. */
+    flex-basis: auto;
+  }
+}

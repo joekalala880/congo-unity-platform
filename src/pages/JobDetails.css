@@ -1,0 +1,79 @@
+.jobdet-card {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.jobdet-description {
+  white-space: pre-wrap;
+  margin: 16px 0;
+}
+
+.jobdet-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+
+.jobdet-login-note {
+  margin-top: 16px;
+}
+
+.jobdet-applied-card,
+.jobdet-apply-card {
+  margin-top: 24px;
+  padding: 20px;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  background: #141414;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.jobdet-apply-card label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.jobdet-apply-card input,
+.jobdet-apply-card textarea {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #0d0d0d;
+  color: #fff;
+}
+
+.jobdet-apply-card textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.jobdet-file-name {
+  font-size: 0.85rem;
+  color: #d9a441;
+}
+
+.jobdet-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  width: fit-content;
+}
+
+.jobdet-badge-applied { background: #2a2a2a; color: #ccc; }
+.jobdet-badge-review { background: #4a3b0f; color: #f0c56a; }
+.jobdet-badge-interview { background: #123a5e; color: #7ec2ff; }
+.jobdet-badge-offered { background: #123a1f; color: #7bd88f; }
+.jobdet-badge-rejected { background: #4a1414; color: #f28b8b; }
+.jobdet-badge-withdrawn { background: #2a2a2a; color: #999; }
+
+@media (max-width: 600px) {
+  .jobdet-actions {
+    flex-direction: column;
+  }
+}

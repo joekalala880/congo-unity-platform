@@ -1,0 +1,51 @@
+.myapp-actions {
+  margin: 16px 0;
+}
+
+.myapp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.myapp-row-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.myapp-meta {
+  font-size: 0.85rem;
+  color: #999;
+}
+
+.myapp-row-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.myapp-interview-note {
+  background: #0d0d0d;
+  border-left: 3px solid #d9a441;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.myapp-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.myapp-badge-applied { background: #2a2a2a; color: #ccc; }
+.myapp-badge-review { background: #4a3b0f; color: #f0c56a; }
+.myapp-badge-interview { background: #123a5e; color: #7ec2ff; }
+.myapp-badge-offered { background: #123a1f; color: #7bd88f; }
+.myapp-badge-rejected { background: #4a1414; color: #f28b8b; }
+.myapp-badge-withdrawn { background: #2a2a2a; color: #999; }
