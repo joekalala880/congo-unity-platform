@@ -18,6 +18,8 @@ import { listMyApplications } from "../services/serviceApplicationsService";
 import { STATUS_LABELS as APPLICATION_STATUS_LABELS } from "../services/serviceApplicationTypes";
 import { listMyApplications as listMyJobApplications } from "../services/jobApplicationsService";
 import { APPLICATION_STATUS_LABELS as JOB_APPLICATION_STATUS_LABELS } from "../services/jobTypes";
+import { listMyHostedEvents } from "../services/eventsService";
+import { listMyRsvps } from "../services/eventAttendeesService";
 import { resolveGalleryImage } from "./galleryLocalImages";
 import "./Dashboard.css";
 
@@ -99,6 +101,10 @@ function Dashboard() {
 
   const [jobApplications, setJobApplications] = useState([]);
   const [jobApplicationsLoading, setJobApplicationsLoading] = useState(true);
+
+  const [hostedEventsCount, setHostedEventsCount] = useState(0);
+  const [attendingEventsCount, setAttendingEventsCount] = useState(0);
+  const [myEventsLoading, setMyEventsLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -251,6 +257,19 @@ function Dashboard() {
         console.error("Failed to load job applications:", error);
       } finally {
         setJobApplicationsLoading(false);
+      }
+    })();
+
+    (async () => {
+      setMyEventsLoading(true);
+      try {
+        const [hosted, rsvps] = await Promise.all([listMyHostedEvents(user.uid), listMyRsvps(user.uid)]);
+        setHostedEventsCount(hosted.filter((e) => e.status === "published" || e.status === "pending_approval").length);
+        setAttendingEventsCount(rsvps.filter((r) => r.status === "going").length);
+      } catch (error) {
+        console.error("Failed to load your events:", error);
+      } finally {
+        setMyEventsLoading(false);
       }
     })();
 
@@ -413,6 +432,26 @@ function Dashboard() {
               </p>
             </Link>
           )}
+
+          {myEventsLoading ? (
+            <StatSkeleton />
+          ) : (
+            <Link to="/my-events" className="db-stat-card">
+              <p className="db-stat-label">Hosting Events</p>
+              <p className="db-stat-value">{hostedEventsCount}</p>
+              <p className="db-stat-sub">Upcoming events you're hosting</p>
+            </Link>
+          )}
+
+          {myEventsLoading ? (
+            <StatSkeleton />
+          ) : (
+            <Link to="/my-events" className="db-stat-card">
+              <p className="db-stat-label">Attending Events</p>
+              <p className="db-stat-value">{attendingEventsCount}</p>
+              <p className="db-stat-sub">Events you've RSVP'd Going to</p>
+            </Link>
+          )}
         </div>
       </section>
 
@@ -430,6 +469,8 @@ function Dashboard() {
           <Link to="/search-users" className="db-action-button">Find People</Link>
           <Link to="/jobs" className="db-action-button">Browse Jobs</Link>
           <Link to="/create-job" className="db-action-button">Post a Job</Link>
+          <Link to="/events" className="db-action-button">Browse Events</Link>
+          <Link to="/events/create" className="db-action-button">Create Event</Link>
           <Link to="/feed" className="db-action-button">Community Feed</Link>
           <Link to="/direct-messages" className="db-action-button">Messages</Link>
           <Link to="/congo-gallery" className="db-action-button">Explore Gallery</Link>

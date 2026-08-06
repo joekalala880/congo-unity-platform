@@ -88,6 +88,9 @@ import CongoGallery from "./pages/CongoGallery";
 import CongoTimeline from "./pages/CongoTimeline";
 import AdminCMS from "./pages/AdminCMS";
 import CreateEvent from "./pages/CreateEvent";
+import EditEvent from "./pages/EditEvent";
+import MyEvents from "./pages/MyEvents";
+import AdminEvents from "./pages/AdminEvents";
 import CreateNews from "./pages/CreateNews";
 import CreateBusiness from "./pages/CreateBusiness";
 import GlobalSearch from "./pages/GlobalSearch";
@@ -476,6 +479,38 @@ function App() {
 
         <Route path="/fundraisers" element={<Fundraisers />} />
         <Route path="/events" element={<Events />} />
+        <Route
+          path="/events/create"
+          element={
+            <ProtectedRoute>
+              <CreateEvent />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/events/:eventId/edit"
+          element={
+            <ProtectedRoute>
+              <EditEvent />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-events"
+          element={
+            <ProtectedRoute>
+              <MyEvents />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/events"
+          element={
+            <ProtectedAdmin>
+              <AdminEvents />
+            </ProtectedAdmin>
+          }
+        />
         <Route path="/businesses" element={<Businesses />} />
         <Route path="/success-stories" element={<SuccessStories />} />
         <Route path="/volunteer" element={<Volunteer />} />
@@ -539,7 +574,6 @@ function App() {
         <Route path="/settings" element={<Settings />} />
         <Route path="/help" element={<HelpSupport />} />
         <Route path="/hub" element={<DashboardHub />} />
-        <Route path="/create-event" element={<CreateEvent />} />
         <Route path="/businesses/:id" element={<BusinessDetails />} />
         <Route path="/scholarships/:id" element={<ScholarshipDetails />} />
         <Route path="/events/:id" element={<EventDetails />} />
