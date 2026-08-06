@@ -1,0 +1,52 @@
+.jobapp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.jobapp-row-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.jobapp-meta {
+  font-size: 0.85rem;
+  color: #999;
+}
+
+.jobapp-cover-letter {
+  background: #0d0d0d;
+  border-radius: 8px;
+  padding: 10px 12px;
+  white-space: pre-wrap;
+}
+
+.jobapp-row-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.jobapp-reject-button {
+  background: transparent;
+  border: 1px solid #f28b8b;
+  color: #f28b8b;
+}
+
+.jobapp-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.jobapp-badge-applied { background: #2a2a2a; color: #ccc; }
+.jobapp-badge-review { background: #4a3b0f; color: #f0c56a; }
+.jobapp-badge-interview { background: #123a5e; color: #7ec2ff; }
+.jobapp-badge-offered { background: #123a1f; color: #7bd88f; }
+.jobapp-badge-rejected { background: #4a1414; color: #f28b8b; }
+.jobapp-badge-withdrawn { background: #2a2a2a; color: #999; }

@@ -1,0 +1,46 @@
+.empjobs-actions {
+  margin: 16px 0;
+}
+
+.empjobs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.empjobs-row-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.empjobs-meta {
+  font-size: 0.85rem;
+  color: #999;
+}
+
+.empjobs-rejection {
+  color: #f28b8b;
+}
+
+.empjobs-row-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.empjobs-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.empjobs-badge-pending { background: #4a3b0f; color: #f0c56a; }
+.empjobs-badge-published { background: #123a1f; color: #7bd88f; }
+.empjobs-badge-closed { background: #2a2a2a; color: #999; }
+.empjobs-badge-rejected { background: #4a1414; color: #f28b8b; }
+.empjobs-badge-removed { background: #4a1414; color: #f28b8b; }

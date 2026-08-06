@@ -1,0 +1,55 @@
+.createjob-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.createjob-form input,
+.createjob-form select,
+.createjob-form textarea {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #0d0d0d;
+  color: #fff;
+}
+
+.createjob-form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.createjob-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0 16px;
+}
+
+.createjob-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.empjobs-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-left: 10px;
+}
+
+.empjobs-badge-pending { background: #4a3b0f; color: #f0c56a; }
+.empjobs-badge-published { background: #123a1f; color: #7bd88f; }
+.empjobs-badge-closed { background: #2a2a2a; color: #999; }
+.empjobs-badge-rejected { background: #4a1414; color: #f28b8b; }
+.empjobs-badge-removed { background: #4a1414; color: #f28b8b; }
+
+@media (max-width: 600px) {
+  .createjob-grid {
+    grid-template-columns: 1fr;
+  }
+}
