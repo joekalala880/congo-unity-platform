@@ -1,0 +1,14 @@
+.editevent-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-left: 10px;
+}
+
+.editevent-badge-pending { background: #4a3b0f; color: #f0c56a; }
+.editevent-badge-published { background: #123a1f; color: #7bd88f; }
+.editevent-badge-cancelled { background: #2a2a2a; color: #999; }
+.editevent-badge-completed { background: #123a5e; color: #7ec2ff; }
+.editevent-badge-rejected { background: #4a1414; color: #f28b8b; }

@@ -1,0 +1,51 @@
+.createevent-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.createevent-form input,
+.createevent-form select,
+.createevent-form textarea {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #0d0d0d;
+  color: #fff;
+}
+
+.createevent-form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.createevent-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0 16px;
+}
+
+.createevent-hint {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.createevent-image-preview {
+  max-width: 240px;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.createevent-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+@media (max-width: 600px) {
+  .createevent-grid {
+    grid-template-columns: 1fr;
+  }
+}
