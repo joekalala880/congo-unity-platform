@@ -1,0 +1,68 @@
+.myevents-actions {
+  display: flex;
+  gap: 10px;
+  margin: 16px 0 24px;
+  flex-wrap: wrap;
+}
+
+.myevents-empty {
+  color: #999;
+  margin-bottom: 20px;
+}
+
+.myevents-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.myevents-row {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.myevents-row-past {
+  opacity: 0.7;
+}
+
+.myevents-row-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.myevents-meta {
+  font-size: 0.85rem;
+  color: #999;
+}
+
+.myevents-row-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.myevents-attendees {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: #0d0d0d;
+  border-radius: 8px;
+}
+
+.myevents-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.myevents-badge-pending { background: #4a3b0f; color: #f0c56a; }
+.myevents-badge-published { background: #123a1f; color: #7bd88f; }
+.myevents-badge-cancelled { background: #2a2a2a; color: #999; }
+.myevents-badge-completed { background: #123a5e; color: #7ec2ff; }
+.myevents-badge-rejected { background: #4a1414; color: #f28b8b; }

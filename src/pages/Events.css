@@ -1,0 +1,63 @@
+.events-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.events-filters input,
+.events-filters select {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #0d0d0d;
+  color: #fff;
+  flex: 1 1 180px;
+  min-width: 160px;
+}
+
+.events-card-image {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.events-featured-badge {
+  display: inline-block;
+  background: #d9a441;
+  color: #0d0d0d;
+  font-weight: 700;
+  font-size: 0.7rem;
+  padding: 3px 8px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+}
+
+.events-skeleton-card {
+  pointer-events: none;
+}
+
+.events-skeleton {
+  background: #232323;
+  border-radius: 6px;
+  animation: events-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes events-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@media (max-width: 700px) {
+  .events-filters {
+    flex-direction: column;
+  }
+
+  .events-filters input,
+  .events-filters select {
+    width: 100%;
+    flex-basis: auto;
+  }
+}
