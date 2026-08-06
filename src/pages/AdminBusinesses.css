@@ -1,0 +1,137 @@
+.admbiz-page {
+  padding: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+  color: #fff;
+}
+
+.admbiz-header {
+  margin-bottom: 20px;
+}
+
+.admbiz-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.admbiz-stat {
+  flex: 1 1 140px;
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+
+.admbiz-stat span {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #d9a441;
+}
+
+.admbiz-section {
+  margin-bottom: 32px;
+}
+
+.admbiz-section h2 {
+  margin-bottom: 12px;
+}
+
+.admbiz-empty {
+  color: #999;
+}
+
+.admbiz-search {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #0d0d0d;
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.admbiz-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admbiz-row {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.admbiz-row-inline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admbiz-row-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 6px;
+}
+
+.admbiz-row-title span {
+  font-size: 0.85rem;
+  color: #999;
+}
+
+.admbiz-meta {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.admbiz-row-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.admbiz-reject {
+  background: transparent;
+  border: 1px solid #f28b8b;
+  color: #f28b8b;
+}
+
+.admbiz-featured {
+  color: #d9a441;
+}
+
+.admbiz-report-status {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  width: fit-content;
+}
+
+.admbiz-report-pending { background: #4a3b0f; color: #f0c56a; }
+.admbiz-report-reviewed { background: #123a1f; color: #7bd88f; }
+.admbiz-report-dismissed { background: #2a2a2a; color: #999; }
+
+.admbiz-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.admbiz-badge-pending { background: #4a3b0f; color: #f0c56a; }
+.admbiz-badge-approved { background: #123a1f; color: #7bd88f; }
+.admbiz-badge-rejected { background: #4a1414; color: #f28b8b; }
+.admbiz-badge-suspended { background: #4a1414; color: #f28b8b; }
+.admbiz-badge-closed { background: #2a2a2a; color: #999; }

@@ -80,7 +80,7 @@ function AdminCMS() {
           <h3>🏢 Businesses</h3>
           <p>Add Congolese-owned businesses and organizations.</p>
 
-          <Link to="/create-business">
+          <Link to="/businesses/create">
             <button>Create Business</button>
           </Link>
         </div>
